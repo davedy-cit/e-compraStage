@@ -10,8 +10,8 @@
 | | |
 |---|---|
 | **Current milestone** | **M0 · System & Design + Planning Artifacts** (Nov 12–18) |
-| **Current step** | M0.1 — Workspace baseline |
-| **M0 progress** | 3 / 13 steps · 23% (M0.10, M0.11, M0.12 coach-produced) |
+| **Current step** | M0.2 — Design-of-record walkthrough |
+| **M0 progress** | 4 / 13 steps · 31% (M0.1, M0.10, M0.11, M0.12) |
 | **M1 progress** | 0 / 9 steps · 0% |
 | **Overall** | 3 / 78 steps · 4% |
 | **Last updated** | 2026-11-17 |
@@ -33,7 +33,7 @@ _(to be filled in)_
 
 | Milestone | Name | Steps | Done | Status | Completed on |
 |---|---|---|---|---|---|
-| M0 | System & Design + Planning Artifacts | 13 | 3 | 🔵 In progress | |
+| M0 | System & Design + Planning Artifacts | 13 | 4 | 🔵 In progress | |
 | M1 | GitHub Repository Creation & Setup | 9 | 0 | ⚪ Not started | |
 | M2 | Data & Backend Core | 18 | 0 | ⚪ Not started | |
 | M3 | Feature Build | 18 | 0 | ⚪ Not started | |
@@ -103,3 +103,11 @@ TEMPLATE — copy this block for each completed step.
   - The deck's architecture slide and the mockups now show **Vue 3 + Vite + Tailwind**, so the deck is already
     consistent with the new choice — the surrounding documents are not.
 - **Next:** settle the pending decisions, then M0.1 — Workspace baseline.
+
+### [2026-11-17] Step M0.1 — Workspace baseline
+- **Status:** ✅ Completed (verified)
+- **What was done:** `git init` on branch `master`; `.gitignore` (Python/Django, Node/Vue, editor/OS, backups, secrets rules); first commit `1f07e1f chore: workspace baseline (M0.1)` holding the Phase 0 planning package: 16 mockup screens + gallery, 28 screenshots, proposal PPTX, five UML diagrams (`.puml`/`.svg`/`.png`), `DESIGN_DECISIONS.md`, `DESIGN_REVIEW.md`, `PROJECT_TIMELINE.md`, `phase-0-system-design.md`, `steps/README.md`, this log.
+- **Verification:** `git log --oneline` → `1f07e1f chore: workspace baseline (M0.1)`; `git status` → clean working tree; `.gitignore` present (574 bytes).
+- **CCS630 lesson applied:** n/a (version control). Security rule from the step: `.env`, `backups/`, `tools/` are excluded before the first commit — a secret committed once stays in the history forever.
+- **Issues/notes:** `backend/`, `frontend/` and `backups/` folders plus pinned `requirements.txt` (Django 6.1.3, PyMySQL 1.2.4, python-dotenv 1.2.4) created as the first action of M0.2 closeout.
+- **Next:** M0.2 — Design-of-record walkthrough.
