@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Search Results</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html" class="on">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 3</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Search results</div>
+      <h1>“tomatoes”</h1>
+      <p>3 products from 3 vendors · sorted by price, lowest first. Prices are compared per kilogram using the Tomatoes comparison group.</p>
+    </div>
+
+    <form class="searchbar" onsubmit="return false">
+      <input class="input" type="search" value="tomatoes" aria-label="Search products">
+      <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+
+    <div class="grid-side">
+
+      <!-- Filters -->
+      <aside class="card">
+        <div class="card-head"><h3>Filters</h3><a class="small" href="search-results.html">Clear</a></div>
+
+        <div class="field">
+          <span>Category</span>
+          <label class="check"><input type="checkbox" checked> Vegetables</label>
+          <label class="check"><input type="checkbox"> Fruits</label>
+          <label class="check"><input type="checkbox"> Fish</label>
+          <label class="check"><input type="checkbox"> Meat</label>
+          <label class="check"><input type="checkbox"> Poultry</label>
+          <label class="check"><input type="checkbox"> Rice</label>
+          <label class="check"><input type="checkbox"> Dry goods</label>
+          <label class="check"><input type="checkbox"> Spices</label>
+          <label class="check"><input type="checkbox"> Others</label>
+        </div>
+
+        <div class="field">
+          <span>Price range (₱ per kg)</span>
+          <div class="row">
+            <input class="input" type="number" value="50" aria-label="Minimum price">
+            <span class="muted">–</span>
+            <input class="input" type="number" value="100" aria-label="Maximum price">
+          </div>
+        </div>
+
+        <div class="field">
+          <span>Availability</span>
+          <label class="check"><input type="checkbox" checked> In stock</label>
+          <label class="check"><input type="checkbox"> Low stock</label>
+          <label class="check"><input type="checkbox"> Out of stock</label>
+        </div>
+
+        <div class="field">
+          <span>Vendor</span>
+          <label class="check"><input type="checkbox" checked> Rosa's Gulay Stand</label>
+          <label class="check"><input type="checkbox" checked> Villamor Fruits &amp; Gulay</label>
+          <label class="check"><input type="checkbox" checked> Tan's Rice &amp; Dry Goods</label>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="button">Apply filters</button>
+      </aside>
+
+      <!-- Results -->
+      <div class="stack">
+        <div class="row-between">
+          <span class="muted small"><strong>3</strong> results</span>
+          <label class="row small">
+            <span class="muted">Sort</span>
+            <select class="input" style="width:auto" aria-label="Sort results">
+              <option>Price — lowest first</option>
+              <option>Price — highest first</option>
+              <option>Vendor name</option>
+              <option>Availability</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid grid-3">
+
+          <article class="pcard is-best">
+            <div class="thumb">🍅</div>
+            <div class="body">
+              <div class="row-between">
+                <span class="name">Tomatoes</span>
+                <span class="badge badge-ok">Best value</span>
+              </div>
+              <div class="vendor">Villamor Fruits &amp; Gulay</div>
+              <div class="small muted">📍 Stall D-02 · Section D – Fruits</div>
+              <div class="row-wrap">
+                <span class="badge badge-ok"><i class="dot"></i>In stock</span>
+                <span class="unit">18 kg available</span>
+              </div>
+              <div class="foot">
+                <span class="price price-lg">₱75.00 <span class="unit">/ kg</span></span>
+                <a class="btn btn-sm btn-primary" href="product-detail.html">Add to cart</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="pcard">
+            <div class="thumb">🍅</div>
+            <div class="body">
+              <div class="row-between">
+                <span class="name">Tomatoes</span>
+                <span class="badge">+₱3.00</span>
+              </div>
+              <div class="vendor">Tan's Rice &amp; Dry Goods</div>
+              <div class="small muted">📍 Stall E-01 · Section E – Dry Goods</div>
+              <div class="row-wrap">
+                <span class="badge badge-ok"><i class="dot"></i>In stock</span>
+                <span class="unit">12 kg available</span>
+              </div>
+              <div class="foot">
+                <span class="price price-lg">₱78.00 <span class="unit">/ kg</span></span>
+                <a class="btn btn-sm btn-primary" href="product-detail.html">Add to cart</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="pcard">
+            <div class="thumb">🍅</div>
+            <div class="body">
+              <div class="row-between">
+                <span class="name">Tomatoes</span>
+                <span class="badge">+₱5.00</span>
+              </div>
+              <div class="vendor">Rosa's Gulay Stand</div>
+              <div class="small muted">📍 Stall B-07 · Section B – Vegetables</div>
+              <div class="row-wrap">
+                <span class="badge badge-ok"><i class="dot"></i>In stock</span>
+                <span class="unit">15 kg available</span>
+              </div>
+              <div class="foot">
+                <span class="price price-lg">₱80.00 <span class="unit">/ kg</span></span>
+                <a class="btn btn-sm btn-primary" href="product-detail.html">Add to cart</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="note">
+          <strong>Same product, three vendors.</strong> All three rows carry the comparison group
+          <span class="mono">TOMATO</span>, so the price shown per kilogram is comparable even when a vendor
+          sells by the gram or by the sack.
+          <a href="price-comparison.html">See the full comparison →</a>
+        </div>
+
+        <!-- A second, unrelated result group so the screen shows mixed categories -->
+        <h3 class="mt16">Also in Vegetables</h3>
+        <div class="grid grid-4">
+          <article class="pcard">
+            <div class="thumb">🥬</div>
+            <div class="body">
+              <div class="name">Kangkong (Water Spinach)</div>
+              <div class="vendor">Rosa's Gulay Stand · B-07</div>
+              <div class="foot">
+                <span class="price price-sm">₱15.00 <span class="unit">/ bundle</span></span>
+                <a class="btn btn-sm" href="product-detail.html">Add</a>
+              </div>
+            </div>
+          </article>
+          <article class="pcard">
+            <div class="thumb">🥬</div>
+            <div class="body">
+              <div class="name">Pechay (Chinese Cabbage)</div>
+              <div class="vendor">Rosa's Gulay Stand · B-07</div>
+              <div class="foot">
+                <span class="price price-sm">₱20.00 <span class="unit">/ bundle</span></span>
+                <a class="btn btn-sm" href="product-detail.html">Add</a>
+              </div>
+            </div>
+          </article>
+          <article class="pcard">
+            <div class="thumb">🥒</div>
+            <div class="body">
+              <div class="name">Ampalaya (Bitter Gourd)</div>
+              <div class="vendor">Rosa's Gulay Stand · B-07</div>
+              <div class="foot">
+                <span class="price price-sm">₱90.00 <span class="unit">/ kg</span></span>
+                <a class="btn btn-sm" href="product-detail.html">Add</a>
+              </div>
+            </div>
+          </article>
+          <article class="pcard">
+            <div class="thumb">🍆</div>
+            <div class="body">
+              <div class="name">Talong (Eggplant)</div>
+              <div class="vendor">Rosa's Gulay Stand · B-07</div>
+              <div class="foot">
+                <span class="price price-sm">₱70.00 <span class="unit">/ kg</span></span>
+                <a class="btn btn-sm" href="product-detail.html">Add</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

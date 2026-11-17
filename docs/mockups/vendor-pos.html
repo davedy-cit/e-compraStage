@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Vendor POS Terminal</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-vendor">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Vendor console</small></span></a>
+    <nav class="nav">
+      <a href="vendor-dashboard.html">Dashboard</a>
+      <a href="vendor-products.html">Products</a>
+      <a href="vendor-orders.html">Orders</a>
+      <a href="vendor-pos.html" class="on">POS</a>
+    </nav>
+    <span class="who">Pedro Reyes · Pedro's Fresh Catch</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Point of sale</div>
+      <h1>Counter terminal</h1>
+      <p>For buyers standing at Stall A-12. A walk-in sale is created and closed in one motion — the order, the
+         payment and the stock movement all happen together.</p>
+    </div>
+
+    <!-- ===== Counter queue ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Counter queue</h3>
+        <span class="small muted">reservations and orders to hand over</span>
+      </div>
+      <div class="grid grid-4">
+
+        <div class="card card-tight" style="box-shadow:none">
+          <div class="row-between mb8">
+            <span class="mono small">ECO-20261116-0009</span>
+            <span class="badge badge-accent">READY_FOR_PICKUP</span>
+          </div>
+          <div class="small" style="font-weight:650">Ana Lim</div>
+          <div class="tiny muted">Bangus 1 kg · ₱180.00</div>
+          <div class="tiny muted mb8">Balance due <strong>₱90.00</strong></div>
+          <button class="btn btn-sm btn-accent btn-block" type="button">Collect balance</button>
+        </div>
+
+        <div class="card card-tight" style="box-shadow:none">
+          <div class="row-between mb8">
+            <span class="mono small">ECO-20261116-0007</span>
+            <span class="badge badge-brand">CONFIRMED</span>
+          </div>
+          <div class="small" style="font-weight:650">Maria Santos</div>
+          <div class="tiny muted">Bangus 2 kg, Galunggong 1 kg</div>
+          <div class="tiny muted mb8">Paid online · ₱520.00</div>
+          <button class="btn btn-sm btn-block" type="button">Start preparing</button>
+        </div>
+
+        <div class="card card-tight" style="box-shadow:none">
+          <div class="row-between mb8">
+            <span class="mono small">ECO-20261116-0008</span>
+            <span class="badge badge-info">PREPARING</span>
+          </div>
+          <div class="small" style="font-weight:650">Juan Dela Cruz</div>
+          <div class="tiny muted">Tilapia 3 kg</div>
+          <div class="tiny muted mb8">For Lalamove · <span class="mono">SBX-LM-80934</span></div>
+          <button class="btn btn-sm btn-block" type="button">Release to rider</button>
+        </div>
+
+        <div class="card card-tight" style="box-shadow:none;background:var(--ok-bg);border-color:var(--ok)">
+          <div class="row-between mb8">
+            <span class="mono small">ECO-20261116-0006</span>
+            <span class="badge badge-ok">COMPLETED</span>
+          </div>
+          <div class="small" style="font-weight:650">Rico Bautista</div>
+          <div class="tiny muted">Walk-in · 3 items</div>
+          <div class="tiny muted mb8">₱620.00 · cash</div>
+          <button class="btn btn-sm btn-block" type="button">Reprint receipt</button>
+        </div>
+
+      </div>
+      <div class="card-foot tiny muted">
+        The queue mixes all three channels on purpose: <span class="mono">POS_WALKIN</span> sales you ring up,
+        <span class="mono">ONLINE_ORDER</span> orders to prepare, and <span class="mono">PICKUP_RESERVATION</span>
+        balances to collect. One counter, one screen.
+      </div>
+    </section>
+
+    <!-- ===== The till ===== -->
+    <div class="grid-side" style="grid-template-columns:1fr 380px">
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="mb0">Current sale</h3>
+            <span class="small muted">Walk-in customer · <span class="mono">POS_WALKIN</span></span>
+          </div>
+          <span class="badge">OPEN</span>
+        </div>
+
+        <div class="searchbar mb12">
+          <input class="input" type="search" placeholder="Scan or type a product…" aria-label="Add product">
+          <button class="btn" type="button">Add</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Subtotal</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>🐟 Bangus (Milkfish)</strong><div class="tiny muted">12 kg on hand</div></td>
+                <td class="num">1 kg</td>
+                <td class="num">₱180.00</td>
+                <td class="num"><strong>₱180.00</strong></td>
+                <td class="num"><button class="btn btn-sm btn-danger" type="button">✕</button></td>
+              </tr>
+              <tr>
+                <td><strong>🐟 Galunggong (Round Scad)</strong><div class="tiny muted">17 kg on hand</div></td>
+                <td class="num">1 kg</td>
+                <td class="num">₱160.00</td>
+                <td class="num"><strong>₱160.00</strong></td>
+                <td class="num"><button class="btn btn-sm btn-danger" type="button">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider">
+
+        <div class="row-between mb8">
+          <span class="small muted">Items</span><span>2</span>
+        </div>
+        <div class="row-between mb8">
+          <span class="small muted">Subtotal</span><span>₱340.00</span>
+        </div>
+        <div class="row-between mb8">
+          <span class="small muted">Delivery fee</span><span class="muted">₱0.00 — walk-in</span>
+        </div>
+        <div class="row-between">
+          <span style="font-weight:650;font-size:1.02rem">Total due</span>
+          <span class="price price-lg">₱340.00</span>
+        </div>
+
+        <div class="note mt16 tiny">
+          <strong>Stock moves on checkout, not on add.</strong> Both items leave the ledger when you press
+          <em>Complete sale</em>. Abandoning this sale changes nothing.
+        </div>
+      </section>
+
+      <!-- Cash panel -->
+      <aside class="stack">
+
+        <div class="card" style="border-color:var(--accent)">
+          <div class="card-head"><h3>💵 Cash payment</h3><span class="badge badge-accent">CASH</span></div>
+
+          <div class="row-between mb12">
+            <span class="small muted">Amount due</span>
+            <span class="price price-lg">₱340.00</span>
+          </div>
+
+          <div class="field">
+            <span>Cash tendered (₱)</span>
+            <input class="input" type="text" value="500.00" aria-label="Cash tendered">
+          </div>
+
+          <div class="chips mb12">
+            <button class="chip" type="button">₱340</button>
+            <button class="chip" type="button">₱500</button>
+            <button class="chip on" type="button">₱1,000</button>
+          </div>
+
+          <div class="card card-tight" style="box-shadow:none;background:var(--accent-light);border-color:var(--accent)">
+            <div class="row-between">
+              <span style="font-weight:650">Change due</span>
+              <span class="price price-lg">₱160.00</span>
+            </div>
+            <div class="tiny muted mt8">₱500.00 tendered − ₱340.00 due</div>
+          </div>
+
+          <div class="card-foot">
+            <button class="btn btn-accent btn-block btn-lg" type="button">Complete sale &amp; print receipt</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>What gets written</h3></div>
+          <div class="stack" style="--gap:10px">
+            <div class="row small">
+              <span class="badge badge-brand">1</span>
+              <span><span class="mono">Order</span> — one row, <span class="mono">POS_WALKIN</span>, straight to <span class="mono">COMPLETED</span></span>
+            </div>
+            <div class="row small">
+              <span class="badge badge-brand">2</span>
+              <span><span class="mono">OrderItem</span> × 2 — price snapshotted at today's ₱180 and ₱160</span>
+            </div>
+            <div class="row small">
+              <span class="badge badge-brand">3</span>
+              <span><span class="mono">Payment</span> — provider <span class="mono">CASH</span>, status <span class="mono">VERIFIED</span></span>
+            </div>
+            <div class="row small">
+              <span class="badge badge-brand">4</span>
+              <span><span class="mono">InventoryMovement</span> × 2 — reason <span class="mono">SOLD_WALKIN</span></span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <div class="note note-accent tiny mb0">
+              All four writes sit inside a single <span class="mono">transaction.atomic()</span> block. If the receipt
+              printer jams, nothing is committed and the sale stays open.
+            </div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- ===== Receipt preview ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Receipt preview</h3>
+        <span class="small muted">72 mm thermal · BIR-style layout</span>
+      </div>
+
+      <div class="grid-side" style="grid-template-columns:1fr 1fr">
+        <div>
+          <div class="receipt">
+            <div class="c b">E-COMPRA</div>
+            <div class="c sm">Mandaue Public Market</div>
+            <div class="c sm">A.C. Cortes Ave., Mandaue City, Cebu</div>
+            <div class="c sm">Vendor: PEDRO'S FRESH CATCH</div>
+            <div class="c sm">Stall A-12 · Section A – Fish</div>
+            <div class="c sm">TIN 123-456-789-000</div>
+            <hr>
+            <div class="line sm"><span>OR No.</span><span>RC-ECO-20261116-0010-1</span></div>
+            <div class="line sm"><span>Date</span><span>16 Nov 2026 11:58 AM</span></div>
+            <div class="line sm"><span>Order</span><span>ECO-20261116-0010</span></div>
+            <div class="line sm"><span>Type</span><span>POS_WALKIN</span></div>
+            <hr>
+            <div class="line"><span>Bangus (Milkfish)</span><span>180.00</span></div>
+            <div class="line sm"><span>&nbsp;&nbsp;1 kg @ 180.00</span><span></span></div>
+            <div class="line"><span>Galunggong</span><span>160.00</span></div>
+            <div class="line sm"><span>&nbsp;&nbsp;1 kg @ 160.00</span><span></span></div>
+            <hr>
+            <div class="line"><span>Subtotal</span><span>340.00</span></div>
+            <div class="line sm"><span>Delivery fee</span><span>0.00</span></div>
+            <div class="tot"><span>TOTAL</span><span>PHP 340.00</span></div>
+            <hr>
+            <div class="line"><span>Cash</span><span>500.00</span></div>
+            <div class="line"><span>Change</span><span>160.00</span></div>
+            <div class="line sm"><span>Payment</span><span>CASH · VERIFIED</span></div>
+            <hr>
+            <div class="line sm"><span>VATable sales</span><span>303.57</span></div>
+            <div class="line sm"><span>VAT (12%)</span><span>36.43</span></div>
+            <div class="line sm"><span>VAT-exempt</span><span>0.00</span></div>
+            <hr>
+            <div class="c sm">Items: 2 &nbsp;|&nbsp; Qty: 2 kg</div>
+            <div class="c sm">Served by: P. REYES</div>
+            <div class="c sm">Thank you — palit na mo!</div>
+            <div class="c sm">This serves as your official receipt.</div>
+            <div class="c sm">Receipt attempt 1 of this order</div>
+          </div>
+          <div class="row mt12 no-print">
+            <button class="btn btn-primary" type="button">🖨 Print 72 mm</button>
+            <button class="btn" type="button">Close sale</button>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="note tiny">
+            <strong>Serial format.</strong> <span class="mono">receipt_serial = RC-{reference_no}-{receipt_attempt}</span>.
+            The order reference is <span class="mono">ECO-20261116-0010</span> and this is attempt 1, so the serial is
+            <span class="mono">RC-ECO-20261116-0010-1</span>.
+          </div>
+
+          <div class="card card-tight">
+            <div class="card-head" style="margin-bottom:8px"><h4 class="mb0">Reprinting does not mint a new serial</h4></div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Attempt</th><th>Serial</th><th>Printed at</th><th>Why</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td class="mono tiny">RC-ECO-20261116-0010-1</td>
+                    <td class="small">11:58 AM</td>
+                    <td class="small muted">Original</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td class="mono tiny">RC-ECO-20261116-0010-2</td>
+                    <td class="small">12:04 PM</td>
+                    <td class="small muted">Buyer asked for a copy</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tiny muted mt8">
+              A receipt is never re-issued under the same number. The attempt counter keeps every copy traceable, so
+              two pieces of paper can never claim to be the same receipt.
+            </div>
+          </div>
+
+          <div class="note note-warn tiny">
+            <strong>Cash is a payment event, not a status transition.</strong> Completing this sale records a
+            <span class="mono">Payment</span> with provider <span class="mono">CASH</span> and status
+            <span class="mono">VERIFIED</span>. It does not push the order through
+            <span class="mono">CONFIRMED → PREPARING → …</span> — a walk-in order is created already
+            <span class="mono">COMPLETED</span>, because goods and money move at the same moment.
+          </div>
+
+          <div class="note tiny">
+            <strong>Printing.</strong> The browser's own print dialog does the work, scoped by
+            <span class="mono">@media print</span> to a 72 mm page. No printer driver or ESC/POS library is needed for
+            the prototype.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot no-print">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

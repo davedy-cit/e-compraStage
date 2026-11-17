@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Favorites &amp; Order History</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html" class="on">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 4</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Maria Santos</div>
+      <h1>Favorites &amp; history</h1>
+      <p>Your saved products and vendors, plus everything you have ordered or reserved at the market.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-4">
+      <div class="stat"><div class="k">Total orders</div><div class="v">4</div><div class="sub">2 completed</div></div>
+      <div class="stat"><div class="k">Total spent</div><div class="v">₱1,325.00</div><div class="sub">since 10 Nov 2026</div></div>
+      <div class="stat"><div class="k">Favorite vendors</div><div class="v">2</div><div class="sub">of 6 at the market</div></div>
+      <div class="stat"><div class="k">Reservations held</div><div class="v">1</div><div class="sub">₱145.00 balance due</div></div>
+    </div>
+
+    <!-- Favorites -->
+    <section>
+      <div class="row-between mb12">
+        <h2 class="mb0">♡ Favorite products</h2>
+        <span class="small muted">3 saved</span>
+      </div>
+      <div class="grid grid-3">
+
+        <article class="pcard">
+          <div class="thumb">🐟</div>
+          <div class="body">
+            <div class="row-between">
+              <span class="name">Bangus (Milkfish)</span>
+              <span style="color:var(--danger);font-size:1.1rem">♥</span>
+            </div>
+            <div class="vendor">Pedro's Fresh Catch · Stall A-12</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">12 kg</span></div>
+            <div class="foot">
+              <span class="price">₱180.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🍅</div>
+          <div class="body">
+            <div class="row-between">
+              <span class="name">Tomatoes</span>
+              <span style="color:var(--danger);font-size:1.1rem">♥</span>
+            </div>
+            <div class="vendor">Rosa's Gulay Stand · Stall B-07</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">15 kg</span></div>
+            <div class="foot">
+              <span class="price">₱80.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🥭</div>
+          <div class="body">
+            <div class="row-between">
+              <span class="name">Mango (Carabao)</span>
+              <span style="color:var(--danger);font-size:1.1rem">♥</span>
+            </div>
+            <div class="vendor">Villamor Fruits &amp; Gulay · Stall D-02</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">15 kg</span></div>
+            <div class="foot">
+              <span class="price">₱160.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+      <div class="note mt12 tiny">
+        A favorite is stored as a <span class="mono">FavoriteProduct</span> row keyed on
+        <span class="mono">(user, product)</span> — so the same product can never be saved twice.
+      </div>
+    </section>
+
+    <!-- Favorite vendors -->
+    <section>
+      <div class="row-between mb12">
+        <h2 class="mb0">♡ Favorite vendors</h2>
+        <span class="small muted">2 saved</span>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="row-between">
+            <div>
+              <div style="font-weight:650">Pedro's Fresh Catch <span style="color:var(--danger)">♥</span></div>
+              <div class="small muted">📍 Stall A-12 · Section A – Fish</div>
+              <div class="small muted">📞 0917-555-0101</div>
+            </div>
+            <span class="badge badge-ok">6 products</span>
+          </div>
+          <div class="card-foot row-wrap">
+            <a class="btn btn-sm btn-primary" href="search-results.html">View store</a>
+            <a class="btn btn-sm" href="market-map.html">Show stall</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row-between">
+            <div>
+              <div style="font-weight:650">Rosa's Gulay Stand <span style="color:var(--danger)">♥</span></div>
+              <div class="small muted">📍 Stall B-07 · Section B – Vegetables</div>
+              <div class="small muted">📞 0917-555-0102</div>
+            </div>
+            <span class="badge badge-ok">7 products</span>
+          </div>
+          <div class="card-foot row-wrap">
+            <a class="btn btn-sm btn-primary" href="search-results.html">View store</a>
+            <a class="btn btn-sm" href="market-map.html">Show stall</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order history -->
+    <section class="card">
+      <div class="card-head">
+        <h2 class="mb0">Order history</h2>
+        <span class="small muted">Newest first</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Reference</th><th>Date</th><th>Vendor</th><th>Fulfillment</th>
+              <th class="num">Total</th><th>Status</th><th>Payment</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">ECO-20261116-0001</td>
+              <td>16 Nov 2026</td>
+              <td>Villamor Fruits &amp; Gulay</td>
+              <td><span class="badge badge-info">DELIVERY</span></td>
+              <td class="num">₱320.00</td>
+              <td><span class="badge badge-brand">CONFIRMED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><button class="btn btn-sm" type="button">Reorder</button></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0002</td>
+              <td>16 Nov 2026</td>
+              <td>Rosa's Gulay Stand</td>
+              <td><span class="badge">PICKUP</span></td>
+              <td class="num">₱50.00</td>
+              <td><span class="badge badge-brand">CONFIRMED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><button class="btn btn-sm" type="button">Reorder</button></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261111-0003</td>
+              <td>11 Nov 2026</td>
+              <td>Pedro's Fresh Catch</td>
+              <td><span class="badge">WALK_IN</span></td>
+              <td class="num">₱340.00</td>
+              <td><span class="badge badge-ok">COMPLETED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><button class="btn btn-sm" type="button">Reorder</button></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261110-0001</td>
+              <td>10 Nov 2026</td>
+              <td>Pedro's Fresh Catch</td>
+              <td><span class="badge badge-info">DELIVERY</span></td>
+              <td class="num">₱615.00</td>
+              <td><span class="badge badge-ok">COMPLETED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><a class="btn btn-sm" href="order-tracking.html">View</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        <strong>Reorder</strong> refills your cart with the same items and quantities at today's prices — you still
+        confirm before anything is created.
+      </div>
+    </section>
+
+    <!-- Reservation history -->
+    <section class="card">
+      <div class="card-head">
+        <h2 class="mb0">Reservation history</h2>
+        <span class="small muted">Pickup reservations</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Reference</th><th>Date</th><th>Vendor</th><th class="num">Total</th>
+              <th class="num">Down payment</th><th class="num">Balance due</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">ECO-20261112-0002</td>
+              <td>12 Nov 2026</td>
+              <td>Rosa's Gulay Stand</td>
+              <td class="num">₱290.00</td>
+              <td class="num">₱145.00</td>
+              <td class="num"><strong style="color:var(--accent)">₱145.00</strong></td>
+              <td><span class="badge badge-accent">READY_FOR_PICKUP</span></td>
+              <td><a class="btn btn-sm btn-accent" href="pickup-reservation.html">Details</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot">
+        <div class="note note-warn tiny mb0">
+          Balance is settled in cash at the stall. If the pickup window closes without collection, the reservation is
+          released and the down payment is forfeited.
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

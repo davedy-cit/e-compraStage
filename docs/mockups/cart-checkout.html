@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Cart &amp; Checkout</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 4</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Step 2 of 4</div>
+      <h1>Your cart</h1>
+      <p>Your items come from <strong>4 different vendors</strong>, so checkout creates <strong>4 separate orders</strong> —
+         one per vendor. Each has its own status, its own payment, and its own pickup or delivery arrangement.</p>
+    </div>
+
+    <div class="note">
+      <strong>Why one order per vendor?</strong> A vendor can only prepare, price and hand over their own goods.
+      Splitting the cart keeps every order trackable on its own — Rosa can have your vegetables ready at 4 PM
+      while Nena is still dressing your chicken.
+    </div>
+
+    <div class="grid-side" style="grid-template-columns:1fr 330px">
+
+      <!-- Vendor groups -->
+      <div class="stack">
+
+        <!-- Group 1 -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="mb0">🏪 Villamor Fruits &amp; Gulay</h3>
+              <span class="small muted">📍 Stall D-02 · Section D – Fruits</span>
+            </div>
+            <span class="badge badge-info">Order 1 of 4</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Unit price</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="row"><span style="font-size:1.4rem">🍅</span><span><strong>Tomatoes</strong><br><span class="tiny muted">Sold per kilogram</span></span></div></td>
+                  <td class="num">₱75.00 / kg</td>
+                  <td class="num">3 kg</td>
+                  <td class="num"><strong>₱225.00</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-foot">
+            <div class="field mb8"><span>Fulfillment for this vendor</span></div>
+            <div class="opt on">
+              <input type="radio" name="ff1" checked aria-label="Delivery">
+              <span><span class="t">🛵 Delivery</span><span class="d">To Unit 4B, A.C. Cortes Ave., Mandaue City · quoted ₱95.00</span></span>
+            </div>
+            <div class="opt">
+              <input type="radio" name="ff1" aria-label="Pickup">
+              <span><span class="t">🏪 Pickup at the stall</span><span class="d">Collect at Stall D-02 · free</span></span>
+            </div>
+            <div class="row-between mt12">
+              <span class="muted small">Vendor subtotal</span>
+              <span class="price">₱225.00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Group 2 -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="mb0">🏪 Rosa's Gulay Stand</h3>
+              <span class="small muted">📍 Stall B-07 · Section B – Vegetables</span>
+            </div>
+            <span class="badge badge-info">Order 2 of 4</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Unit price</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="row"><span style="font-size:1.4rem">🥬</span><span><strong>Kangkong (Water Spinach)</strong><br><span class="tiny muted">Sold per bundle</span></span></div></td>
+                  <td class="num">₱15.00 / bundle</td>
+                  <td class="num">2</td>
+                  <td class="num"><strong>₱30.00</strong></td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span style="font-size:1.4rem">🥬</span><span><strong>Pechay (Chinese Cabbage)</strong><br><span class="tiny muted">Sold per bundle</span></span></div></td>
+                  <td class="num">₱20.00 / bundle</td>
+                  <td class="num">1</td>
+                  <td class="num"><strong>₱20.00</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-foot">
+            <div class="field mb8"><span>Fulfillment for this vendor</span></div>
+            <div class="opt">
+              <input type="radio" name="ff2" aria-label="Delivery">
+              <span><span class="t">🛵 Delivery</span><span class="d">To Unit 4B, A.C. Cortes Ave., Mandaue City · quoted ₱95.00</span></span>
+            </div>
+            <div class="opt on">
+              <input type="radio" name="ff2" checked aria-label="Pickup">
+              <span><span class="t">🏪 Pickup at the stall</span><span class="d">Collect at Stall B-07 · free</span></span>
+            </div>
+            <div class="row-between mt12">
+              <span class="muted small">Vendor subtotal</span>
+              <span class="price">₱50.00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Group 3 -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="mb0">🏪 Tan's Rice &amp; Dry Goods</h3>
+              <span class="small muted">📍 Stall E-01 · Section E – Dry Goods</span>
+            </div>
+            <span class="badge badge-info">Order 3 of 4</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Unit price</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="row"><span style="font-size:1.4rem">🍚</span><span><strong>Well-Milled Rice</strong><br><span class="tiny muted">Sold per kilogram</span></span></div></td>
+                  <td class="num">₱52.00 / kg</td>
+                  <td class="num">5 kg</td>
+                  <td class="num"><strong>₱260.00</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-foot">
+            <div class="field mb8"><span>Fulfillment for this vendor</span></div>
+            <div class="opt">
+              <input type="radio" name="ff3" aria-label="Delivery">
+              <span><span class="t">🛵 Delivery</span><span class="d">To Unit 4B, A.C. Cortes Ave., Mandaue City · quoted ₱95.00</span></span>
+            </div>
+            <div class="opt on">
+              <input type="radio" name="ff3" checked aria-label="Pickup">
+              <span><span class="t">🏪 Pickup at the stall</span><span class="d">Collect at Stall E-01 · free</span></span>
+            </div>
+            <div class="row-between mt12">
+              <span class="muted small">Vendor subtotal</span>
+              <span class="price">₱260.00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Group 4 -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="mb0">🏪 Nena's Manok</h3>
+              <span class="small muted">📍 Stall C-09 · Section C – Meat &amp; Poultry</span>
+            </div>
+            <span class="badge badge-info">Order 4 of 4</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Unit price</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="row"><span style="font-size:1.4rem">🍗</span><span><strong>Whole Chicken</strong><br><span class="tiny muted">Sold per kilogram</span></span></div></td>
+                  <td class="num">₱210.00 / kg</td>
+                  <td class="num">1 kg</td>
+                  <td class="num"><strong>₱210.00</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-foot">
+            <div class="field mb8"><span>Fulfillment for this vendor</span></div>
+            <div class="opt">
+              <input type="radio" name="ff4" aria-label="Delivery">
+              <span><span class="t">🛵 Delivery</span><span class="d">To Unit 4B, A.C. Cortes Ave., Mandaue City · quoted ₱95.00</span></span>
+            </div>
+            <div class="opt on">
+              <input type="radio" name="ff4" checked aria-label="Pickup">
+              <span><span class="t">🏪 Pickup at the stall</span><span class="d">Collect at Stall C-09 · free</span></span>
+            </div>
+            <div class="row-between mt12">
+              <span class="muted small">Vendor subtotal</span>
+              <span class="price">₱210.00</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Summary -->
+      <aside class="stack">
+        <div class="card">
+          <div class="card-head"><h3>Order summary</h3></div>
+          <dl class="kv">
+            <dt>Villamor Fruits &amp; Gulay</dt><dd>₱225.00</dd>
+            <dt>Rosa's Gulay Stand</dt><dd>₱50.00</dd>
+            <dt>Tan's Rice &amp; Dry Goods</dt><dd>₱260.00</dd>
+            <dt>Nena's Manok</dt><dd>₱210.00</dd>
+            <dt>Delivery fee (1 vendor)</dt><dd>₱95.00</dd>
+          </dl>
+          <hr class="divider">
+          <div class="row-between">
+            <span style="font-weight:650">Total</span>
+            <span class="price price-lg">₱840.00</span>
+          </div>
+          <div class="tiny muted mt8">4 orders · 3 for pickup, 1 for delivery</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Payment method</h3></div>
+          <div class="opt on">
+            <input type="radio" name="pay" checked aria-label="GCash">
+            <span><span class="t">📱 GCash</span><span class="d">Pay online now · sandbox</span></span>
+          </div>
+          <div class="opt">
+            <input type="radio" name="pay" aria-label="Maya">
+            <span><span class="t">📱 Maya</span><span class="d">Pay online now · sandbox</span></span>
+          </div>
+          <div class="opt">
+            <input type="radio" name="pay" aria-label="Online banking">
+            <span><span class="t">🏦 Online banking</span><span class="d">Sandbox</span></span>
+          </div>
+          <div class="opt">
+            <input type="radio" name="pay" aria-label="Card">
+            <span><span class="t">💳 Card</span><span class="d">Sandbox · no card data is stored</span></span>
+          </div>
+          <div class="opt">
+            <input type="radio" name="pay" aria-label="Cash at pickup">
+            <span><span class="t">💵 Cash at pickup</span><span class="d">Pickup orders only</span></span>
+          </div>
+          <div class="note note-warn mt12 tiny">
+            Payments run in <strong>sandbox / test mode</strong>. No real money moves and no card details are stored.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Delivery quote</h3></div>
+          <label class="field">
+            <span>Partner</span>
+            <select class="input" aria-label="Delivery partner">
+              <option>Lalamove — ₱95.00</option>
+              <option>GrabExpress — ₱110.00</option>
+              <option>Maxim — ₱85.00</option>
+              <option>Local market rider — ₱60.00</option>
+            </select>
+          </label>
+          <dl class="kv">
+            <dt>Estimated time</dt><dd>45–60 min</dd>
+            <dt>Drop-off</dt><dd>Unit 4B, A.C. Cortes Ave.</dd>
+          </dl>
+          <div class="note mt12 tiny">Delivery is <strong>mocked</strong> in this project — the partner is simulated.</div>
+        </div>
+
+        <a class="btn btn-accent btn-lg btn-block" href="order-payment.html">Place 4 orders · ₱840.00</a>
+        <a class="btn btn-block" href="home.html">Continue shopping</a>
+      </aside>
+
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

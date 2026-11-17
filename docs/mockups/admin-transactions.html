@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Market Admin: Vendors &amp; Transactions</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-admin">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Market administration</small></span></a>
+    <nav class="nav">
+      <a href="admin-transactions.html" class="on">Transactions</a>
+      <a href="admin-transactions.html">Vendors</a>
+      <a href="admin-transactions.html">Products</a>
+    </nav>
+    <span class="who">Market Administrator</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Market administration</div>
+      <h1>Vendors &amp; transactions</h1>
+      <p>Oversight of who is registered at the market and what they sold. The administrator does not sell — this
+         console exists to keep vendor records accurate and to correct mistakes.</p>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="stat"><div class="k">Registered vendors</div><div class="v">6</div><div class="sub">of 10 stalls</div></div>
+      <div class="stat"><div class="k">Active products</div><div class="v">34</div><div class="sub">across 9 categories</div></div>
+      <div class="stat"><div class="k">Transactions recorded</div><div class="v">3</div><div class="sub">this period</div></div>
+      <div class="stat" style="border-color:var(--warn)">
+        <div class="k">Needs correction</div>
+        <div class="v" style="color:var(--warn)">1</div>
+        <div class="sub">status mismatch</div>
+      </div>
+    </div>
+
+    <!-- ===== Vendors ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Registered vendors</h3>
+        <span class="small muted">6 records</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Vendor</th><th>Stall</th><th>Section</th><th>Category</th>
+              <th>Contact</th><th class="num">Products</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pedro's Fresh Catch</strong><div class="tiny muted">Pedro Reyes</div></td>
+              <td class="mono">A-12</td><td>A — Fish</td><td>🐟 Fish</td>
+              <td class="small">0917-555-0101</td>
+              <td class="num">6</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>ACTIVE</span></td>
+              <td><button class="btn btn-sm" type="button">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>Rosa's Gulay Stand</strong><div class="tiny muted">Rosa Mendoza</div></td>
+              <td class="mono">B-07</td><td>B — Vegetables</td><td>🥬 Vegetables</td>
+              <td class="small">0917-555-0102</td>
+              <td class="num">7</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>ACTIVE</span></td>
+              <td><button class="btn btn-sm" type="button">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>Bautista Meat Shop</strong><div class="tiny muted">Rico Bautista</div></td>
+              <td class="mono">C-03</td><td>C — Meat &amp; Poultry</td><td>🥩 Meat</td>
+              <td class="small">0917-555-0103</td>
+              <td class="num">4</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>ACTIVE</span></td>
+              <td><button class="btn btn-sm" type="button">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>Nena's Manok</strong><div class="tiny muted">Nena Ocampo</div></td>
+              <td class="mono">C-09</td><td>C — Meat &amp; Poultry</td><td>🍗 Poultry</td>
+              <td class="small">0917-555-0104</td>
+              <td class="num">4</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>ACTIVE</span></td>
+              <td><button class="btn btn-sm" type="button">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>Villamor Fruits &amp; Gulay</strong><div class="tiny muted">Ben Villamor</div></td>
+              <td class="mono">D-02</td><td>D — Fruits</td><td>🍎 Fruits</td>
+              <td class="small">0917-555-0105</td>
+              <td class="num">5</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>ACTIVE</span></td>
+              <td><button class="btn btn-sm" type="button">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>Tan's Rice &amp; Dry Goods</strong><div class="tiny muted">Liza Tan</div></td>
+              <td class="mono">E-01</td><td>E — Dry Goods</td><td>🍚 Rice</td>
+              <td class="small">0917-555-0106</td>
+              <td class="num">8</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>ACTIVE</span></td>
+              <td><button class="btn btn-sm" type="button">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        Four further stalls (A-14, B-09, D-05, E-03) trade at the market but have no E-Compra account yet — see the
+        <a href="market-map.html">market map</a>.
+      </div>
+    </section>
+
+    <!-- ===== Transactions ===== -->
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h3 class="mb0">Vendor transactions</h3>
+          <span class="small muted">one row per sale recorded against a vendor</span>
+        </div>
+        <button class="btn btn-sm" type="button">＋ Record transaction</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Reference</th><th>Vendor</th><th>Type</th><th>Buyer</th>
+              <th class="num">Amount</th><th>Recorded</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">ECO-20261110-0001</td>
+              <td>Pedro's Fresh Catch</td>
+              <td><span class="badge badge-info">ONLINE_ORDER</span></td>
+              <td class="small">Maria Santos</td>
+              <td class="num"><strong>₱615.00</strong></td>
+              <td class="small">10 Nov 2026</td>
+              <td><span class="badge badge-ok">COMPLETED</span></td>
+              <td><button class="btn btn-sm" type="button">View</button></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261112-0002</td>
+              <td>Rosa's Gulay Stand</td>
+              <td><span class="badge badge-accent">PICKUP_RESERVATION</span></td>
+              <td class="small">Maria Santos</td>
+              <td class="num"><strong>₱290.00</strong></td>
+              <td class="small">12 Nov 2026</td>
+              <td><span class="badge badge-accent">READY_FOR_PICKUP</span></td>
+              <td><button class="btn btn-sm" type="button">View</button></td>
+            </tr>
+            <tr style="background:var(--warn-bg)">
+              <td class="mono">ECO-20261111-0003</td>
+              <td>Pedro's Fresh Catch</td>
+              <td><span class="badge">POS_WALKIN</span></td>
+              <td class="small">Walk-in customer</td>
+              <td class="num"><strong>₱340.00</strong></td>
+              <td class="small">11 Nov 2026</td>
+              <td><span class="badge badge-warn">⚠ Status mismatch</span></td>
+              <td><button class="btn btn-sm btn-accent" type="button">Correct</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        A <span class="mono">POS_WALKIN</span> transaction is closed the instant it is rung up. Row three is flagged
+        because it is still sitting at <span class="mono">CONFIRMED</span> — the correction panel below explains what
+        to do about it.
+      </div>
+    </section>
+
+    <div class="grid-side" style="grid-template-columns:1fr 340px">
+
+      <!-- Correction panel -->
+      <section class="card" style="border-color:var(--warn)">
+        <div class="card-head">
+          <div>
+            <h3 class="mb0">⚠ Status correction</h3>
+            <span class="small muted mono">ECO-20261111-0003</span>
+          </div>
+          <span class="badge badge-warn">needs review</span>
+        </div>
+
+        <div class="grid grid-2 mb16">
+          <div class="card card-tight" style="box-shadow:none">
+            <div class="tiny muted">Order status now</div>
+            <div class="mt8"><span class="badge badge-brand">CONFIRMED</span></div>
+            <div class="tiny muted mt8">Set when the payment was verified.</div>
+          </div>
+          <div class="card card-tight" style="box-shadow:none">
+            <div class="tiny muted">What the evidence says</div>
+            <div class="mt8"><span class="badge badge-ok">COMPLETED</span></div>
+            <div class="tiny muted mt8">
+              Payment <span class="mono">CASH</span> verified 11 Nov, 2:30 PM, and
+              <span class="mono">InventoryMovement</span> rows show the goods left the stall.
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span>Correct to</span>
+          <select class="input" aria-label="Correct status to">
+            <option>COMPLETED — goods handed over, cash received</option>
+            <option>PREPARING</option>
+            <option>READY_FOR_PICKUP</option>
+            <option>CANCELLED</option>
+          </select>
+        </div>
+        <div class="field">
+          <span>Reason for the correction</span>
+          <input class="input" type="text" value="Walk-in sale was never closed on the POS; cash and stock both confirm handover." aria-label="Reason">
+        </div>
+
+        <div class="note note-warn tiny">
+          <strong>Corrections are additive, never destructive.</strong> The change writes an audit entry recording the
+          old value, the new value, who changed it and why. The original value is never erased — that is what makes
+          the record defensible in a dispute.
+        </div>
+
+        <div class="card-foot row-wrap">
+          <button class="btn btn-accent" type="button">Apply correction</button>
+          <button class="btn" type="button">Dismiss</button>
+        </div>
+      </section>
+
+      <!-- Lookup tables -->
+      <aside class="stack">
+        <div class="card">
+          <div class="card-head"><h3>Lookup tables</h3><span class="small muted">reference data</span></div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Table</th><th class="num">Rows</th></tr></thead>
+              <tbody>
+                <tr><td class="mono small">orders_transactionstatus</td><td class="num">7</td></tr>
+                <tr><td class="mono small">orders_paymentstatus</td><td class="num">4</td></tr>
+                <tr><td class="mono small">orders_deliverystatus</td><td class="num">5</td></tr>
+                <tr><td class="mono small">orders_fulfillmentmethod</td><td class="num">3</td></tr>
+                <tr><td class="mono small">orders_transactiontype</td><td class="num">3</td></tr>
+                <tr><td class="mono small">catalog_availabilitystatus</td><td class="num">4</td></tr>
+                <tr><td class="mono small">catalog_unitofmeasure</td><td class="num">9</td></tr>
+                <tr><td class="mono small">catalog_inventoryreason</td><td class="num">7</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-foot tiny muted">
+            These eight tables hold the vocabularies the whole system shares. Every status column in the schema is a
+            foreign key into one of them — so a typo like <span class="mono">COMPLETEDD</span> cannot be stored at all.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Order status vocabulary</h3></div>
+          <div class="row-wrap">
+            <span class="badge">PENDING_PAYMENT</span>
+            <span class="badge badge-brand">CONFIRMED</span>
+            <span class="badge badge-info">PREPARING</span>
+            <span class="badge badge-accent">READY_FOR_PICKUP</span>
+            <span class="badge badge-info">OUT_FOR_DELIVERY</span>
+            <span class="badge badge-ok">COMPLETED</span>
+            <span class="badge badge-danger">CANCELLED</span>
+          </div>
+          <div class="card-foot tiny muted">
+            Seven values, one authority. <span class="mono">Order.status</span> is the only column that decides where
+            an order is in its life.
+          </div>
+        </div>
+
+        <div class="note tiny">
+          <strong>Why lookup tables instead of ENUM.</strong> An <span class="mono">ENUM</span> change needs an
+          <span class="mono">ALTER TABLE</span> — a schema migration — every time the market adds a status. A lookup
+          row is just an <span class="mono">INSERT</span>, and it can carry a human-readable label the admin can edit
+          without touching code.
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Marketplace Home</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html" class="on">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 3</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <!-- Hero + search -->
+    <section class="card" style="background:linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%);border:0;color:#fff;padding:26px 22px">
+      <div style="max-width:620px">
+        <h1 style="color:#fff;margin-bottom:6px">Shop the market before you leave home.</h1>
+        <p style="opacity:.9;margin-bottom:16px">Search what the vendors of Mandaue Public Market have today, compare prices across stalls, and reserve for pickup or delivery.</p>
+        <form class="searchbar" onsubmit="return false">
+          <input class="input" type="search" placeholder="Search fish, vegetables, rice…" value="tomatoes" aria-label="Search products">
+          <a class="btn btn-accent btn-lg" href="search-results.html">Search</a>
+        </form>
+        <div class="row-wrap mt12" style="font-size:.8rem;opacity:.9">
+          <span>Popular:</span>
+          <a href="search-results.html" style="color:#fff;text-decoration:underline">bangus</a>
+          <a href="price-comparison.html" style="color:#fff;text-decoration:underline">tomatoes</a>
+          <a href="search-results.html" style="color:#fff;text-decoration:underline">well-milled rice</a>
+          <a href="search-results.html" style="color:#fff;text-decoration:underline">pork liempo</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section>
+      <div class="row-between mb12">
+        <h2 class="mb0">Browse by category</h2>
+        <span class="muted small">9 categories · 6 vendors</span>
+      </div>
+      <div class="chips">
+        <a class="chip" href="search-results.html">🐟 Fish</a>
+        <a class="chip" href="search-results.html">🥩 Meat</a>
+        <a class="chip" href="search-results.html">🍗 Poultry</a>
+        <a class="chip" href="search-results.html">🍎 Fruits</a>
+        <a class="chip on" href="search-results.html">🥬 Vegetables</a>
+        <a class="chip" href="search-results.html">🍚 Rice</a>
+        <a class="chip" href="search-results.html">🫙 Dry goods</a>
+        <a class="chip" href="search-results.html">🧂 Spices</a>
+        <a class="chip" href="search-results.html">🧺 Others</a>
+      </div>
+    </section>
+
+    <!-- Featured products -->
+    <section>
+      <div class="row-between mb12">
+        <h2 class="mb0">Fresh today</h2>
+        <a class="small" href="search-results.html">See all 34 products →</a>
+      </div>
+      <div class="grid grid-4">
+
+        <article class="pcard">
+          <div class="thumb">🐟</div>
+          <div class="body">
+            <div class="name">Bangus (Milkfish)</div>
+            <div class="vendor">Pedro's Fresh Catch · Stall A-12</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">12 kg left</span></div>
+            <div class="foot">
+              <span class="price">₱180.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🍅</div>
+          <div class="body">
+            <div class="name">Tomatoes</div>
+            <div class="vendor">Villamor Fruits &amp; Gulay · Stall D-02</div>
+            <div class="row-wrap"><span class="badge badge-accent">Lowest price</span></div>
+            <div class="foot">
+              <span class="price">₱75.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🥬</div>
+          <div class="body">
+            <div class="name">Kangkong (Water Spinach)</div>
+            <div class="vendor">Rosa's Gulay Stand · Stall B-07</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">20 bundles</span></div>
+            <div class="foot">
+              <span class="price">₱15.00 <span class="unit">/ bundle</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🍚</div>
+          <div class="body">
+            <div class="name">Well-Milled Rice</div>
+            <div class="vendor">Tan's Rice &amp; Dry Goods · Stall E-01</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">100 kg</span></div>
+            <div class="foot">
+              <span class="price">₱52.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🥩</div>
+          <div class="body">
+            <div class="name">Pork Belly (Liempo)</div>
+            <div class="vendor">Bautista Meat Shop · Stall C-03</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">10 kg left</span></div>
+            <div class="foot">
+              <span class="price">₱320.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🍗</div>
+          <div class="body">
+            <div class="name">Whole Chicken</div>
+            <div class="vendor">Nena's Manok · Stall C-09</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">12 kg</span></div>
+            <div class="foot">
+              <span class="price">₱210.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🥭</div>
+          <div class="body">
+            <div class="name">Mango (Carabao)</div>
+            <div class="vendor">Villamor Fruits &amp; Gulay · Stall D-02</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">15 kg</span></div>
+            <div class="foot">
+              <span class="price">₱160.00 <span class="unit">/ kg</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="pcard">
+          <div class="thumb">🥚</div>
+          <div class="body">
+            <div class="name">Eggs (Large)</div>
+            <div class="vendor">Nena's Manok · Stall C-09</div>
+            <div class="row-wrap"><span class="badge badge-ok"><i class="dot"></i>In stock</span><span class="unit">20 trays</span></div>
+            <div class="foot">
+              <span class="price">₱240.00 <span class="unit">/ tray</span></span>
+              <a class="btn btn-sm btn-primary" href="product-detail.html">Add</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Featured vendors -->
+    <section>
+      <h2>Vendors at the market</h2>
+      <div class="grid grid-3">
+        <a class="card card-tight" href="search-results.html" style="color:inherit">
+          <div class="row-between"><strong>Pedro's Fresh Catch</strong><span class="badge badge-brand">Fish</span></div>
+          <div class="small muted">Stall A-12 · Section A – Fish</div>
+          <div class="small muted mt8">6 products · fresh catch daily</div>
+        </a>
+        <a class="card card-tight" href="search-results.html" style="color:inherit">
+          <div class="row-between"><strong>Rosa's Gulay Stand</strong><span class="badge badge-brand">Vegetables</span></div>
+          <div class="small muted">Stall B-07 · Section B – Vegetables</div>
+          <div class="small muted mt8">7 products · picked this morning</div>
+        </a>
+        <a class="card card-tight" href="search-results.html" style="color:inherit">
+          <div class="row-between"><strong>Tan's Rice &amp; Dry Goods</strong><span class="badge badge-brand">Rice</span></div>
+          <div class="small muted">Stall E-01 · Section E – Dry Goods</div>
+          <div class="small muted mt8">8 products · sold by the kilo or sack</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Market map teaser -->
+    <section class="card">
+      <div class="grid grid-2" style="align-items:center">
+        <div>
+          <span class="badge badge-brand mb8">Interactive Market Map</span>
+          <h2>Find the stall before you go.</h2>
+          <p class="muted">See every section, stall number and vendor pin — then filter by category to plan your route through the market.</p>
+          <a class="btn btn-primary" href="market-map.html">Open the market map</a>
+        </div>
+        <div class="map" style="min-height:190px;padding:10px">
+          <div class="section" style="margin-bottom:8px">
+            <h4>Section A – Fish</h4>
+            <div class="stalls">
+              <div class="stall pin"><span class="no">A-12</span><span class="nm">Pedro's Fresh Catch</span><span class="cat">Fish</span></div>
+              <div class="stall"><span class="no">A-14</span><span class="nm">Ong's Seafood</span><span class="cat">Fish</span></div>
+            </div>
+          </div>
+          <div class="section" style="margin-bottom:0">
+            <h4>Section B – Vegetables</h4>
+            <div class="stalls">
+              <div class="stall"><span class="no">B-07</span><span class="nm">Rosa's Gulay Stand</span><span class="cat">Vegetables</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

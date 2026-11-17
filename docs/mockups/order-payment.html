@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Order Confirmation &amp; Payment</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 0</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <!-- Confirmation -->
+    <section class="card center" style="border-color:var(--ok);background:var(--ok-bg)">
+      <div style="font-size:2.6rem;line-height:1">✅</div>
+      <h1 class="mb8">Payment confirmed — 4 orders placed</h1>
+      <p class="mb8" style="margin-left:auto;margin-right:auto;max-width:58ch">
+        Your cart came from 4 vendors, so E-Compra created <strong>4 separate orders</strong> in a single
+        all-or-nothing database transaction. Either all 4 were created, or none were.
+      </p>
+      <span class="badge badge-ok">All 4 orders created atomically</span>
+    </section>
+
+    <!-- The 4 orders -->
+    <section class="card">
+      <div class="card-head">
+        <h3>Your orders</h3>
+        <span class="small muted">16 Nov 2026, 8:12 AM</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Reference</th><th>Vendor</th><th>Fulfillment</th>
+              <th class="num">Total</th><th>Order status</th><th>Payment</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">ECO-20261116-0001</td>
+              <td>Villamor Fruits &amp; Gulay</td>
+              <td><span class="badge badge-info">DELIVERY</span></td>
+              <td class="num">₱320.00</td>
+              <td><span class="badge badge-brand">CONFIRMED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><a class="btn btn-sm" href="order-tracking.html">Track</a></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0002</td>
+              <td>Rosa's Gulay Stand</td>
+              <td><span class="badge">PICKUP</span></td>
+              <td class="num">₱50.00</td>
+              <td><span class="badge badge-brand">CONFIRMED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><a class="btn btn-sm" href="order-tracking.html">Track</a></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0003</td>
+              <td>Tan's Rice &amp; Dry Goods</td>
+              <td><span class="badge">PICKUP</span></td>
+              <td class="num">₱260.00</td>
+              <td><span class="badge badge-brand">CONFIRMED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><a class="btn btn-sm" href="order-tracking.html">Track</a></td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0004</td>
+              <td>Nena's Manok</td>
+              <td><span class="badge">PICKUP</span></td>
+              <td class="num">₱210.00</td>
+              <td><span class="badge badge-brand">CONFIRMED</span></td>
+              <td><span class="badge badge-ok">VERIFIED</span></td>
+              <td><a class="btn btn-sm" href="order-tracking.html">Track</a></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" style="text-align:right;font-weight:650">Total paid</td>
+              <td class="num price price-sm" style="font-size:1rem">₱840.00</td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        ₱745.00 goods + ₱95.00 delivery. Only order <span class="mono">ECO-20261116-0001</span> is delivered;
+        the other three are collected at the stall.
+      </div>
+    </section>
+
+    <div class="grid grid-2">
+
+      <!-- Payment record -->
+      <section class="card">
+        <div class="card-head"><h3>Payment record</h3><span class="badge badge-ok">✓ VERIFIED</span></div>
+        <dl class="kv">
+          <dt>Provider</dt><dd class="mono">PAYMAYA</dd>
+          <dt>Provider reference</dt><dd class="mono">SBX-PM-20261116-A4C81F20</dd>
+          <dt>Amount</dt><dd>₱840.00</dd>
+          <dt>Payment status</dt><dd><span class="badge badge-ok">VERIFIED</span></dd>
+          <dt>Paid at</dt><dd>16 Nov 2026, 8:11 AM</dd>
+          <dt>Mode</dt><dd><span class="badge badge-warn">SANDBOX</span></dd>
+        </dl>
+        <div class="note mt12 tiny">
+          <strong>Sandbox / test mode.</strong> No real money moves and no card data is stored. A redirect back from
+          the provider is <em>not</em> proof of payment — E-Compra verifies server-side before marking anything
+          <span class="mono">VERIFIED</span>.
+        </div>
+      </section>
+
+      <!-- Payment status vocabulary -->
+      <section class="card">
+        <div class="card-head"><h3>Payment status states</h3></div>
+        <p class="small muted">These four values are a lookup table (<span class="mono">orders_paymentstatus</span>),
+           not free text — so a typo can never create a fifth state.</p>
+        <ul class="timeline">
+          <li class="done"><span class="node"></span>
+            <div class="t"><span class="mono">PENDING</span></div>
+            <div class="d">Initiated, not yet settled. The order waits here.</div></li>
+          <li class="now"><span class="node"></span>
+            <div class="t"><span class="mono">VERIFIED</span> — current</div>
+            <div class="d">Settlement confirmed by the provider. This is the only state that releases an order for preparation.</div></li>
+          <li class="todo"><span class="node"></span>
+            <div class="t"><span class="mono">FAILED</span></div>
+            <div class="d">Settlement failed or was declined. The customer may retry.</div></li>
+          <li class="todo"><span class="node"></span>
+            <div class="t"><span class="mono">REFUNDED</span></div>
+            <div class="d">Money returned to the customer, e.g. after a cancellation.</div></li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- What happens next -->
+    <section class="card">
+      <div class="card-head"><h3>What happens next</h3></div>
+      <div class="grid grid-3">
+        <div>
+          <div class="badge badge-brand mb8">Delivery order</div>
+          <p class="small mb0"><strong>Villamor Fruits &amp; Gulay</strong> prepares your tomatoes, then hands them to
+             Lalamove. Track it from the orders page.</p>
+        </div>
+        <div>
+          <div class="badge mb8">Pickup orders</div>
+          <p class="small mb0"><strong>Rosa's, Tan's and Nena's</strong> prepare your items and mark them ready.
+             Collect at stalls B-07, E-01 and C-09.</p>
+        </div>
+        <div>
+          <div class="badge badge-ok mb8">Nothing else to pay</div>
+          <p class="small mb0">The full ₱840.00 is settled. Pickup orders need no cash at the stall.</p>
+        </div>
+      </div>
+      <div class="card-foot row-wrap">
+        <a class="btn btn-primary" href="order-tracking.html">Track all orders</a>
+        <a class="btn" href="delivery-booking.html">View delivery booking</a>
+        <a class="btn btn-ghost" href="home.html">Back to marketplace</a>
+      </div>
+    </section>
+
+    <!-- Unhappy path -->
+    <section class="card" style="border-color:#e8b4b0">
+      <div class="card-head"><h3>If a payment fails</h3><span class="badge badge-danger">FAILED</span></div>
+      <p class="small muted">The same screen, in the failure state. The order is not created at all — the
+         <span class="mono">transaction.atomic()</span> block rolls back every vendor's order together.</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Reference</th><th>Provider</th><th class="num">Amount</th><th>Status</th><th>Reason</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">ECO-20261116-0005</td>
+              <td class="mono">PAYMAYA</td>
+              <td class="num">₱840.00</td>
+              <td><span class="badge badge-danger">FAILED</span></td>
+              <td class="small">Insufficient funds (simulated)</td>
+              <td><button class="btn btn-sm btn-primary" type="button">Retry payment</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note note-warn mt12 tiny">
+        Retrying reuses the same <span class="mono">Idempotency-Key</span>, so a double-tap can never create a
+        second set of orders or charge twice.
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

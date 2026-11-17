@@ -1,0 +1,103 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F5F9FC
+  BorderColor #36546C
+  DiamondBackgroundColor #FFF5DD
+  DiamondBorderColor #A77B24
+  ArrowColor #526B7A
+}
+start
+:Customer signs in and reviews cart;
+:Choose paid order or pickup reservation;
+:Submit checkout request;
+:Authenticate and verify cart ownership;
+if (Authorized?) then (Yes)
+  :Validate vendor, quantities, availability, prices;
+  :Group cart items by vendor;
+  :Create one Transaction per vendor (multi-vendor cart);
+  if (Cart valid?) then (Yes)
+    if (Pickup reservation without payment?) then (Yes)
+      :Save reservation and item price snapshots;
+      :Generate reference and confirmation;
+      stop
+    else (Paid order)
+      :Calculate server-side subtotal and fulfillment fee;
+      :Create pending transaction and payment session;
+      :Customer completes provider checkout;
+      :Verify payment server-side;
+      if (Payment verified successful?) then (Yes)
+        :Record paid status;
+        if (Delivery selected?) then (Yes)
+          :Request delivery quote/booking as supported;
+          if (Delivery booking succeeds?) then (Yes)
+            :Store booking reference and available tracking details;
+            :Show paid order and delivery status;
+            stop
+          else (No)
+            :Keep order paid; mark delivery booking for retry/attention;
+            :Show paid confirmation and delivery issue;
+            stop
+          endif
+        else (Pickup)
+          :Show paid order confirmation and pickup status;
+          stop
+        endif
+      else (No / unverified)
+        :Record pending or failed payment;
+        :Do not mark order paid or request delivery;
+        :Show retry/status message;
+        stop
+      endif
+    endif
+  else (No)
+    :Reject invalid cart; do not create fulfillable order;
+    :Show correction message;
+    stop
+  endif
+else (No)
+  :Reject request; show authentication/permission message;
+  stop
+endif
+
+' ================= Vendor POS Flow =================
+start
+:Vendor signs in;
+if (is_vendor?) then (Yes)
+  :Route to vendor dashboard;
+  :View own orders;
+  :Select transaction;
+  :View order detail;
+  if (Order is PICKUP + PENDING_PAYMENT?) then (Yes)
+    :Vendor enters cash received amount;
+    :Calculate change (cash − total_amount);
+    if (Change >= 0?) then (Yes)
+      :Record cash payment (POST /pay/cash/);
+      :Transaction advances PENDING_PAYMENT → CONFIRMED;
+      :Receipt serial generated (RC-{ref}-{attempt});
+      :Show change due (₱X.XX);
+      :Print receipt (window.print, BIR-style);
+      if (Confirm pickup?) then (Yes)
+        :Confirm pickup (POST /confirm-pickup/);
+        :Transaction advances CONFIRMED → COMPLETED (direct, skips PREPARING/READY_FOR_PICKUP);
+        :Show order completed;
+      else (No)
+        :Wait for later confirm pickup;
+      endif
+    else (No)
+      :Show error: cash less than total;
+    endif
+  else (No)
+    if (Valid status transition?) then (Yes)
+      :Update status (CONFIRMED → PREPARING → READY_FOR_PICKUP → COMPLETED / CANCELLED);
+      :Show updated order status;
+    else (No)
+      :Show error: invalid status transition;
+    endif
+  endif
+else (No)
+  :Show authentication error;
+endif
+stop
+@enduml

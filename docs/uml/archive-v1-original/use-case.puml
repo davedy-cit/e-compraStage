@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F5F9FC
+  BorderColor #36546C
+  ArrowColor #526B7A
+}
+actor Customer
+actor "Market Administrator" as Admin
+actor "Payment Gateway" as PayGateway
+actor "Delivery Provider" as DeliveryProvider
+actor Vendor
+rectangle "e-Compra Customer Marketplace" {
+  usecase "Register / Sign In" as UC1
+  usecase "Browse, Search, Filter Products" as UC2
+  usecase "View Product Details" as UC3
+  usecase "Compare Equivalent Prices" as UC4
+  usecase "Manage Shopping Cart" as UC5
+  usecase "Submit Pickup Reservation" as UC6
+  usecase "Place Paid Order" as UC7
+  usecase "Validate Cart, Prices, and Availability" as UC8
+  usecase "Choose Pickup or Delivery" as UC9
+  usecase "Initiate and Verify Online Payment" as UC10
+  usecase "Quote / Book Delivery" as UC11
+  usecase "View Order, Payment, and Delivery Status" as UC12
+  usecase "Manage Favorites (Secondary)" as UC13
+  usecase "Maintain Vendor / Product Demonstration Data" as UC14
+  usecase "Update Transaction Status" as UC15
+  usecase "Record Cash Payment" as UC16
+  usecase "Print Receipt" as UC17
+  usecase "Confirm Pickup" as UC18
+  UC11 ..> UC7 : <<extend>>\n[delivery selected]
+  UC16 ..> UC15 : <<extend>>\n[cash payment confirms to CONFIRMED]
+  UC18 ..> UC15 : <<extend>>\n[confirm pickup completes to COMPLETED]
+}
+Customer -- UC1
+Customer -- UC2
+Customer -- UC3
+Customer -- UC4
+Customer -- UC5
+Customer -- UC6
+Customer -- UC7
+Customer -- UC12
+Customer -- UC13
+PayGateway -- UC10
+DeliveryProvider -- UC11
+DeliveryProvider -- UC12
+Admin -- UC14
+Admin -- UC15
+Vendor -- UC15
+Vendor -- UC16
+Vendor -- UC17
+Vendor -- UC18
+note bottom of UC10 : Verify payment server-side; a redirect alone is not proof.
+note bottom of UC11 : Book delivery only after payment succeeds. Pickup bypasses delivery.
+note bottom of UC14 : Controlled Django administration, not vendor self-service.
+note bottom of UC16 : Cash payment only for PICKUP orders in PENDING_PAYMENT;\nvalidates cash_received >= total_amount;\nreceipt serial: RC-{reference_no}-{attempt}.
+note bottom of UC17 : Print receipt uses browser window.print();\nBIR-style 72mm layout hidden on screen.
+note bottom of UC18 : Confirm pickup only for PICKUP orders already CONFIRMED;\nskips PREPARING / READY_FOR_PICKUP; direct CONFIRMED -> COMPLETED.
+@enduml

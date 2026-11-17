@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Order Tracking</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html" class="on">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 0</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Order tracking</div>
+      <h1>Your orders</h1>
+      <p>Delivery and pickup follow <strong>different status paths</strong>. Both are shown below so you can see
+         exactly where each order is.</p>
+    </div>
+
+    <div class="chips">
+      <a class="chip on" href="order-tracking.html">All orders</a>
+      <a class="chip" href="order-tracking.html">Active</a>
+      <a class="chip" href="order-tracking.html">Completed</a>
+      <a class="chip" href="favorites-history.html">History</a>
+    </div>
+
+    <div class="grid grid-2" style="align-items:start">
+
+      <!-- ============ FLOW A: DELIVERY ============ -->
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="mb0">🛵 Delivery order</h3>
+            <span class="mono small muted">ECO-20261110-0001</span>
+          </div>
+          <span class="badge badge-ok">COMPLETED</span>
+        </div>
+
+        <dl class="kv mb12">
+          <dt>Vendor</dt><dd>Pedro's Fresh Catch</dd>
+          <dt>Stall</dt><dd>A-12 · Section A – Fish</dd>
+          <dt>Type</dt><dd class="mono">ONLINE_ORDER</dd>
+          <dt>Fulfillment</dt><dd class="mono">DELIVERY</dd>
+          <dt>Order total</dt><dd>₱615.00</dd>
+        </dl>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+            <tbody>
+              <tr><td>🐟 Bangus (Milkfish)</td><td class="num">2 kg × ₱180.00</td><td class="num">₱360.00</td></tr>
+              <tr><td>🐟 Galunggong (Round Scad)</td><td class="num">1 kg × ₱160.00</td><td class="num">₱160.00</td></tr>
+              <tr><td class="muted">Delivery fee — Lalamove</td><td class="num"></td><td class="num">₱95.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider">
+
+        <h4>Status history</h4>
+        <ul class="timeline">
+          <li class="done"><span class="node"></span>
+            <div class="t">Pending payment</div>
+            <div class="d"><span class="mono">PENDING_PAYMENT</span> · 10 Nov 2026, 9:12 AM</div></li>
+          <li class="done"><span class="node"></span>
+            <div class="t">Payment confirmed</div>
+            <div class="d"><span class="mono">CONFIRMED</span> · 10 Nov 2026, 9:14 AM · ₱520.00 verified</div></li>
+          <li class="done"><span class="node"></span>
+            <div class="t">Preparing</div>
+            <div class="d"><span class="mono">PREPARING</span> · 10 Nov 2026, 11:30 AM · Pedro is cleaning the fish</div></li>
+          <li class="done"><span class="node"></span>
+            <div class="t">Out for delivery</div>
+            <div class="d"><span class="mono">OUT_FOR_DELIVERY</span> · 10 Nov 2026, 2:05 PM · handed to Lalamove rider</div></li>
+          <li class="done"><span class="node"></span>
+            <div class="t">Completed</div>
+            <div class="d"><span class="mono">COMPLETED</span> · 10 Nov 2026, 3:40 PM · received by Maria Santos</div></li>
+        </ul>
+
+        <div class="card-foot row-wrap">
+          <a class="btn btn-sm" href="delivery-booking.html">Delivery booking</a>
+          <a class="btn btn-sm" href="product-detail.html">Buy again</a>
+        </div>
+      </section>
+
+      <!-- ============ FLOW B: PICKUP ============ -->
+      <section class="card" style="border-color:var(--accent)">
+        <div class="card-head">
+          <div>
+            <h3 class="mb0">🏪 Pickup reservation</h3>
+            <span class="mono small muted">ECO-20261112-0002</span>
+          </div>
+          <span class="badge badge-accent">READY_FOR_PICKUP</span>
+        </div>
+
+        <dl class="kv mb12">
+          <dt>Vendor</dt><dd>Rosa's Gulay Stand</dd>
+          <dt>Stall</dt><dd>B-07 · Section B – Vegetables</dd>
+          <dt>Type</dt><dd class="mono">PICKUP_RESERVATION</dd>
+          <dt>Fulfillment</dt><dd class="mono">PICKUP</dd>
+          <dt>Order total</dt><dd>₱290.00</dd>
+        </dl>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+            <tbody>
+              <tr><td>🍅 Tomatoes</td><td class="num">3 kg × ₱80.00</td><td class="num">₱240.00</td></tr>
+              <tr><td>🥬 Kangkong (Water Spinach)</td><td class="num">2 × ₱15.00</td><td class="num">₱30.00</td></tr>
+              <tr><td>🥬 Pechay (Chinese Cabbage)</td><td class="num">1 × ₱20.00</td><td class="num">₱20.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-foot" style="border-top:0;padding-top:0">
+          <div class="row-between mb8"><span class="muted small">Down payment paid</span><span style="color:var(--ok);font-weight:650">− ₱145.00</span></div>
+          <div class="row-between"><span style="font-weight:650">Balance due at the stall</span><span class="price">₱145.00</span></div>
+        </div>
+
+        <hr class="divider">
+
+        <h4>Status history</h4>
+        <ul class="timeline">
+          <li class="done"><span class="node"></span>
+            <div class="t">Pending payment</div>
+            <div class="d"><span class="mono">PENDING_PAYMENT</span> · 12 Nov 2026, 7:45 AM</div></li>
+          <li class="done"><span class="node"></span>
+            <div class="t">Down payment confirmed</div>
+            <div class="d"><span class="mono">CONFIRMED</span> · 12 Nov 2026, 7:47 AM · ₱145.00 verified</div></li>
+          <li class="done"><span class="node"></span>
+            <div class="t">Preparing</div>
+            <div class="d"><span class="mono">PREPARING</span> · 12 Nov 2026, 11:05 AM</div></li>
+          <li class="now"><span class="node"></span>
+            <div class="t">Ready for pickup</div>
+            <div class="d"><span class="mono">READY_FOR_PICKUP</span> · collect at Stall B-07 before 6:00 PM</div></li>
+          <li class="todo"><span class="node"></span>
+            <div class="t">Full payment upon pickup</div>
+            <div class="d">₱145.00 in cash at the stall · no status change yet</div></li>
+          <li class="todo"><span class="node"></span>
+            <div class="t">Completed</div>
+            <div class="d"><span class="mono">COMPLETED</span> · after the vendor confirms handover</div></li>
+        </ul>
+
+        <div class="card-foot row-wrap">
+          <a class="btn btn-sm btn-accent" href="pickup-reservation.html">Reservation details</a>
+          <a class="btn btn-sm" href="market-map.html">Show stall B-07</a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Ownership note -->
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="card-head"><h3>Order status</h3></div>
+        <p class="small muted mb0">The <strong>single lifecycle authority</strong>. Every transition guard reads
+           <span class="mono">Order.status</span>. Values: <span class="mono">PENDING_PAYMENT</span>,
+           <span class="mono">CONFIRMED</span>, <span class="mono">PREPARING</span>,
+           <span class="mono">READY_FOR_PICKUP</span>, <span class="mono">OUT_FOR_DELIVERY</span>,
+           <span class="mono">COMPLETED</span>, <span class="mono">CANCELLED</span>.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Payment status</h3></div>
+        <p class="small muted mb0">Tracks <strong>settlement only</strong>, on its own row. Taking cash does not move
+           the order. Values: <span class="mono">PENDING</span>, <span class="mono">VERIFIED</span>,
+           <span class="mono">FAILED</span>, <span class="mono">REFUNDED</span>.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Delivery status</h3></div>
+        <p class="small muted mb0">Tracks <strong>courier progress</strong> separately. A delivery order reaches
+           <span class="mono">COMPLETED</span> only through this path. Values: <span class="mono">BOOKED</span>,
+           <span class="mono">IN_TRANSIT</span>, <span class="mono">DELIVERED</span>,
+           <span class="mono">FAILED</span>, <span class="mono">CANCELLED</span>.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

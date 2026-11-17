@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Pickup Reservation</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 4</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap-narrow stack">
+
+    <div class="pagehead center">
+      <div class="eyebrow">Reservation confirmed</div>
+      <h1>Your vegetables are being held</h1>
+      <p style="margin:0 auto">Rosa's Gulay Stand has reserved your items. Pay a small down payment now, then settle
+         the balance in cash when you collect.</p>
+    </div>
+
+    <!-- Reference -->
+    <div class="card center" style="border-color:var(--brand);background:var(--brand-light)">
+      <div class="tiny" style="text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--brand-dark)">Reservation reference</div>
+      <div class="mono" style="font-size:1.75rem;font-weight:700;letter-spacing:.02em;margin:6px 0">ECO-20261112-0002</div>
+      <div class="small muted">Show this number at the stall when you collect.</div>
+      <div class="row-wrap mt12" style="justify-content:center">
+        <span class="badge badge-brand">PICKUP_RESERVATION</span>
+        <span class="badge badge-ok"><i class="dot"></i>READY_FOR_PICKUP</span>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="card">
+      <div class="card-head"><h3>Reservation summary</h3><span class="badge badge-info">Order 2 of 4</span></div>
+      <dl class="kv">
+        <dt>Vendor</dt><dd>Rosa's Gulay Stand</dd>
+        <dt>Stall</dt><dd>Stall B-07 · Section B – Vegetables</dd>
+        <dt>Contact</dt><dd>0917-555-0102</dd>
+        <dt>Pickup window</dt><dd>12 Nov 2026, 4:00–6:00 PM</dd>
+        <dt>Reserved on</dt><dd>12 Nov 2026, 7:45 AM</dd>
+      </dl>
+
+      <hr class="divider">
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Item</th><th class="num">Unit price</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+          <tbody>
+            <tr><td>🍅 Tomatoes</td><td class="num">₱80.00 / kg</td><td class="num">3 kg</td><td class="num">₱240.00</td></tr>
+            <tr><td>🥬 Kangkong (Water Spinach)</td><td class="num">₱15.00 / bundle</td><td class="num">2</td><td class="num">₱30.00</td></tr>
+            <tr><td>🥬 Pechay (Chinese Cabbage)</td><td class="num">₱20.00 / bundle</td><td class="num">1</td><td class="num">₱20.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-foot">
+        <div class="row-between mb8"><span class="muted">Reservation total</span><span class="price price-lg">₱290.00</span></div>
+        <div class="row-between mb8"><span class="muted">Down payment (50%)</span><span style="color:var(--ok);font-weight:650">− ₱145.00 paid</span></div>
+        <div class="row-between"><span style="font-weight:650">Balance due at the stall</span><span class="price">₱145.00</span></div>
+      </div>
+    </div>
+
+    <!-- Down payment -->
+    <div class="card">
+      <div class="card-head"><h3>Down payment</h3><span class="badge badge-ok">✓ Verified</span></div>
+      <p class="small muted">A 50% down payment secures the stock so the vendor does not sell it to a walk-in customer.
+         The remaining balance is paid in cash on collection.</p>
+      <div class="opt on">
+        <input type="radio" name="dp" checked aria-label="GCash">
+        <span><span class="t">📱 GCash</span><span class="d">₱145.00 · sandbox</span></span>
+      </div>
+      <div class="opt">
+        <input type="radio" name="dp" aria-label="Maya">
+        <span><span class="t">📱 Maya</span><span class="d">₱145.00 · sandbox</span></span>
+      </div>
+      <dl class="kv mt12">
+        <dt>Provider</dt><dd class="mono">PAYMAYA</dd>
+        <dt>Provider reference</dt><dd class="mono">SBX-PM-20261112-C19D4E77</dd>
+        <dt>Amount</dt><dd>₱145.00</dd>
+        <dt>Payment status</dt><dd><span class="badge badge-ok">VERIFIED</span></dd>
+        <dt>Paid at</dt><dd>12 Nov 2026, 7:47 AM</dd>
+      </dl>
+      <div class="note mt12 tiny">
+        Payments run in <strong>sandbox / test mode</strong> — no real money moves. A redirect alone is not proof of
+        payment; the server verifies it before the reservation is confirmed.
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="card">
+      <div class="card-head"><h3>What happens next</h3></div>
+      <ul class="timeline">
+        <li class="done"><span class="node"></span>
+          <div class="t">Reservation placed</div><div class="d">12 Nov 2026, 7:45 AM</div></li>
+        <li class="done"><span class="node"></span>
+          <div class="t">Down payment confirmed</div><div class="d">₱145.00 verified · 7:47 AM</div></li>
+        <li class="done"><span class="node"></span>
+          <div class="t">Vendor preparing your order</div><div class="d">Rosa's Gulay Stand · 11:05 AM</div></li>
+        <li class="now"><span class="node"></span>
+          <div class="t">Ready for pickup</div><div class="d">Collect at Stall B-07 before 6:00 PM</div></li>
+        <li class="todo"><span class="node"></span>
+          <div class="t">Full payment upon pickup</div><div class="d">₱145.00 in cash at the stall</div></li>
+        <li class="todo"><span class="node"></span>
+          <div class="t">Completed</div><div class="d">Order closed</div></li>
+      </ul>
+    </div>
+
+    <div class="note note-warn">
+      <strong>Hold expires at 6:00 PM.</strong> If the reservation is not collected within the pickup window it is
+      released and the items go back on sale. The down payment is forfeited — this is the same rule as a market
+      vendor holding stock for a regular customer.
+    </div>
+
+    <div class="row-wrap no-print">
+      <button class="btn btn-primary" type="button">🖨️ Print this reservation</button>
+      <a class="btn" href="order-tracking.html">Track this order</a>
+      <a class="btn" href="market-map.html">Show stall B-07 on the map</a>
+      <a class="btn btn-ghost" href="home.html">Back to marketplace</a>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

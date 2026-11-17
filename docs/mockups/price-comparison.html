@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Price Comparison</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html" class="on">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 3</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Price comparison tool</div>
+      <h1>Tomatoes — 3 vendors</h1>
+      <p>Every vendor selling this product is normalised to one base unit (1 kilogram) before ranking, so the
+         cheapest stall is the cheapest stall even when the listed unit differs.</p>
+    </div>
+
+    <div class="row-wrap">
+      <label class="row small"><span class="muted">Product</span>
+        <select class="input" style="width:auto" aria-label="Product">
+          <option>Tomatoes (TOMATO)</option>
+          <option>Bangus (BANGUS)</option>
+          <option>Well-Milled Rice (RICE_WELL_MILLED)</option>
+          <option>Pork Belly (PORK_BELLY)</option>
+          <option>Eggs (EGGS)</option>
+        </select>
+      </label>
+      <label class="row small"><span class="muted">Compare per</span>
+        <select class="input" style="width:auto" aria-label="Base unit">
+          <option>Kilogram</option>
+          <option>Gram</option>
+          <option>Piece</option>
+        </select>
+      </label>
+      <span class="badge badge-brand">Comparison group: TOMATO</span>
+    </div>
+
+    <!-- Best value -->
+    <div class="card" style="border-color:var(--ok);box-shadow:0 0 0 2px var(--ok-bg),var(--shadow)">
+      <div class="row-between">
+        <div class="row">
+          <div style="width:60px;height:60px;display:grid;place-items:center;font-size:2rem;background:var(--brand-light);border-radius:var(--radius-sm)">🍅</div>
+          <div>
+            <span class="badge badge-ok mb8">✓ Best value</span>
+            <h2 class="mb0">Villamor Fruits &amp; Gulay</h2>
+            <div class="small muted">📍 Stall D-02 · Section D – Fruits · 📞 0917-555-0105</div>
+          </div>
+        </div>
+        <div class="center">
+          <div class="price price-lg" style="font-size:2rem">₱75.00</div>
+          <div class="unit">per kg</div>
+          <div class="badge badge-ok mt8">Saves ₱5.00/kg</div>
+        </div>
+      </div>
+      <div class="card-foot row-between">
+        <span class="small muted">18 kg available · in stock · sold by the kilo</span>
+        <div class="row-wrap">
+          <a class="btn btn-sm" href="market-map.html">Show stall</a>
+          <a class="btn btn-sm btn-primary" href="product-detail.html">Add to cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- All vendors ranked -->
+    <div class="card">
+      <div class="card-head">
+        <h3>All vendors, ranked by price per kilogram</h3>
+        <span class="small muted">Updated 12 Nov 2026, 7:45 AM</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Vendor</th>
+              <th>Stall</th>
+              <th>Listed price</th>
+              <th>Listed unit</th>
+              <th class="num">Per kg</th>
+              <th class="num">Difference</th>
+              <th>Availability</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:var(--ok-bg)">
+              <td><strong>1</strong></td>
+              <td><strong>Villamor Fruits &amp; Gulay</strong> <span class="badge badge-ok">Best</span></td>
+              <td class="mono">D-02</td>
+              <td>₱75.00</td>
+              <td>per kg</td>
+              <td class="num"><strong>₱75.00</strong></td>
+              <td class="num muted">—</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>18 kg</span></td>
+              <td><a class="btn btn-sm btn-primary" href="product-detail.html">Add</a></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Tan's Rice &amp; Dry Goods</td>
+              <td class="mono">E-01</td>
+              <td>₱78.00</td>
+              <td>per kg</td>
+              <td class="num">₱78.00</td>
+              <td class="num" style="color:var(--danger)">+₱3.00</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>12 kg</span></td>
+              <td><a class="btn btn-sm" href="product-detail.html">Add</a></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Rosa's Gulay Stand</td>
+              <td class="mono">B-07</td>
+              <td>₱80.00</td>
+              <td>per kg</td>
+              <td class="num">₱80.00</td>
+              <td class="num" style="color:var(--danger)">+₱5.00</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>15 kg</span></td>
+              <td><a class="btn btn-sm" href="product-detail.html">Add</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot small muted">
+        A basket of <strong>5 kg</strong> costs ₱375.00 at the cheapest stall and ₱400.00 at the dearest —
+        <strong>₱25.00 saved</strong> by walking to Section D instead of Section B.
+      </div>
+    </div>
+
+    <!-- Normalisation explainer -->
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-head"><h3>How normalisation works</h3></div>
+        <p class="small muted">Each comparison group stores a conversion factor from every allowed unit to the group's base unit:</p>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Unit</th><th class="num">Factor to kg</th><th class="num">₱75.00 becomes</th></tr></thead>
+            <tbody>
+              <tr><td>Kilogram (KG)</td><td class="num">1.0000</td><td class="num">₱75.00 / kg</td></tr>
+              <tr><td>Gram (G)</td><td class="num">0.0010</td><td class="num">₱0.075 / g</td></tr>
+              <tr><td>Sack (SACK)</td><td class="num">25.0000</td><td class="num">₱1,875.00 / sack</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note mt12 tiny">
+          The ranking is one <span class="mono">JOIN</span> and one <span class="mono">ORDER BY</span>:
+          <span class="mono">price / factor_to_base</span>. Nothing is hard-coded per vendor.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Other products with multiple vendors</h3></div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Product</th><th class="num">Vendors</th><th class="num">Lowest</th><th class="num">Highest</th><th class="num">Spread</th></tr></thead>
+            <tbody>
+              <tr><td><a href="price-comparison.html">Tomatoes</a></td><td class="num">3</td><td class="num">₱75.00</td><td class="num">₱80.00</td><td class="num">₱5.00</td></tr>
+              <tr><td>Bangus (Milkfish)</td><td class="num">1</td><td class="num">₱180.00</td><td class="num">₱180.00</td><td class="num">—</td></tr>
+              <tr><td>Well-Milled Rice</td><td class="num">1</td><td class="num">₱52.00</td><td class="num">₱52.00</td><td class="num">—</td></tr>
+              <tr><td>Eggs</td><td class="num">1</td><td class="num">₱240.00</td><td class="num">₱240.00</td><td class="num">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note note-warn mt12 tiny">
+          Only <strong>Tomatoes</strong> currently has more than one vendor, which is why it is the example in the
+          project idea document. The comparison screen works the same for any product once more vendors list it.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

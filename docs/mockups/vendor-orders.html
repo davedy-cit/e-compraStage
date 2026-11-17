@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Vendor Order Queue</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-vendor">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Vendor console</small></span></a>
+    <nav class="nav">
+      <a href="vendor-dashboard.html">Dashboard</a>
+      <a href="vendor-products.html">Products</a>
+      <a href="vendor-orders.html" class="on">Orders</a>
+      <a href="vendor-pos.html">POS</a>
+    </nav>
+    <span class="who">Pedro Reyes · Pedro's Fresh Catch</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Vendor console</div>
+      <h1>Order queue</h1>
+      <p>Every order a buyer placed with your stall. Move each one along the lifecycle — the buttons below are the
+         only legal transitions from where the order currently sits.</p>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="stat"><div class="k">Awaiting action</div><div class="v">3</div><div class="sub">needs you today</div></div>
+      <div class="stat"><div class="k">Ready for pickup</div><div class="v" style="color:var(--accent-dark)">1</div><div class="sub">buyer notified</div></div>
+      <div class="stat"><div class="k">Completed today</div><div class="v">3</div><div class="sub">₱1,300.00</div></div>
+      <div class="stat"><div class="k">Cash still to collect</div><div class="v" style="color:var(--accent-dark)">₱90.00</div><div class="sub">1 reservation balance</div></div>
+    </div>
+
+    <div class="chips">
+      <a class="chip on" href="vendor-orders.html">Active (3)</a>
+      <a class="chip" href="vendor-orders.html">Pickup</a>
+      <a class="chip" href="vendor-orders.html">Delivery</a>
+      <a class="chip" href="vendor-orders.html">Completed</a>
+      <a class="chip" href="vendor-orders.html">Cancelled</a>
+    </div>
+
+    <!-- ============ ORDER 1 — CONFIRMED, pickup ============ -->
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h3 class="mb0">ECO-20261116-0007 · Maria Santos</h3>
+          <span class="small muted">Placed 16 Nov 2026, 8:05 AM · <span class="mono">ONLINE_ORDER</span> · <span class="mono">PICKUP</span></span>
+        </div>
+        <span class="badge badge-brand">CONFIRMED</span>
+      </div>
+
+      <div class="grid-side" style="grid-template-columns:1fr 300px">
+        <div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr><td>🐟 Bangus (Milkfish)</td><td class="num">2 kg × ₱180.00</td><td class="num">₱360.00</td></tr>
+                <tr><td>🐟 Galunggong (Round Scad)</td><td class="num">1 kg × ₱160.00</td><td class="num">₱160.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row-between mt12">
+            <span class="small muted">Paid online — <span class="mono">SBX-PM-20261116-B7E21D90</span></span>
+            <span class="price price-lg">₱520.00</span>
+          </div>
+          <div class="note mt12 tiny">
+            Payment is already <span class="mono">VERIFIED</span>, so the order reached
+            <span class="mono">CONFIRMED</span> on its own. Nothing to collect at the counter.
+          </div>
+        </div>
+
+        <aside>
+          <div class="card card-tight" style="box-shadow:none;background:var(--brand-light)">
+            <div class="small" style="font-weight:650">Next step</div>
+            <div class="tiny muted mb8">Start preparing this order for collection.</div>
+            <button class="btn btn-primary btn-block" type="button">Mark as PREPARING</button>
+          </div>
+          <div class="row-wrap mt12">
+            <button class="btn btn-sm" type="button">Print pick list</button>
+            <button class="btn btn-sm btn-danger" type="button">Cancel order</button>
+          </div>
+          <div class="tiny muted mt8">
+            Cancelling returns both items to the ledger and refunds the payment.
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ ORDER 2 — PREPARING, delivery ============ -->
+    <section class="card" style="border-color:var(--info)">
+      <div class="card-head">
+        <div>
+          <h3 class="mb0">ECO-20261116-0008 · Juan Dela Cruz</h3>
+          <span class="small muted">Placed 16 Nov 2026, 9:40 AM · <span class="mono">ONLINE_ORDER</span> · <span class="mono">DELIVERY</span></span>
+        </div>
+        <span class="badge badge-info">PREPARING</span>
+      </div>
+
+      <div class="grid-side" style="grid-template-columns:1fr 300px">
+        <div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr><td>🐟 Tilapia</td><td class="num">3 kg × ₱140.00</td><td class="num">₱420.00</td></tr>
+                <tr><td class="muted">Delivery fee — Lalamove</td><td class="num"></td><td class="num">₱95.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row-between mt12">
+            <span class="small muted">Paid online — <span class="mono">SBX-PM-20261116-C3A77E15</span></span>
+            <span class="price price-lg">₱515.00</span>
+          </div>
+
+          <div class="card card-tight mt12" style="box-shadow:none">
+            <div class="row-between">
+              <div>
+                <div class="small" style="font-weight:650">🛵 Delivery booking</div>
+                <div class="tiny muted">Lalamove · <span class="mono">SBX-LM-80934</span> · ₱95.00</div>
+              </div>
+              <span class="badge badge-warn">BOOKED</span>
+            </div>
+            <hr class="divider">
+            <div class="small muted">Drop off to <strong>Juan Dela Cruz</strong>, 12 Plaridel St., Mandaue City</div>
+            <div class="tiny muted">📞 0917-555-0142</div>
+          </div>
+
+          <div class="note note-accent mt12 tiny">
+            Hand the packed order to the rider, then mark it <span class="mono">OUT_FOR_DELIVERY</span>. The courier's
+            own status stays on the booking — it does not overwrite the order status.
+          </div>
+        </div>
+
+        <aside>
+          <div class="card card-tight" style="box-shadow:none;background:var(--info-bg)">
+            <div class="small" style="font-weight:650">Next step</div>
+            <div class="tiny muted mb8">Fish is cleaned and packed. Release it to the courier.</div>
+            <button class="btn btn-primary btn-block" type="button">Mark as OUT_FOR_DELIVERY</button>
+          </div>
+          <div class="row-wrap mt12">
+            <button class="btn btn-sm" type="button">Print pick list</button>
+            <button class="btn btn-sm" type="button">Rebook courier</button>
+          </div>
+          <div class="tiny muted mt8">
+            Delivery orders skip <span class="mono">READY_FOR_PICKUP</span> entirely — that state belongs to the
+            pickup flow.
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ ORDER 3 — READY_FOR_PICKUP, reservation ============ -->
+    <section class="card" style="border-color:var(--accent)">
+      <div class="card-head">
+        <div>
+          <h3 class="mb0">ECO-20261116-0009 · Ana Lim</h3>
+          <span class="small muted">Placed 16 Nov 2026, 6:15 AM · <span class="mono">PICKUP_RESERVATION</span> · <span class="mono">PICKUP</span></span>
+        </div>
+        <span class="badge badge-accent">READY_FOR_PICKUP</span>
+      </div>
+
+      <div class="grid-side" style="grid-template-columns:1fr 300px">
+        <div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+              <tbody>
+                <tr><td>🐟 Bangus (Milkfish)</td><td class="num">1 kg × ₱180.00</td><td class="num">₱180.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt12">
+            <div class="row-between mb8">
+              <span class="small muted">Total</span><span>₱180.00</span>
+            </div>
+            <div class="row-between mb8">
+              <span class="small muted">Down payment — <span class="mono">SBX-PM-20261116-D91B4C33</span></span>
+              <span style="color:var(--ok);font-weight:650">− ₱90.00</span>
+            </div>
+            <div class="row-between">
+              <span style="font-weight:650">Balance due at the stall</span>
+              <span class="price price-lg">₱90.00</span>
+            </div>
+          </div>
+
+          <div class="note note-warn mt12 tiny">
+            The buyer holds this reservation until <strong>6:00 PM today</strong>. Collect ₱90.00 in cash, record it
+            at the POS, and only then mark the order <span class="mono">COMPLETED</span>.
+          </div>
+        </div>
+
+        <aside>
+          <div class="card card-tight" style="box-shadow:none;background:var(--accent-light)">
+            <div class="small" style="font-weight:650">Next step</div>
+            <div class="tiny muted mb8">Buyer arrives, pays the ₱90.00 balance in cash, takes the fish.</div>
+            <button class="btn btn-accent btn-block" type="button">Collect ₱90.00 &amp; complete</button>
+          </div>
+          <div class="row-wrap mt12">
+            <a class="btn btn-sm" href="vendor-pos.html">Open POS</a>
+            <button class="btn btn-sm" type="button">Notify buyer</button>
+          </div>
+          <div class="tiny muted mt8">
+            Taking the cash records a <span class="mono">Payment</span> row — it does not by itself complete the order.
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Completed -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Recently completed</h3>
+        <span class="small muted">today</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Reference</th><th>Buyer</th><th>Channel</th><th class="num">Items</th><th class="num">Total</th><th>Payment</th><th>Closed</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">ECO-20261116-0006</td><td>Rico Bautista</td>
+              <td><span class="badge">WALK_IN</span></td><td class="num">3</td>
+              <td class="num">₱620.00</td><td><span class="badge badge-ok">CASH</span></td><td class="small">11:52 AM</td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0005</td><td>Liza Tan</td>
+              <td><span class="badge">WALK_IN</span></td><td class="num">2</td>
+              <td class="num">₱340.00</td><td><span class="badge badge-ok">CASH</span></td><td class="small">10:18 AM</td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0004</td><td>Mark Villanueva</td>
+              <td><span class="badge">WALK_IN</span></td><td class="num">2</td>
+              <td class="num">₱340.00</td><td><span class="badge badge-ok">CASH</span></td><td class="small">9:05 AM</td>
+            </tr>
+            <tr>
+              <td class="mono">ECO-20261116-0003</td><td>Maria Santos</td>
+              <td><span class="badge badge-info">ONLINE</span></td><td class="num">2</td>
+              <td class="num">₱520.00</td><td><span class="badge badge-info">E-WALLET</span></td><td class="small">Yesterday</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        Cash sales appear here as <span class="mono">COMPLETED</span> the moment the POS closes them, because the money
+        and the goods change hands at the same instant.
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

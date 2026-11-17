@@ -1,0 +1,137 @@
+@startuml
+' ============================================================================
+'  E-Compra — Activity Diagram
+'  Revision 2 · 2026-11-12
+'  Applies every ruling in docs/DESIGN_DECISIONS.md (see docs/DESIGN_REVIEW.md
+'  for the findings). Revision 1 is preserved in ./archive-v1-original/.
+'
+'  Flow A: Customer checkout (paid order or pickup reservation)
+'  Flow B: Vendor POS (pickup) and delivery fulfilment
+' ============================================================================
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F5F9FC
+  BorderColor #36546C
+  DiamondBackgroundColor #FFF5DD
+  DiamondBorderColor #A77B24
+  ArrowColor #526B7A
+}
+
+' ================= Flow A: Customer checkout =================
+start
+:Customer signs in and reviews cart;
+:Choose paid order or pickup reservation;
+:Submit checkout request (with Idempotency-Key);
+:Authenticate and verify cart ownership;
+if (Authorized?) then (Yes)
+  :Validate vendor, quantities, availability, stock, and prices;
+  :Group cart items by vendor;
+  if (Cart valid?) then (Yes)
+    :Create one Order AND one Transaction per vendor;
+    if (Pickup reservation without online payment?) then (Yes)
+      :Set Order.status = CONFIRMED (reservation accepted);
+      :Set Transaction.transaction_type = PICKUP_RESERVATION;
+      :Save item price snapshots;
+      :Generate reference and confirmation;
+      stop
+    else (Paid order)
+      :Set Transaction.transaction_type = ONLINE_ORDER;
+      :Calculate server-side subtotal and fulfillment fee;
+      :Create pending payment session (Order.status = PENDING_PAYMENT);
+      :Customer completes provider checkout;
+      :Verify payment server-side;
+      if (Payment verified successful?) then (Yes)
+        :Record Payment status = VERIFIED;
+        :Advance Order.status PENDING_PAYMENT -> CONFIRMED;
+        if (Delivery selected?) then (Yes)
+          :Request delivery quote/booking as supported;
+          if (Delivery booking succeeds?) then (Yes)
+            :Store booking reference and available tracking details;
+            :Show paid order and delivery status;
+            stop
+          else (No)
+            :Keep order paid; mark delivery booking for retry/attention;
+            :Show paid confirmation and delivery issue;
+            stop
+          endif
+        else (Pickup)
+          :Show paid order confirmation and pickup status;
+          stop
+        endif
+      else (No / unverified)
+        :Record Payment status = FAILED;
+        :Leave Order.status = PENDING_PAYMENT (not fulfilable);
+        :Do not request delivery;
+        :Show retry/status message;
+        stop
+      endif
+    endif
+  else (No)
+    :Reject invalid cart; create no order and no transaction;
+    :Show correction message;
+    stop
+  endif
+else (No)
+  :Reject request; show authentication/permission message;
+  stop
+endif
+
+' ================= Flow B: Vendor fulfilment =================
+start
+:Vendor signs in;
+if (is_vendor?) then (Yes)
+  :Route to vendor dashboard;
+  :View own orders (vendor-scoped);
+  :Select order;
+  :View order detail;
+  if (Order.fulfillment = PICKUP?) then (Yes)
+    if (Order.status = CONFIRMED?) then (Yes)
+      :Mark PREPARING (POST /prepare/);
+      :Mark READY_FOR_PICKUP (POST /ready/);
+    else (No)
+      :Continue from the current status;
+    endif
+    :Customer arrives at the stall and tenders cash;
+    :Vendor enters cash received amount;
+    :Calculate change (cash - total_amount);
+    if (Change >= 0?) then (Yes)
+      :Record Payment (provider = CASH, status = VERIFIED);
+      :Receipt serial = RC-{reference_no}-{receipt_attempt};
+      :Order.status is unchanged - cash is a payment event;
+      :Show change due;
+      :Print receipt (window.print, BIR-style 72mm);
+      if (Confirm pickup?) then (Yes)
+        :Confirm pickup (POST /confirm-pickup/);
+        :Order.status -> COMPLETED;
+        :Show order completed;
+      else (No)
+        :Wait for later confirm pickup;
+      endif
+    else (No)
+      :Show error: cash less than total;
+    endif
+  else (DELIVERY)
+    if (Order.status = CONFIRMED?) then (Yes)
+      :Mark PREPARING (POST /prepare/);
+    else (No)
+      :Continue from the current status;
+    endif
+    :Mark OUT_FOR_DELIVERY (POST /out-for-delivery/);
+    :DeliveryBooking.status = IN_TRANSIT;
+    :Mark Delivered (POST /delivered/);
+    :Order.status -> COMPLETED;
+    :DeliveryBooking.status = DELIVERED, delivered_at = NOW();
+  endif
+else (No)
+  :Show authentication error;
+endif
+stop
+
+note right
+  Every status guard reads Order.status - the single lifecycle
+  authority. Payment.status holds settlement; DeliveryBooking.status
+  holds courier progress. No fact is stored twice.
+end note
+
+@enduml

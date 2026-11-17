@@ -1,0 +1,254 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F7FAFC
+  BorderColor #36546C
+  ArrowColor #526B7A
+}
+' NOTE: Django models are thin data holders; business logic lives in
+' apps/orders/services.py and the APIView classes (apps/*/views.py).
+' Model methods such as calculateTotal/verifyStatus/recordCashPayment
+' from the previous diagram do NOT exist on the models and are omitted.
+
+class "User (Django built-in)" as User {
+  +id: int
+  +username: str
+  +email: str
+  -password_hash: managed by Django
+}
+
+class UserProfile {
+  +user: User (FK, PK)
+  +is_vendor: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class CustomerProfile {
+  +user: User (FK, PK)
+  +phone: str
+  +address: text
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class "Market Vendor (catalog.Vendor)" as CatalogVendor {
+  +id: int
+  +name: str
+  +stall_location: str
+  +market_section: str
+  +contact_phone: str
+  +contact_email: str
+  +is_active: bool
+  +user: User (FK, UK, null)
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class "POS Vendor (vendors.Vendor)" as PosVendor {
+  +user: User (FK, PK)
+  +stall_name: str
+  +stall_location: str
+}
+
+class Category {
+  +id: int
+  +name: str
+  +slug: str (UK)
+}
+
+class UnitOfMeasure {
+  +code: str (PK)
+  +name: str
+  +description: str
+  +is_active: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class ComparisonGroup {
+  +code: str (PK)
+  +name: str
+  +base_unit: UnitOfMeasure (FK)
+  +description: str
+  +is_active: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class Product {
+  +id: int
+  +name: str
+  +description: text
+  +image_url: url
+  +price: Decimal
+  +unit: str
+  +stall_location: str
+  +availability: str
+  +category: Category (FK)
+  +vendor: CatalogVendor (FK)
+  +comparison_group: ComparisonGroup (FK, null)
+}
+
+class Cart {
+  +user: User (FK, PK)
+  +created_at: datetime
+}
+
+class CartItem {
+  +id: int
+  +quantity: int
+  +cart: Cart (FK)
+  +product: Product (FK)
+}
+
+class TransactionType {
+  +code: str (PK)
+  +description: str
+}
+
+class TransactionStatus {
+  +code: str (PK)
+  +description: str
+  +sort_order: int
+}
+
+class FulfillmentMethod {
+  +code: str (PK)
+  +description: str
+}
+
+class PaymentStatus {
+  +code: str (PK)
+  +description: str
+  +is_terminal: bool
+}
+
+class DeliveryStatus {
+  +code: str (PK)
+  +description: str
+  +is_terminal: bool
+}
+
+class Order {
+  +id: int
+  +user: User (FK)
+  +vendor: CatalogVendor (FK, null, blank)
+  +status: TransactionStatus (FK)
+  +fulfillment_type: FulfillmentMethod (FK)
+  +total_amount: Decimal
+  +notes: text
+  +created_at: datetime
+}
+
+class OrderItem {
+  +id: int
+  +order: Order (FK)
+  +product: Product (FK)
+  +quantity: int
+  +unit_price: Decimal
+}
+
+class Transaction {
+  +id: int
+  +order: Order (FK, 1:1)
+  +status: TransactionStatus (FK)
+  +reference_no: str (UK)
+}
+
+class Payment {
+  +id: int
+  +transaction: Transaction (FK)
+  +provider: str
+  +provider_reference: str
+  +amount: Decimal
+  +status: PaymentStatus (FK)
+  +raw_response: json
+  +paid_at: datetime
+  +created_at: datetime
+}
+
+class DeliveryBooking {
+  +id: int
+  +transaction: Transaction (FK, 1:1)
+  +provider: str
+  +booking_reference: str
+  +tracking_url: url
+  +fee: Decimal
+  +status: DeliveryStatus (FK)
+  +raw_response: json
+  +booked_at: datetime
+  +delivered_at: datetime
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class "VendorTx (vendors.VendorTransaction)" as VendorTx {
+  +id: int
+  +vendor: PosVendor (FK)
+  +order: Order (FK, 1:1)
+  +status: TransactionStatus (FK)
+  +receipt_serial: str (null, blank)
+}
+
+class Favorite {
+  +id: int
+  +user: User (FK)
+  +product: Product (FK, null, blank)
+  +vendor: CatalogVendor (FK, null, blank)
+  +created_at: datetime
+}
+
+User "1" -- "0..1" UserProfile : extends
+User "1" -- "0..1" CustomerProfile : extends
+User "1" -- "0..1" CatalogVendor : owns profile
+User "1" -- "0..1" PosVendor : owns POS profile
+User "1" -- "0..1" Cart : owns active cart
+
+Cart "1" *-- "0..*" CartItem : contains
+Product "1" -- "0..*" CartItem : referenced in
+CatalogVendor "1" -- "0..*" Product : sells
+Category "1" -- "0..*" Product : classifies
+ComparisonGroup "1" -- "0..*" Product : groups
+UnitOfMeasure "1" -- "0..*" ComparisonGroup : base unit of
+
+User "1" -- "0..*" Order : places
+CatalogVendor "1" -- "0..*" Order : fulfills
+
+Order "1" *-- "0..*" OrderItem : contains
+Product "1" -- "0..*" OrderItem : purchased item
+Order "1" -- "0..1" Transaction : linked transaction
+Order "1" -- "0..1" VendorTx : vendor POS record
+
+Transaction "1" -- "0..*" Payment : payment attempts
+Transaction "1" -- "0..1" DeliveryBooking : delivery booking
+Payment "1" -- "0..1" PaymentStatus : has status
+DeliveryBooking "1" -- "0..1" DeliveryStatus : has status
+
+User "1" -- "0..*" Favorite : favorites
+Product "1" -- "0..*" Favorite : product
+CatalogVendor "1" -- "0..*" Favorite : vendor
+
+PosVendor "1" -- "0..*" VendorTx : handles
+
+note right of Payment
+  Store provider references and status only.
+  Never store raw card numbers, CVV,
+  or banking passwords.
+  unique_together (provider, provider_reference)
+  guarantees idempotency - no double charges.
+end note
+
+note right of Order
+  One order = products from one vendor only.
+  Multi-vendor checkout creates one Order per vendor.
+end note
+
+note bottom of Transaction
+  Transaction is a linked record (status + reference_no),
+  NOT the order itself. Order is the order entity.
+end note
+
+@enduml

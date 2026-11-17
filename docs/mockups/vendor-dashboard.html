@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Vendor Sales Dashboard</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-vendor">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Vendor console</small></span></a>
+    <nav class="nav">
+      <a href="vendor-dashboard.html" class="on">Dashboard</a>
+      <a href="vendor-products.html">Products</a>
+      <a href="vendor-orders.html">Orders</a>
+      <a href="vendor-pos.html">POS</a>
+    </nav>
+    <span class="who">Pedro Reyes · Pedro's Fresh Catch</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Vendor console</div>
+      <h1>Sales dashboard</h1>
+      <p>Pedro's Fresh Catch · Stall A-12 · Section A – Fish. Figures cover walk-in sales recorded at the POS as
+         well as online orders and pickup reservations.</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid grid-4">
+      <div class="stat">
+        <div class="k">Today's sales</div>
+        <div class="v">₱1,300.00</div>
+        <div class="sub">3 walk-in sales</div>
+      </div>
+      <div class="stat">
+        <div class="k">This week</div>
+        <div class="v">₱8,450.00</div>
+        <div class="sub">up 12% on last week</div>
+      </div>
+      <div class="stat">
+        <div class="k">This month</div>
+        <div class="v">₱31,200.00</div>
+        <div class="sub">Nov 2026 to date</div>
+      </div>
+      <div class="stat" style="border-color:var(--accent)">
+        <div class="k">Open orders</div>
+        <div class="v" style="color:var(--accent-dark)">3</div>
+        <div class="sub">1 confirmed · 1 preparing · 1 ready</div>
+      </div>
+    </div>
+
+    <div class="grid-side" style="grid-template-columns:1fr 320px">
+
+      <div class="stack">
+
+        <!-- Sales chart -->
+        <section class="card">
+          <div class="card-head">
+            <h3>Sales, last 7 days</h3>
+            <span class="small muted">Best day highlighted</span>
+          </div>
+          <div class="bars">
+            <div class="bar"><span class="lab">₱1,180</span><i class="fill" style="height:62%"></i><span class="lab">Tue 10</span></div>
+            <div class="bar"><span class="lab">₱1,340</span><i class="fill" style="height:71%"></i><span class="lab">Wed 11</span></div>
+            <div class="bar"><span class="lab">₱980</span><i class="fill" style="height:52%"></i><span class="lab">Thu 12</span></div>
+            <div class="bar"><span class="lab">₱1,890</span><i class="fill hi" style="height:100%"></i><span class="lab">Fri 13</span></div>
+            <div class="bar"><span class="lab">₱1,560</span><i class="fill" style="height:83%"></i><span class="lab">Sat 14</span></div>
+            <div class="bar"><span class="lab">₱260</span><i class="fill" style="height:14%"></i><span class="lab">Sun 15</span></div>
+            <div class="bar"><span class="lab">₱1,300</span><i class="fill hi" style="height:69%"></i><span class="lab">Mon 16</span></div>
+          </div>
+          <div class="card-foot tiny muted">
+            Friday is the peak — market day. Sunday is short because the stall closes at noon. The last bar is
+            <strong>today</strong>, and it is still climbing.
+          </div>
+        </section>
+
+        <!-- Best sellers -->
+        <section class="card">
+          <div class="card-head">
+            <h3>Best sellers, this month</h3>
+            <span class="small muted">by revenue</span>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Product</th><th class="num">Qty sold</th><th class="num">Revenue</th><th class="num">Share</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>🐟 Bangus (Milkfish)</td>
+                  <td class="num">42 kg</td>
+                  <td class="num"><strong>₱7,560.00</strong></td>
+                  <td class="num">
+                    <div class="meter" style="min-width:70px"><i style="width:37%"></i></div>
+                    <span class="tiny muted">37%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>🐟 Galunggong (Round Scad)</td>
+                  <td class="num">28 kg</td>
+                  <td class="num"><strong>₱4,480.00</strong></td>
+                  <td class="num">
+                    <div class="meter" style="min-width:70px"><i style="width:22%"></i></div>
+                    <span class="tiny muted">22%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>🐟 Tilapia</td>
+                  <td class="num">22 kg</td>
+                  <td class="num"><strong>₱3,080.00</strong></td>
+                  <td class="num">
+                    <div class="meter" style="min-width:70px"><i style="width:15%"></i></div>
+                    <span class="tiny muted">15%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>🐟 Tulingan (Bullet Tuna)</td>
+                  <td class="num">15 kg</td>
+                  <td class="num"><strong>₱2,850.00</strong></td>
+                  <td class="num">
+                    <div class="meter" style="min-width:70px"><i style="width:14%"></i></div>
+                    <span class="tiny muted">14%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>🦐 Hipon (Shrimp)</td>
+                  <td class="num">6 kg</td>
+                  <td class="num"><strong>₱2,280.00</strong></td>
+                  <td class="num">
+                    <div class="meter" style="min-width:70px"><i style="width:11%"></i></div>
+                    <span class="tiny muted">11%</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Channel mix -->
+        <section class="card">
+          <div class="card-head"><h3>Where the sales come from</h3></div>
+          <div class="grid grid-3">
+            <div class="stat" style="box-shadow:none">
+              <div class="k">Walk-in (POS)</div>
+              <div class="v">34</div>
+              <div class="sub"><span class="mono tiny">POS_WALKIN</span></div>
+            </div>
+            <div class="stat" style="box-shadow:none">
+              <div class="k">Online orders</div>
+              <div class="v">18</div>
+              <div class="sub"><span class="mono tiny">ONLINE_ORDER</span></div>
+            </div>
+            <div class="stat" style="box-shadow:none">
+              <div class="k">Pickup reservations</div>
+              <div class="v">5</div>
+              <div class="sub"><span class="mono tiny">PICKUP_RESERVATION</span></div>
+            </div>
+          </div>
+          <div class="note mt12 tiny">
+            Walk-in still dominates — which is why the POS is part of the system rather than an afterthought.
+            The digital store adds reach without replacing the counter.
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="stack">
+
+        <!-- Inventory movement -->
+        <div class="card">
+          <div class="card-head"><h3>Inventory movement</h3><span class="small muted">recent</span></div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Product</th><th class="num">Change</th><th>Reason</th></tr></thead>
+              <tbody>
+                <tr><td>🐟 Bangus</td><td class="num" style="color:var(--danger)">−2</td><td class="tiny mono">SOLD_ONLINE</td></tr>
+                <tr><td>🐟 Bangus</td><td class="num" style="color:var(--danger)">−1</td><td class="tiny mono">SOLD_WALKIN</td></tr>
+                <tr><td>🦐 Hipon</td><td class="num" style="color:var(--ok)">+1</td><td class="tiny mono">ADJUSTMENT</td></tr>
+                <tr><td>🐟 Galunggong</td><td class="num" style="color:var(--danger)">−1</td><td class="tiny mono">SOLD_ONLINE</td></tr>
+                <tr><td>🐟 Tilapia</td><td class="num" style="color:var(--danger)">−1</td><td class="tiny mono">SOLD_WALKIN</td></tr>
+                <tr><td>🐟 Bangus</td><td class="num" style="color:var(--ok)">+15</td><td class="tiny mono">RECEIVED</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-foot tiny muted">
+            <strong>Bangus ledger:</strong> +15 received, −2 online, −1 walk-in → balance <strong>12 kg</strong>.
+          </div>
+        </div>
+
+        <!-- Low stock -->
+        <div class="card" style="border-color:var(--warn)">
+          <div class="card-head"><h3>⚠️ Low stock</h3><span class="badge badge-warn">2 items</span></div>
+          <div class="stack" style="--gap:10px">
+            <div>
+              <div class="row-between small"><span>🦐 Hipon (Shrimp)</span><span class="badge badge-warn">LOW_STOCK</span></div>
+              <div class="meter mt8"><i class="mid" style="width:40%"></i></div>
+              <div class="tiny muted mt8">6 kg on hand · threshold 5 kg</div>
+            </div>
+            <div>
+              <div class="row-between small"><span>🐟 Dried Fish (Tuyo)</span><span class="badge badge-warn">LOW_STOCK</span></div>
+              <div class="meter mt8"><i class="mid" style="width:35%"></i></div>
+              <div class="tiny muted mt8">5 kg on hand · threshold 3 kg</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <a class="btn btn-sm btn-block" href="vendor-products.html">Restock in Products</a>
+          </div>
+        </div>
+
+        <div class="note tiny">
+          Stock is <strong>derived from the movement ledger</strong>, not typed in by hand. Every sale, receipt and
+          spoilage entry is a row; the balance is their sum.
+        </div>
+
+        <a class="btn btn-primary btn-block" href="vendor-pos.html">Open POS terminal</a>
+
+      </aside>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

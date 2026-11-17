@@ -1,0 +1,213 @@
+@startuml
+' ============================================================================
+'  E-Compra — Sequence Diagram
+'  Revision 2 · 2026-11-12
+'  Applies every ruling in docs/DESIGN_DECISIONS.md (see docs/DESIGN_REVIEW.md
+'  for the findings). Revision 1 is preserved in ./archive-v1-original/.
+'
+'  STATUS OWNERSHIP (single authority per fact):
+'    Order.status      = the order lifecycle, customer-facing
+'    Payment.status    = settlement of one payment attempt
+'    DeliveryBooking.status = courier progress
+'  Transaction carries no status of its own.
+' ============================================================================
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #526B7A
+  LifeLineBorderColor #96AAB5
+  LifeLineBackgroundColor white
+  ParticipantBorderColor #36546C
+  ParticipantBackgroundColor #E8F1F7
+}
+
+actor Customer
+actor Vendor
+boundary "Vue UI" as UI
+control "Django REST API" as API
+control "Order / Payment Service" as OrderSvc
+control "Vendor POS Service" as PosSvc
+database MySQL as DB
+participant "Payment Gateway" as PG
+participant "Delivery Provider" as DP
+
+' ================= Customer: Place Order (multi-vendor split) =================
+Customer -> UI: review cart & choose fulfillment
+UI -> API: POST /api/orders/ (cart, fulfillment_type, notes, Idempotency-Key)
+API -> OrderSvc: authenticate + verify ownership + check Idempotency-Key
+alt Idempotency-Key already used by this user
+  OrderSvc --> API: 200 + the orders created by that first request
+  API --> UI: existing order(s) - no duplicates created
+else New request
+  OrderSvc -> DB: read cart items + current prices / vendors
+  DB --> OrderSvc: cart items (grouped by vendor)
+  alt Cart empty / invalid
+    API --> UI: HTTP 400 Cart is empty
+    UI --> Customer: show correction message
+  else Cart valid
+    loop For each vendor in cart (multi-vendor split)
+      OrderSvc -> DB: create ONE Order (vendor set, status PENDING_PAYMENT)
+      OrderSvc -> DB: create OrderItems (unit_price snapshotted)
+      OrderSvc -> DB: create linked Transaction (transaction_type, reference_no)
+      DB --> OrderSvc: order id per vendor
+    end
+    alt Fulfillment = PICKUP reservation (no online payment)
+      OrderSvc -> DB: set each Order.status = CONFIRMED (reservation accepted)
+      OrderSvc -> DB: set Transaction.transaction_type = PICKUP_RESERVATION
+      DB --> OrderSvc: reservations confirmed
+    else Fulfillment = paid online order
+      OrderSvc -> DB: set Transaction.transaction_type = ONLINE_ORDER
+      DB --> OrderSvc: pending payment
+    end
+    OrderSvc -> DB: clear ordered items from cart
+    DB --> OrderSvc: cart cleared
+    OrderSvc --> API: 201 Created + list of orders (one per vendor)
+    API --> UI: order(s) created
+    UI --> Customer: show order confirmation / reservation reference
+  end
+end
+
+' ================= Customer: Verify Payment =================
+Customer -> UI: trigger payment verification
+UI -> API: POST /api/orders/{id}/verify-payment/
+API -> OrderSvc: verify_payment(order, reference)
+OrderSvc -> PG: query / verify payment (provider-specific)
+PG --> OrderSvc: payment outcome
+alt Payment successful
+  OrderSvc -> DB: create/update Payment (status VERIFIED, provider_reference)
+  OrderSvc -> DB: advance Order.status PENDING_PAYMENT -> CONFIRMED
+  DB --> OrderSvc: updated records
+  OrderSvc --> API: payment verified + order confirmed
+  API --> UI: 200 + confirmed order
+  UI --> Customer: show payment confirmation
+else Payment failed
+  OrderSvc -> DB: record Payment (status FAILED)
+  OrderSvc -> DB: leave Order.status = PENDING_PAYMENT (not fulfilable)
+  DB --> OrderSvc: updated records
+  OrderSvc --> API: payment failed
+  API --> UI: not paid
+  UI --> Customer: show retry / status message
+end
+
+' ================= Customer: Book Delivery =================
+Customer -> UI: request delivery booking
+UI -> API: POST /api/orders/{id}/book-delivery/
+API -> OrderSvc: book_delivery(order)  (delivery orders only)
+alt Delivery booking succeeds
+  OrderSvc -> DP: request quote / booking
+  DP --> OrderSvc: booking reference + tracking + status
+  OrderSvc -> DB: create DeliveryBooking (status BOOKED) linked to Transaction
+  OrderSvc --> API: delivery booked
+  API --> UI: 200 + delivery details
+  UI --> Customer: show confirmation & tracking
+else Delivery booking fails
+  OrderSvc -> DB: create DeliveryBooking (status FAILED)
+  OrderSvc --> API: delivery needs attention
+  API --> UI: paid order; delivery needs retry
+  UI --> Customer: show delivery issue (do not re-charge)
+end
+
+' ================= Vendor: Sign in =================
+Vendor -> UI: login (username, password)
+UI -> API: POST /api/auth/login/ (credentials)
+API -> DB: authenticate + read catalog.Vendor via user
+DB --> API: vendor storefront (or none)
+API --> UI: user data + is_vendor=true + vendor id
+UI --> Vendor: redirect to vendor POS dashboard
+
+' ================= Vendor: POS Flow (pickup orders) =================
+Vendor -> UI: view orders awaiting handling
+UI -> API: GET /api/pos/orders/
+API -> PosSvc: list own CONFIRMED orders (prefetch items)
+PosSvc -> DB: read orders WHERE vendor = me AND status = CONFIRMED
+DB --> PosSvc: orders (paid-online AND pickup reservations)
+PosSvc --> API: 200 + order list
+API --> UI: order list
+UI --> Vendor: show orders (status badges)
+
+Vendor -> UI: select order + click "Prepare"
+UI -> API: POST /api/pos/orders/{id}/prepare/
+API -> PosSvc: mark order PREPARING + create/update VendorTx
+PosSvc -> DB: update Order.status = PREPARING
+DB --> PosSvc: updated
+PosSvc --> API: 200 + VendorTransaction
+API --> UI: updated
+UI --> Vendor: show PREPARING badge
+
+Vendor -> UI: click "Ready for Pickup"
+UI -> API: POST /api/pos/orders/{id}/ready/
+API -> PosSvc: mark order READY_FOR_PICKUP
+PosSvc -> DB: update Order.status = READY_FOR_PICKUP
+DB --> PosSvc: updated
+PosSvc --> API: 200 + VendorTransaction
+API --> UI: updated
+UI --> Vendor: show READY_FOR_PICKUP badge
+
+Vendor -> UI: record cash payment (cash tendered)
+UI -> API: POST /api/pos/orders/{id}/cash-payment/ {cash_tendered}
+API -> PosSvc: validate cash_tendered >= order.total_amount
+alt Cash sufficient
+  PosSvc -> DB: create Payment (provider CASH, status VERIFIED, amount = total)
+  PosSvc -> DB: set VendorTx.receipt_serial = RC-{reference_no}-{receipt_attempt}
+  PosSvc -> DB: set VendorTx.receipt_attempt = 1 (or +1 on reprint)
+  Note over PosSvc: Order.status is NOT changed - cash is a payment event, not a lifecycle step
+  PosSvc --> API: change = cash_tendered - total_amount
+  API --> UI: 200 + change due + receipt serial
+  UI --> Vendor: show change + BIR-style receipt preview
+else Cash insufficient
+  API --> UI: HTTP 400 amount less than total
+  UI --> Vendor: show error
+end
+
+Vendor -> UI: click "Confirm Pickup"
+UI -> API: POST /api/pos/orders/{id}/confirm-pickup/
+API -> PosSvc: validate order.status in CONFIRMED | PREPARING | READY_FOR_PICKUP
+alt Valid status
+  PosSvc -> DB: advance Order.status -> COMPLETED
+  PosSvc -> DB: create/update VendorTx (status COMPLETED)
+  DB --> PosSvc: completed
+  PosSvc --> API: 200 + order + VendorTransaction
+  API --> UI: order completed
+  UI --> Vendor: show order completed + receipt
+else Invalid status
+  API --> UI: HTTP 400 invalid status transition
+  UI --> Vendor: show error
+end
+
+' ================= Vendor: Delivery order progress =================
+Vendor -> UI: click "Out for Delivery" (DELIVERY orders only)
+UI -> API: POST /api/pos/orders/{id}/out-for-delivery/
+API -> PosSvc: validate fulfillment = DELIVERY and status in CONFIRMED | PREPARING
+PosSvc -> DB: update Order.status = OUT_FOR_DELIVERY
+PosSvc -> DB: update DeliveryBooking.status = IN_TRANSIT
+DB --> PosSvc: updated
+PosSvc --> API: 200 + order
+API --> UI: updated
+UI --> Vendor: show OUT_FOR_DELIVERY badge
+
+Vendor -> UI: click "Delivered" (DELIVERY orders only)
+UI -> API: POST /api/pos/orders/{id}/delivered/
+API -> PosSvc: validate status = OUT_FOR_DELIVERY
+PosSvc -> DB: advance Order.status -> COMPLETED
+PosSvc -> DB: update DeliveryBooking.status = DELIVERED, delivered_at = NOW()
+DB --> PosSvc: completed
+PosSvc --> API: 200 + order
+API --> UI: order completed
+UI --> Vendor: show order completed
+
+note over PosSvc, DB
+  Vendor POS flows are vendor-scoped: a vendor can only act on
+  orders they fulfill (catalog.Vendor). Every guard reads
+  Order.status - the single lifecycle authority.
+  receipt_serial lives on vendors.VendorTransaction, not on Payment,
+  and is stable across reprints because receipt_attempt is stored.
+end note
+
+note over Customer, PG
+  Verify payment server-side. A redirect alone is not proof of payment.
+  Payment is idempotent through unique (provider, provider_reference),
+  and order creation is idempotent through the Idempotency-Key header,
+  so a double-submitted checkout cannot double-charge.
+end note
+
+@enduml

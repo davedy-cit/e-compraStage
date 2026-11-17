@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Vendor Product Management</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-vendor">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Vendor console</small></span></a>
+    <nav class="nav">
+      <a href="vendor-dashboard.html">Dashboard</a>
+      <a href="vendor-products.html" class="on">Products</a>
+      <a href="vendor-orders.html">Orders</a>
+      <a href="vendor-pos.html">POS</a>
+    </nav>
+    <span class="who">Pedro Reyes · Pedro's Fresh Catch</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Vendor console</div>
+      <h1>My products</h1>
+      <p>Six listings. Price and availability are yours to set; <strong>stock is not</strong> — it is the sum of the
+         inventory ledger, so it changes only when you record a movement.</p>
+    </div>
+
+    <div class="row-between">
+      <div class="chips">
+        <a class="chip on" href="vendor-products.html">All (6)</a>
+        <a class="chip" href="vendor-products.html">In stock (4)</a>
+        <a class="chip" href="vendor-products.html">Low stock (2)</a>
+        <a class="chip" href="vendor-products.html">Unavailable (0)</a>
+      </div>
+      <div class="row-wrap">
+        <button class="btn" type="button">📥 Record stock received</button>
+        <button class="btn btn-primary" type="button">＋ Add product</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <div class="card-head">
+        <h3>Listings</h3>
+        <span class="small muted">Pedro's Fresh Catch · Stall A-12</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th><th>Comparison group</th>
+              <th class="num">Price</th><th class="num">On hand</th><th class="num">Threshold</th>
+              <th>Availability</th><th class="num">Sold (mo.)</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td><strong>🐟 Bangus (Milkfish)</strong><div class="tiny muted">Fish · fresh</div></td>
+              <td class="tiny mono">BANGUS</td>
+              <td class="num"><strong>₱180.00</strong> <span class="unit tiny">/ kg</span></td>
+              <td class="num">12 kg</td>
+              <td class="num">5 kg</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>IN_STOCK</span></td>
+              <td class="num">42 kg</td>
+              <td>
+                <div class="row-wrap">
+                  <button class="btn btn-sm" type="button">Edit</button>
+                  <button class="btn btn-sm" type="button">Restock</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>🐟 Galunggong (Round Scad)</strong><div class="tiny muted">Fish · fresh</div></td>
+              <td class="tiny mono">GALUNGGONG</td>
+              <td class="num"><strong>₱160.00</strong> <span class="unit tiny">/ kg</span></td>
+              <td class="num">17 kg</td>
+              <td class="num">5 kg</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>IN_STOCK</span></td>
+              <td class="num">28 kg</td>
+              <td>
+                <div class="row-wrap">
+                  <button class="btn btn-sm" type="button">Edit</button>
+                  <button class="btn btn-sm" type="button">Restock</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>🐟 Tilapia</strong><div class="tiny muted">Fish · fresh</div></td>
+              <td class="tiny mono">TILAPIA</td>
+              <td class="num"><strong>₱140.00</strong> <span class="unit tiny">/ kg</span></td>
+              <td class="num">25 kg</td>
+              <td class="num">5 kg</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>IN_STOCK</span></td>
+              <td class="num">22 kg</td>
+              <td>
+                <div class="row-wrap">
+                  <button class="btn btn-sm" type="button">Edit</button>
+                  <button class="btn btn-sm" type="button">Restock</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>🐟 Tulingan (Bullet Tuna)</strong><div class="tiny muted">Fish · fresh</div></td>
+              <td class="tiny mono">TULINGAN</td>
+              <td class="num"><strong>₱190.00</strong> <span class="unit tiny">/ kg</span></td>
+              <td class="num">14 kg</td>
+              <td class="num">4 kg</td>
+              <td><span class="badge badge-ok"><i class="dot"></i>IN_STOCK</span></td>
+              <td class="num">15 kg</td>
+              <td>
+                <div class="row-wrap">
+                  <button class="btn btn-sm" type="button">Edit</button>
+                  <button class="btn btn-sm" type="button">Restock</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr style="background:var(--warn-bg)">
+              <td><strong>🦐 Hipon (Shrimp)</strong><div class="tiny muted">Seafood · fresh</div></td>
+              <td class="tiny mono">HIPON</td>
+              <td class="num"><strong>₱380.00</strong> <span class="unit tiny">/ kg</span></td>
+              <td class="num"><strong>6 kg</strong></td>
+              <td class="num">5 kg</td>
+              <td><span class="badge badge-warn"><i class="dot"></i>LOW_STOCK</span></td>
+              <td class="num">6 kg</td>
+              <td>
+                <div class="row-wrap">
+                  <button class="btn btn-sm" type="button">Edit</button>
+                  <button class="btn btn-sm btn-accent" type="button">Restock</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr style="background:var(--warn-bg)">
+              <td><strong>🐟 Dried Fish (Tuyo)</strong><div class="tiny muted">Fish · dried</div></td>
+              <td class="tiny mono">TUYO</td>
+              <td class="num"><strong>₱420.00</strong> <span class="unit tiny">/ kg</span></td>
+              <td class="num"><strong>5 kg</strong></td>
+              <td class="num">3 kg</td>
+              <td><span class="badge badge-warn"><i class="dot"></i>LOW_STOCK</span></td>
+              <td class="num">2 kg</td>
+              <td>
+                <div class="row-wrap">
+                  <button class="btn btn-sm" type="button">Edit</button>
+                  <button class="btn btn-sm btn-accent" type="button">Restock</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        <strong>LOW_STOCK</strong> is derived, not typed: on hand (6 kg) is at or below the threshold you set (5 kg).
+        Buyers still see the product — it just carries a warning badge.
+      </div>
+    </section>
+
+    <div class="grid-side" style="grid-template-columns:1fr 340px">
+
+      <!-- Ledger -->
+      <section class="card">
+        <div class="card-head">
+          <h3>Inventory ledger — Bangus</h3>
+          <span class="small muted">every movement, newest last</span>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>When</th><th>Reason</th><th>Order</th><th class="num">Δ</th><th class="num">Running</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="small">09 Nov, 6:00 AM</td>
+                <td><span class="badge badge-ok">RECEIVED</span></td>
+                <td class="tiny muted">— opening balance</td>
+                <td class="num" style="color:var(--ok)">+15</td>
+                <td class="num">15</td>
+              </tr>
+              <tr>
+                <td class="small">10 Nov, 9:14 AM</td>
+                <td><span class="badge badge-info">SOLD_ONLINE</span></td>
+                <td class="tiny mono">ECO-20261110-0001</td>
+                <td class="num" style="color:var(--danger)">−2</td>
+                <td class="num">13</td>
+              </tr>
+              <tr>
+                <td class="small">11 Nov, 2:30 PM</td>
+                <td><span class="badge">SOLD_WALKIN</span></td>
+                <td class="tiny mono">ECO-20261111-0003</td>
+                <td class="num" style="color:var(--danger)">−1</td>
+                <td class="num"><strong>12</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-foot">
+          <div class="row-between">
+            <span class="small muted">Ledger balance</span>
+            <span class="price">12 kg</span>
+          </div>
+          <div class="row-between mt8">
+            <span class="small muted">Cached on <span class="mono">Product.stock_quantity</span></span>
+            <span class="badge badge-ok"><i class="dot"></i>12 kg — matches</span>
+          </div>
+        </div>
+        <div class="note mt12 tiny">
+          <strong>Why both.</strong> The ledger is the source of truth and the audit trail. The cached column exists
+          only so product listings do not have to <span class="mono">SUM()</span> the ledger on every page view — a
+          database trigger keeps the two in step.
+        </div>
+      </section>
+
+      <!-- Sidebar: edit + restock -->
+      <aside class="stack">
+
+        <div class="card">
+          <div class="card-head"><h3>Edit listing — Bangus</h3></div>
+          <div class="field">
+            <span>Product name</span>
+            <input class="input" type="text" value="Bangus (Milkfish)" aria-label="Product name">
+          </div>
+          <div class="field">
+            <span>Price per kg (₱)</span>
+            <input class="input" type="text" value="180.00" aria-label="Price">
+          </div>
+          <div class="field">
+            <span>Unit of measure</span>
+            <select class="input" aria-label="Unit">
+              <option>kg — kilogram</option>
+              <option>pc — piece</option>
+              <option>bundle</option>
+            </select>
+          </div>
+          <div class="field">
+            <span>Comparison group</span>
+            <select class="input" aria-label="Comparison group">
+              <option>BANGUS — Bangus (Milkfish)</option>
+            </select>
+          </div>
+          <div class="field">
+            <span>Low-stock threshold</span>
+            <input class="input" type="text" value="5" aria-label="Threshold">
+          </div>
+          <div class="field mb0">
+            <span>Availability</span>
+            <select class="input" aria-label="Availability">
+              <option>Auto (from stock)</option>
+              <option>UNAVAILABLE — hide from buyers</option>
+            </select>
+          </div>
+          <div class="card-foot row-wrap">
+            <button class="btn btn-primary" type="button">Save changes</button>
+            <button class="btn" type="button">Cancel</button>
+          </div>
+          <div class="note note-warn mt12 tiny mb0">
+            There is no stock field on this form — that is deliberate. Stock moves through the ledger only.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Record stock received</h3></div>
+          <div class="field">
+            <span>Product</span>
+            <select class="input" aria-label="Product">
+              <option>🦐 Hipon (Shrimp)</option>
+            </select>
+          </div>
+          <div class="field">
+            <span>Quantity received</span>
+            <input class="input" type="text" value="10" aria-label="Quantity">
+          </div>
+          <div class="field">
+            <span>Reason</span>
+            <select class="input" aria-label="Reason">
+              <option>RECEIVED — delivery from supplier</option>
+              <option>ADJUSTMENT — correction</option>
+              <option>RETURNED — customer return</option>
+              <option>SPOILAGE — damaged or spoiled</option>
+            </select>
+          </div>
+          <div class="field mb0">
+            <span>Note</span>
+            <input class="input" type="text" placeholder="e.g. Morning catch, 10 kg" aria-label="Note">
+          </div>
+          <div class="card-foot">
+            <button class="btn btn-primary btn-block" type="button">Post movement · +10 kg</button>
+          </div>
+          <div class="tiny muted mt8">
+            Posting writes one <span class="mono">InventoryMovement</span> row and the trigger updates the cached
+            balance. Hipon would go from 6 kg to 16 kg and its badge back to <span class="mono">IN_STOCK</span>.
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

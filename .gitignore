@@ -1,0 +1,46 @@
+# ---- Python / Django ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Node / Vue ----
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini
+
+# ---- Tooling (large, re-downloadable) ----
+tools/
+*.jar
+
+# ---- Backups / dumps (never commit data) ----
+backups/
+*.sql.gz
+*.dump
+
+# ---- Logs ----
+*.log
+logs/

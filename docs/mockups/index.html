@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — UI Mockups</title>
+<link rel="stylesheet" href="assets/mockup.css">
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--brand-dark), var(--brand) 55%, #17886a);
+    color: #fff; padding: 40px 0 44px; margin-bottom: 26px;
+  }
+  .hero h1 { font-size: 2.1rem; letter-spacing: -.03em; margin: 0 0 8px; }
+  .hero p { margin: 0; opacity: .92; max-width: 68ch; }
+  .hero .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .hero .tags span {
+    background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28);
+    padding: 4px 11px; border-radius: 999px; font-size: .76rem;
+  }
+  .gal { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); }
+  .gal a.item {
+    display: flex; flex-direction: column; background: var(--card);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow); color: inherit; transition: .15s;
+  }
+  .gal a.item:hover {
+    text-decoration: none; transform: translateY(-2px);
+    box-shadow: var(--shadow-lg); border-color: var(--brand-line);
+  }
+  .gal .shot {
+    height: 116px; display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; background: var(--brand-light); border-bottom: 1px solid var(--line);
+  }
+  .gal .shot.v { background: #e4eef3; }
+  .gal .shot.a { background: #ebe7f5; }
+  .gal .meta { padding: 12px 13px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .gal .n { font-size: .7rem; font-weight: 700; color: var(--muted); letter-spacing: .06em; }
+  .gal .t { font-weight: 680; font-size: .98rem; letter-spacing: -.01em; }
+  .gal .d { font-size: .8rem; color: var(--muted); flex: 1; }
+  .gal .f { font-family: var(--mono); font-size: .72rem; color: var(--brand-dark); }
+  .gal .k {
+    font-size: .73rem; background: var(--accent-light); color: var(--accent-dark);
+    border-radius: 6px; padding: 5px 8px; margin-top: 4px;
+  }
+  .rolebar {
+    display: flex; align-items: center; gap: 12px; margin: 30px 0 14px;
+    padding-bottom: 9px; border-bottom: 2px solid var(--line);
+  }
+  .rolebar h2 { margin: 0; font-size: 1.06rem; letter-spacing: -.01em; }
+  .rolebar .pill {
+    font-size: .72rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 999px; background: var(--brand-light); color: var(--brand-dark);
+  }
+  .rolebar .pill.v { background: #e4eef3; color: #123f52; }
+  .rolebar .pill.a { background: #ebe7f5; color: #33285c; }
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <span class="who">16 mockup screens</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>E-Compra — user interface mockups</h1>
+    <p>Static HTML wireframes for the Mandaue Public Market online marketplace, ordering and reservation system.
+       Sixteen screens covering three roles: the customer buying, the vendor selling, and the market administrator
+       keeping the records straight.</p>
+    <div class="tags">
+      <span>No JavaScript</span>
+      <span>No external assets</span>
+      <span>Hand-written HTML + one shared stylesheet</span>
+      <span>Desktop and mobile layouts</span>
+    </div>
+  </div>
+</section>
+
+<main class="page">
+  <div class="wrap">
+
+    <!-- ============ CUSTOMER ============ -->
+    <div class="rolebar">
+      <h2>Customer</h2>
+      <span class="pill">11 screens</span>
+      <span class="spacer"></span>
+      <span class="small muted">Buyer browsing, ordering, paying and collecting</span>
+    </div>
+
+    <div class="gal">
+
+      <a class="item" href="home.html">
+        <div class="shot">🏠</div>
+        <div class="meta">
+          <span class="n">01 · CUSTOMER</span>
+          <span class="t">Home &amp; Marketplace</span>
+          <span class="d">Landing page with search, category chips, featured products and vendors.</span>
+          <span class="k">Product discovery across 9 market categories</span>
+          <span class="f">home.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="search-results.html">
+        <div class="shot">🔍</div>
+        <div class="meta">
+          <span class="n">02 · CUSTOMER</span>
+          <span class="t">Search &amp; Filter Results</span>
+          <span class="d">One search term returns the same product from several vendors, cheapest flagged.</span>
+          <span class="k">Multi-vendor results with a best-value marker</span>
+          <span class="f">search-results.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="product-detail.html">
+        <div class="shot">🍅</div>
+        <div class="meta">
+          <span class="n">03 · CUSTOMER</span>
+          <span class="t">Product Detail</span>
+          <span class="d">Gallery, buy box, quantity picker, reserve-for-pickup, vendor card and product facts.</span>
+          <span class="k">Add to cart or reserve, from one page</span>
+          <span class="f">product-detail.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="price-comparison.html">
+        <div class="shot">⚖️</div>
+        <div class="meta">
+          <span class="n">04 · CUSTOMER</span>
+          <span class="t">Price Comparison</span>
+          <span class="d">Vendors ranked by normalised unit price, with peso deltas against the cheapest.</span>
+          <span class="k">Comparison groups normalise kg, pc and bundle to one base unit</span>
+          <span class="f">price-comparison.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="cart-checkout.html">
+        <div class="shot">🛒</div>
+        <div class="meta">
+          <span class="n">05 · CUSTOMER</span>
+          <span class="t">Cart &amp; Checkout</span>
+          <span class="d">A cart spanning four vendors, each group choosing its own fulfillment method.</span>
+          <span class="k">One cart splits into one order per vendor, atomically</span>
+          <span class="f">cart-checkout.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="pickup-reservation.html">
+        <div class="shot">🏪</div>
+        <div class="meta">
+          <span class="n">06 · CUSTOMER</span>
+          <span class="t">Pickup Reservation</span>
+          <span class="d">Half down payment online, the balance in cash at the stall, with a hold window.</span>
+          <span class="k">Partial payment and a reservation hold that can expire</span>
+          <span class="f">pickup-reservation.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="order-payment.html">
+        <div class="shot">💳</div>
+        <div class="meta">
+          <span class="n">07 · CUSTOMER</span>
+          <span class="t">Payment (Sandbox)</span>
+          <span class="d">E-wallet checkout in test mode, plus the unhappy path when a payment fails.</span>
+          <span class="k">Idempotency keys stop a retry from charging twice</span>
+          <span class="f">order-payment.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="order-tracking.html">
+        <div class="shot">📍</div>
+        <div class="meta">
+          <span class="n">08 · CUSTOMER</span>
+          <span class="t">Order Tracking</span>
+          <span class="d">Delivery and pickup orders tracked side by side, each on its own status path.</span>
+          <span class="k">Order, payment and delivery status each own a different concern</span>
+          <span class="f">order-tracking.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="delivery-booking.html">
+        <div class="shot">🛵</div>
+        <div class="meta">
+          <span class="n">09 · CUSTOMER</span>
+          <span class="t">Delivery Booking</span>
+          <span class="d">Courier booking with route, fee, tracking link and courier-side progress.</span>
+          <span class="k">Courier status is tracked separately from order status</span>
+          <span class="f">delivery-booking.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="market-map.html">
+        <div class="shot">🗺️</div>
+        <div class="meta">
+          <span class="n">10 · CUSTOMER</span>
+          <span class="t">Interactive Market Map</span>
+          <span class="d">Five sections, ten stalls, registered vendors pinned by stall number.</span>
+          <span class="k">Stall-level location without a mapping library</span>
+          <span class="f">market-map.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="favorites-history.html">
+        <div class="shot">♡</div>
+        <div class="meta">
+          <span class="n">11 · CUSTOMER</span>
+          <span class="t">Favorites &amp; History</span>
+          <span class="d">Saved products and vendors, order history, reservation history and reorder.</span>
+          <span class="k">Favorites are unique per user and product</span>
+          <span class="f">favorites-history.html</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ============ VENDOR ============ -->
+    <div class="rolebar">
+      <h2>Vendor</h2>
+      <span class="pill v">4 screens</span>
+      <span class="spacer"></span>
+      <span class="small muted">Stallholder selling online and at the counter</span>
+    </div>
+
+    <div class="gal">
+
+      <a class="item" href="vendor-dashboard.html">
+        <div class="shot v">📊</div>
+        <div class="meta">
+          <span class="n">12 · VENDOR</span>
+          <span class="t">Sales Dashboard</span>
+          <span class="d">Daily, weekly and monthly sales, best sellers, channel mix and low-stock alerts.</span>
+          <span class="k">Aggregate reporting over the order and ledger tables</span>
+          <span class="f">vendor-dashboard.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="vendor-products.html">
+        <div class="shot v">📦</div>
+        <div class="meta">
+          <span class="n">13 · VENDOR</span>
+          <span class="t">Products &amp; Inventory</span>
+          <span class="d">Listings with price and availability, plus the inventory ledger behind each balance.</span>
+          <span class="k">Stock is derived from an append-only movement ledger</span>
+          <span class="f">vendor-products.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="vendor-orders.html">
+        <div class="shot v">🧾</div>
+        <div class="meta">
+          <span class="n">14 · VENDOR</span>
+          <span class="t">Order Queue</span>
+          <span class="d">Every order for the stall, each showing only the transitions legal from its state.</span>
+          <span class="k">Status transitions are guarded, not free-form</span>
+          <span class="f">vendor-orders.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="vendor-pos.html">
+        <div class="shot v">💵</div>
+        <div class="meta">
+          <span class="n">15 · VENDOR</span>
+          <span class="t">POS Terminal &amp; Receipt</span>
+          <span class="d">Counter sale with cash tender, change calculation and a 72 mm printed receipt.</span>
+          <span class="k">Receipt serials are unique per attempt; cash is a payment event</span>
+          <span class="f">vendor-pos.html</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ============ ADMIN ============ -->
+    <div class="rolebar">
+      <h2>Market Administrator</h2>
+      <span class="pill a">1 screen</span>
+      <span class="spacer"></span>
+      <span class="small muted">Oversight of vendor records and recorded sales</span>
+    </div>
+
+    <div class="gal">
+
+      <a class="item" href="admin-transactions.html">
+        <div class="shot a">🛡️</div>
+        <div class="meta">
+          <span class="n">16 · ADMIN</span>
+          <span class="t">Vendors &amp; Transactions</span>
+          <span class="d">Vendor registry, recorded transactions, a status-correction panel and lookup tables.</span>
+          <span class="k">Corrections are additive and audited, never destructive</span>
+          <span class="f">admin-transactions.html</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ============ NOTES ============ -->
+    <section class="card mt16">
+      <div class="card-head"><h3>About these mockups</h3></div>
+      <div class="grid grid-2">
+        <div>
+          <p class="small muted"><strong>What they are.</strong> Static HTML pages that show layout, content and
+             interaction intent. They are the design reference the Django templates and Vue components will be built
+             against — not the application itself.</p>
+          <p class="small muted"><strong>What they are not.</strong> Nothing here is wired to a database. Buttons do
+             not submit, forms do not post, and every figure is sample data that matches the seed script so the
+             screens tell one coherent story.</p>
+        </div>
+        <div>
+          <p class="small muted"><strong>No JavaScript, deliberately.</strong> Every page is HTML plus a single shared
+             stylesheet. That keeps the wireframes readable as documents and makes them render identically wherever
+             they are opened — including in a screenshot tool with scripting disabled.</p>
+          <p class="small muted"><strong>One stylesheet.</strong> All sixteen screens link
+             <span class="mono">assets/mockup.css</span>, so a change to a colour token or component updates the whole
+             set at once.</p>
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="row-wrap">
+          <a class="btn btn-primary" href="home.html">Start with the customer flow →</a>
+          <a class="btn" href="vendor-dashboard.html">Jump to the vendor console</a>
+          <a class="btn" href="admin-transactions.html">Jump to admin</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockups, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+@startuml
+' ============================================================================
+'  E-Compra — Class Diagram (domain model)
+'  Revision 2 · 2026-11-12
+'  Mirrors er-diagram.puml rev 2 exactly. Applies every ruling in
+'  docs/DESIGN_DECISIONS.md (see docs/DESIGN_REVIEW.md for the findings).
+'  Revision 1 is preserved in ./archive-v1-original/.
+' ============================================================================
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F7FAFC
+  BorderColor #36546C
+  ArrowColor #526B7A
+}
+' SCOPE: this diagram models the DOMAIN layer only - the Django models.
+' Django models are thin data holders; business logic lives in
+' apps/orders/services.py and the APIView classes (apps/*/views.py),
+' which are modelled in sequence-diagram.puml, not here.
+
+class "User (Django built-in)" as User {
+  +id: int
+  +username: str
+  +email: str
+  -password_hash: managed by Django
+}
+
+class UserProfile {
+  +user: User (FK, PK)
+  +is_vendor: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class CustomerProfile {
+  +user: User (FK, PK)
+  +phone: str
+  +address: text
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class "Market Vendor (catalog.Vendor)" as CatalogVendor {
+  +id: int
+  +name: str
+  +stall_location: str
+  +market_section: str
+  +contact_phone: str
+  +contact_email: str
+  +is_active: bool
+  +user: User (FK, UK)          ' NOT NULL
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class "POS Vendor (vendors.Vendor)" as PosVendor {
+  +catalog_vendor: CatalogVendor (FK, PK)
+  +stall_name: str
+  +stall_location: str
+}
+
+class Category {
+  +id: int
+  +name: str
+  +slug: str (UK)
+  +is_active: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class UnitOfMeasure {
+  +code: str (PK)
+  +name: str
+  +description: str
+  +is_active: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class ComparisonGroup {
+  +code: str (PK)
+  +name: str
+  +base_unit: UnitOfMeasure (FK)
+  +description: str
+  +is_active: bool
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class ComparisonGroupUnit {
+  +id: int
+  +comparison_group: ComparisonGroup (FK)
+  +unit: UnitOfMeasure (FK)
+  +factor_to_base: Decimal
+}
+
+class AvailabilityStatus {
+  +code: str (PK)
+  +description: str
+  +sort_order: int
+  +is_orderable: bool
+}
+
+class Product {
+  +id: int
+  +name: str
+  +description: text
+  +image_url: url
+  +price: Decimal
+  +unit: UnitOfMeasure (FK)
+  +stall_location: str
+  +availability: AvailabilityStatus (FK)
+  +stock_quantity: int
+  +low_stock_threshold: int
+  +category: Category (FK)
+  +vendor: CatalogVendor (FK)
+  +comparison_group: ComparisonGroup (FK, null)
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class InventoryReason {
+  +code: str (PK)
+  +description: str
+  +direction: str
+}
+
+class InventoryMovement {
+  +id: int
+  +product: Product (FK)
+  +delta: int
+  +reason: InventoryReason (FK)
+  +order: Order (FK, null)
+  +note: str
+  +created_at: datetime
+}
+
+class Cart {
+  +user: User (FK, PK)
+  +created_at: datetime
+}
+
+class CartItem {
+  +id: int
+  +quantity: int
+  +cart: Cart (FK)
+  +product: Product (FK)
+  +created_at: datetime
+  ' unique_together (cart, product)
+}
+
+class TransactionType {
+  +code: str (PK)
+  +description: str
+}
+
+class TransactionStatus {
+  +code: str (PK)
+  +description: str
+  +sort_order: int
+}
+
+class FulfillmentMethod {
+  +code: str (PK)
+  +description: str
+}
+
+class PaymentStatus {
+  +code: str (PK)
+  +description: str
+  +is_terminal: bool
+}
+
+class DeliveryStatus {
+  +code: str (PK)
+  +description: str
+  +is_terminal: bool
+}
+
+class Order {
+  +id: int
+  +user: User (FK, null)
+  +customer_label: str (null)
+  +vendor: CatalogVendor (FK)
+  +status: TransactionStatus (FK)
+  +fulfillment_type: FulfillmentMethod (FK)
+  +total_amount: Decimal
+  +notes: text
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class OrderItem {
+  +id: int
+  +order: Order (FK)
+  +product: Product (FK)
+  +quantity: int
+  +unit_price: Decimal
+  +created_at: datetime
+}
+
+class Transaction {
+  +id: int
+  +order: Order (FK, 1:1)
+  +transaction_type: TransactionType (FK)
+  +reference_no: str (UK)
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class Payment {
+  +id: int
+  +transaction: Transaction (FK)
+  +provider: str
+  +provider_reference: str
+  +amount: Decimal
+  +status: PaymentStatus (FK)
+  +raw_response: json
+  +paid_at: datetime
+  +created_at: datetime
+}
+
+class DeliveryBooking {
+  +id: int
+  +transaction: Transaction (FK, 1:1)
+  +provider: str
+  +booking_reference: str
+  +tracking_url: url
+  +fee: Decimal
+  +status: DeliveryStatus (FK)
+  +raw_response: json
+  +booked_at: datetime
+  +delivered_at: datetime
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class "VendorTx (vendors.VendorTransaction)" as VendorTx {
+  +id: int
+  +vendor: PosVendor (FK)
+  +order: Order (FK, 1:1)
+  +status: TransactionStatus (FK)
+  +receipt_serial: str (null, blank)
+  +receipt_attempt: int
+  +created_at: datetime
+}
+
+class FavoriteProduct {
+  +id: int
+  +user: User (FK)
+  +product: Product (FK)
+  +created_at: datetime
+  ' unique_together (user, product)
+}
+
+class FavoriteVendor {
+  +id: int
+  +user: User (FK)
+  +vendor: CatalogVendor (FK)
+  +created_at: datetime
+  ' unique_together (user, vendor)
+}
+
+User "1" -- "0..1" UserProfile : extends
+User "1" -- "0..1" CustomerProfile : extends
+User "1" -- "0..1" CatalogVendor : owns storefront
+User "1" -- "0..1" Cart : owns active cart
+
+Cart "1" *-- "0..*" CartItem : contains
+Product "1" -- "0..*" CartItem : referenced in
+
+CatalogVendor "1" -- "0..1" PosVendor : POS extension
+CatalogVendor "1" -- "0..*" Product : sells
+Category "1" -- "0..*" Product : classifies
+AvailabilityStatus "1" -- "0..*" Product : availability of
+UnitOfMeasure "1" -- "0..*" Product : priced per
+UnitOfMeasure "1" -- "0..*" ComparisonGroup : base unit of
+ComparisonGroup "1" -- "0..*" ComparisonGroupUnit : allows
+UnitOfMeasure "1" -- "0..*" ComparisonGroupUnit : unit
+ComparisonGroup "1" -- "0..*" Product : groups
+
+Product "1" -- "0..*" InventoryMovement : stock changes
+InventoryReason "1" -- "0..*" InventoryMovement : reason
+Order "1" -- "0..*" InventoryMovement : caused by
+
+User "1" -- "0..*" Order : places
+CatalogVendor "1" -- "0..*" Order : fulfills
+
+Order "1" *-- "1..*" OrderItem : contains
+Product "1" -- "0..*" OrderItem : purchased item
+Order "1" -- "0..1" Transaction : linked transaction
+Order "1" -- "0..1" VendorTx : vendor POS record
+
+TransactionType "1" -- "0..*" Transaction : classifies
+Transaction "1" -- "0..*" Payment : payment attempts
+Transaction "1" -- "0..1" DeliveryBooking : delivery booking
+Payment "1" -- "1" PaymentStatus : has status
+DeliveryBooking "1" -- "1" DeliveryStatus : has status
+
+User "1" -- "0..*" FavoriteProduct : favorites
+Product "1" -- "0..*" FavoriteProduct : favorited product
+User "1" -- "0..*" FavoriteVendor : favorites
+CatalogVendor "1" -- "0..*" FavoriteVendor : favorited vendor
+
+PosVendor "1" -- "0..*" VendorTx : handles
+
+note right of Payment
+  Store provider references and status only.
+  Never store raw card numbers, CVV,
+  or banking passwords.
+  unique_together (provider, provider_reference)
+  guarantees idempotency - no double charges.
+  CASH is recorded here too, so all money received
+  is answerable from one table.
+end note
+
+note right of Order
+  One order = products from one vendor only (vendor NOT NULL).
+  Multi-vendor checkout creates one Order per vendor.
+  user is NULL only for anonymous WALK_IN sales.
+end note
+
+note bottom of Transaction
+  Transaction is a linked commercial record (reference_no +
+  transaction_type), NOT the order itself.
+  transaction_type (ONLINE_ORDER | PICKUP_RESERVATION | POS_WALKIN)
+  is what makes reservations queryable.
+  No status column: lifecycle lives once on Order.status, settlement
+  lives once on Payment.status.
+end note
+
+note bottom of Product
+  stock_quantity is maintained by the database trigger on
+  InventoryMovement, not by application code - the trigger is the
+  single enforcement point, and the ledger is the audit trail.
+end note
+
+note bottom of CatalogVendor
+  Single source of vendor identity. vendors.Vendor is a 1:1
+  extension of this row, not a second vendor record, so the
+  vendor name and stall location exist in exactly one place.
+end note
+
+@enduml

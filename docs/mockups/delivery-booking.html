@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Delivery Booking</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html" class="on">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 0</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Delivery booking</div>
+      <h1>Order ECO-20261110-0001</h1>
+      <p>One delivery order from Pedro's Fresh Catch, handed to a courier partner. Delivery is
+         <strong>mocked</strong> in this project — the partner is simulated end to end.</p>
+    </div>
+
+    <div class="grid-side" style="grid-template-columns:1fr 330px">
+
+      <div class="stack">
+
+        <!-- Booking record -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="mb0">🛵 Lalamove</h3>
+              <span class="small muted">Booking reference <span class="mono">SBX-LM-77120</span></span>
+            </div>
+            <span class="badge badge-ok">DELIVERED</span>
+          </div>
+
+          <dl class="kv">
+            <dt>Provider</dt><dd class="mono">LALAMOVE</dd>
+            <dt>Booking reference</dt><dd class="mono">SBX-LM-77120</dd>
+            <dt>Delivery fee</dt><dd>₱95.00</dd>
+            <dt>Delivery status</dt><dd><span class="badge badge-ok">DELIVERED</span></dd>
+            <dt>Booked at</dt><dd>10 Nov 2026, 9:20 AM</dd>
+            <dt>Delivered at</dt><dd>10 Nov 2026, 3:40 PM</dd>
+          </dl>
+
+          <hr class="divider">
+
+          <div class="field mb0">
+            <span>Tracking link</span>
+            <div class="row">
+              <input class="input mono" type="text" readonly value="https://sandbox.example/track/SBX-LM-77120" aria-label="Tracking link">
+              <button class="btn no-print" type="button">Copy</button>
+            </div>
+          </div>
+          <div class="note note-warn mt12 tiny">
+            This URL points at a <strong>sandbox host</strong>. No live courier account exists for this project.
+          </div>
+        </section>
+
+        <!-- Route -->
+        <section class="card">
+          <div class="card-head"><h3>Route</h3></div>
+          <div class="grid grid-2">
+            <div class="card card-tight" style="box-shadow:none">
+              <div class="badge badge-brand mb8">Pickup from</div>
+              <div style="font-weight:650">Pedro's Fresh Catch</div>
+              <div class="small muted">Stall A-12 · Section A – Fish</div>
+              <div class="small muted">Mandaue Public Market, Mandaue City, Cebu</div>
+              <div class="small muted mt8">📞 0917-555-0101</div>
+            </div>
+            <div class="card card-tight" style="box-shadow:none">
+              <div class="badge badge-accent mb8">Drop off to</div>
+              <div style="font-weight:650">Maria Santos</div>
+              <div class="small muted">Unit 4B, A.C. Cortes Ave.</div>
+              <div class="small muted">Mandaue City, Cebu</div>
+              <div class="small muted mt8">📞 0917-555-0110</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Courier timeline -->
+        <section class="card">
+          <div class="card-head"><h3>Courier progress</h3><span class="small muted">DeliveryBooking.status</span></div>
+          <ul class="timeline">
+            <li class="done"><span class="node"></span>
+              <div class="t">Booked</div>
+              <div class="d"><span class="mono">BOOKED</span> · 10 Nov 2026, 9:20 AM · provider accepted the booking</div></li>
+            <li class="done"><span class="node"></span>
+              <div class="t">In transit</div>
+              <div class="d"><span class="mono">IN_TRANSIT</span> · 10 Nov 2026, 2:05 PM · rider collected from Stall A-12</div></li>
+            <li class="done"><span class="node"></span>
+              <div class="t">Delivered</div>
+              <div class="d"><span class="mono">DELIVERED</span> · 10 Nov 2026, 3:40 PM · received by Maria Santos</div></li>
+          </ul>
+          <div class="note mt12 tiny">
+            <strong>Why this is separate from the order status.</strong> <span class="mono">DeliveryBooking.status</span>
+            tracks the courier. <span class="mono">Order.status</span> tracks the order. A delivery order reaches
+            <span class="mono">COMPLETED</span> only when the courier reports <span class="mono">DELIVERED</span>.
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="stack">
+
+        <div class="card">
+          <div class="card-head"><h3>Compare partners</h3></div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Partner</th><th class="num">Fee</th><th class="num">ETA</th></tr></thead>
+              <tbody>
+                <tr><td>GrabExpress</td><td class="num">₱110.00</td><td class="num">40 min</td></tr>
+                <tr style="background:var(--brand-light)"><td><strong>Lalamove</strong> <span class="badge badge-brand">Chosen</span></td><td class="num"><strong>₱95.00</strong></td><td class="num">45 min</td></tr>
+                <tr><td>Maxim</td><td class="num">₱85.00</td><td class="num">55 min</td></tr>
+                <tr><td>Local market rider</td><td class="num">₱60.00</td><td class="num">90 min</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tiny muted mt8">Cheapest is not always chosen — ETA and reliability matter for fresh fish.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Order total</h3></div>
+          <dl class="kv">
+            <dt>Bangus 2 kg</dt><dd>₱360.00</dd>
+            <dt>Galunggong 1 kg</dt><dd>₱160.00</dd>
+            <dt>Goods subtotal</dt><dd>₱520.00</dd>
+            <dt>Delivery fee</dt><dd>₱95.00</dd>
+          </dl>
+          <hr class="divider">
+          <div class="row-between">
+            <span style="font-weight:650">Total paid</span>
+            <span class="price price-lg">₱615.00</span>
+          </div>
+          <div class="tiny muted mt8">Payment <span class="mono">SBX-PM-20261110-8F31A2C4</span> · VERIFIED</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Pickup alternative</h3></div>
+          <p class="small muted">The same order could have been collected at Stall A-12 with no delivery fee —
+             saving ₱95.00.</p>
+          <a class="btn btn-block" href="market-map.html">Show stall A-12</a>
+        </div>
+
+        <a class="btn btn-primary btn-block" href="order-tracking.html">Back to order tracking</a>
+
+      </aside>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+@startuml
+' ============================================================================
+'  E-Compra — Use Case Diagram
+'  Revision 2 · 2026-11-12
+'  Applies every ruling in docs/DESIGN_DECISIONS.md (see docs/DESIGN_REVIEW.md
+'  for the findings). Revision 1 is preserved in ./archive-v1-original/.
+' ============================================================================
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F5F9FC
+  BorderColor #36546C
+  ArrowColor #526B7A
+}
+actor Customer
+actor Vendor
+actor "Market Administrator" as Admin
+actor "Payment Gateway" as PayGateway
+actor "Delivery Provider" as DeliveryProvider
+
+rectangle "e-Compra Marketplace" {
+
+  ' ---------- Customer ----------
+  usecase "Register / Sign In" as UC1
+  usecase "Browse, Search, Filter Products" as UC2
+  usecase "View Product Details" as UC3
+  usecase "Compare Equivalent Prices" as UC4
+  usecase "View Interactive Market Map" as UC5
+  usecase "Manage Shopping Cart" as UC6
+  usecase "Choose Pickup or Delivery" as UC7
+  usecase "Validate Cart, Prices, and Availability" as UC8
+  usecase "Submit Pickup Reservation" as UC9
+  usecase "Place Paid Order" as UC10
+  usecase "Initiate and Verify Online Payment" as UC11
+  usecase "Quote / Book Delivery" as UC12
+  usecase "View Order, Payment, and Delivery Status" as UC13
+  usecase "Manage Favorites" as UC14
+  usecase "View Order History / Quick Reorder" as UC15
+
+  ' ---------- Vendor ----------
+  usecase "Vendor Sign In" as UC20
+  usecase "Manage Own Products & Inventory" as UC21
+  usecase "Update Order Status" as UC22
+  usecase "Record Cash Payment" as UC23
+  usecase "Print Receipt" as UC24
+  usecase "Confirm Pickup" as UC25
+  usecase "Mark Out for Delivery / Delivered" as UC26
+  usecase "View Sales Dashboard" as UC27
+
+  ' ---------- Administrator ----------
+  usecase "Oversee Vendors & Products" as UC30
+  usecase "Correct Transaction Status" as UC31
+
+  ' ---------- Relationships ----------
+  UC9  ..> UC8  : <<include>>
+  UC9  ..> UC7  : <<include>>
+  UC10 ..> UC8  : <<include>>
+  UC10 ..> UC7  : <<include>>
+  UC10 ..> UC11 : <<include>>
+  UC3  ..> UC2  : <<include>>
+  UC4  ..> UC3  : <<include>>
+  UC12 ..> UC10 : <<extend>>\n[delivery selected]
+  UC23 ..> UC22 : <<extend>>\n[cash payment records settlement]
+  UC25 ..> UC22 : <<extend>>\n[confirm pickup completes the order]
+  UC26 ..> UC22 : <<extend>>\n[delivery progress]
+  UC21 ..> UC27 : <<extend>>\n[inventory movement feeds the dashboard]
+}
+
+' ---------- Actor associations ----------
+Customer -- UC1
+Customer -- UC2
+Customer -- UC4
+Customer -- UC5
+Customer -- UC6
+Customer -- UC9
+Customer -- UC10
+Customer -- UC13
+Customer -- UC14
+Customer -- UC15
+PayGateway -- UC11
+DeliveryProvider -- UC12
+DeliveryProvider -- UC13
+
+Vendor -- UC20
+Vendor -- UC21
+Vendor -- UC22
+Vendor -- UC23
+Vendor -- UC24
+Vendor -- UC25
+Vendor -- UC26
+Vendor -- UC27
+
+Admin -- UC30
+Admin -- UC31
+
+note bottom of UC11
+  Verify payment server-side; a redirect alone is not proof.
+end note
+
+note bottom of UC12
+  Book delivery only after payment succeeds. Pickup bypasses delivery.
+end note
+
+note bottom of UC30
+  Controlled Django administration for oversight and correction,
+  NOT the vendor's own product management - see UC21.
+end note
+
+note bottom of UC21
+  Vendor self-service: create/update own products, price,
+  availability, stock, and images. Matches the project idea
+  document (key feature 6). Admin retains oversight via UC30.
+end note
+
+note bottom of UC23
+  Cash payment is a PAYMENT EVENT, not a status transition.
+  It records Payment(provider = CASH, status = VERIFIED) and
+  generates the receipt serial RC-{reference_no}-{receipt_attempt}.
+  Order.status is not changed by taking cash.
+end note
+
+note bottom of UC24
+  Print receipt uses browser window.print();
+  BIR-style 72mm layout hidden on screen.
+end note
+
+note bottom of UC25
+  Confirm pickup accepts CONFIRMED, PREPARING or READY_FOR_PICKUP
+  and advances Order.status to COMPLETED. Cash may already have
+  been taken (UC23) or may be taken at the same moment.
+end note
+
+note bottom of UC26
+  Delivery orders only. OUT_FOR_DELIVERY + DeliveryBooking IN_TRANSIT,
+  then COMPLETED + DELIVERED + delivered_at.
+  This is the only path by which a delivery order reaches COMPLETED.
+end note
+
+note bottom of UC22
+  Every transition guard reads Order.status - the single
+  lifecycle authority. Payment.status holds settlement;
+  DeliveryBooking.status holds courier progress.
+end note
+
+@enduml

@@ -1,0 +1,299 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F7FAFC
+  BorderColor #36546C
+  ArrowColor #526B7A
+}
+skinparam entity {
+  BackgroundColor #FFFFFF
+  BorderColor #2E5E8C
+  ArrowColor #526B7A
+}
+
+' ================= Core / Users =================
+entity "User (Django built-in)" as User {
+  *id: int
+  --
+  username: str
+  email: str
+  -password_hash: managed by Django
+}
+
+entity UserProfile {
+  *user: User (FK, PK)
+  --
+  is_vendor: bool
+  created_at: datetime
+  updated_at: datetime
+}
+
+entity CustomerProfile {
+  *user: User (FK, PK)
+  --
+  phone: str
+  address: text
+  created_at: datetime
+  updated_at: datetime
+}
+
+' ================= Catalog =================
+entity "Market Vendor (catalog.Vendor)" as CatalogVendor {
+  *id: int
+  --
+  name: str
+  stall_location: str
+  market_section: str
+  contact_phone: str
+  contact_email: str
+  is_active: bool
+  user: User (FK, UK, null)
+  created_at: datetime
+  updated_at: datetime
+}
+
+entity "POS Vendor (vendors.Vendor)" as PosVendor {
+  *user: User (FK, PK)
+  --
+  stall_name: str
+  stall_location: str
+}
+
+entity Category {
+  *id: int
+  --
+  name: str
+  slug: str (UK)
+}
+
+entity UnitOfMeasure {
+  *code: str (PK)
+  --
+  name: str
+  description: str
+  is_active: bool
+  created_at: datetime
+  updated_at: datetime
+}
+
+entity ComparisonGroup {
+  *code: str (PK)
+  --
+  name: str
+  base_unit: UnitOfMeasure (FK)
+  description: str
+  is_active: bool
+  created_at: datetime
+  updated_at: datetime
+}
+
+entity Product {
+  *id: int
+  --
+  name: str
+  description: text
+  image_url: url
+  price: decimal
+  unit: str             ' CharField (not FK to UnitOfMeasure)
+  stall_location: str
+  availability: str     ' CharField (not an enum/FK)
+  category: Category (FK)
+  vendor: CatalogVendor (FK)
+  comparison_group: ComparisonGroup (FK, null)
+}
+
+' ================= Cart =================
+entity Cart {
+  *user: User (FK, PK)
+  --
+  created_at: datetime
+}
+
+entity CartItem {
+  *id: int
+  --
+  quantity: int
+  cart: Cart (FK)
+  product: Product (FK)
+  unique_together (cart, product)
+}
+
+' ================= Lookups =================
+entity TransactionType {
+  *code: str (PK)
+  --
+  description: str
+}
+
+entity TransactionStatus {
+  *code: str (PK)
+  --
+  description: str
+  sort_order: int
+}
+
+entity FulfillmentMethod {
+  *code: str (PK)
+  --
+  description: str
+}
+
+entity PaymentStatus {
+  *code: str (PK)
+  --
+  description: str
+  is_terminal: bool
+}
+
+entity DeliveryStatus {
+  *code: str (PK)
+  --
+  description: str
+  is_terminal: bool
+}
+
+' ================= Orders / Payments / Delivery =================
+entity Order {
+  *id: int
+  --
+  user: User (FK)
+  vendor: CatalogVendor (FK, null, blank)
+  status: TransactionStatus (FK)
+  fulfillment_type: FulfillmentMethod (FK)
+  total_amount: decimal
+  notes: text
+  created_at: datetime
+}
+
+entity OrderItem {
+  *id: int
+  --
+  order: Order (FK)
+  product: Product (FK)
+  quantity: int
+  unit_price: decimal
+}
+
+entity Transaction {
+  *id: int
+  --
+  order: Order (FK, 1:1)
+  status: TransactionStatus (FK)
+  reference_no: str (UK)
+}
+
+entity Payment {
+  *id: int
+  --
+  transaction: Transaction (FK)
+  provider: str
+  provider_reference: str
+  amount: decimal
+  status: PaymentStatus (FK)
+  raw_response: json
+  paid_at: datetime
+  created_at: datetime
+  unique_together (provider, provider_reference)
+}
+
+entity DeliveryBooking {
+  *id: int
+  --
+  transaction: Transaction (FK, 1:1)
+  provider: str
+  booking_reference: str
+  tracking_url: url
+  fee: decimal
+  status: DeliveryStatus (FK)
+  raw_response: json
+  booked_at: datetime
+  delivered_at: datetime
+  created_at: datetime
+  updated_at: datetime
+}
+
+entity "Vendor POS Transaction (vendors.VendorTransaction)" as VendorTx {
+  *id: int
+  --
+  vendor: PosVendor (FK)
+  order: Order (FK, 1:1)
+  status: TransactionStatus (FK)
+  receipt_serial: str (null, blank)
+}
+
+' ================= Favorites =================
+entity Favorite {
+  *id: int
+  --
+  user: User (FK)
+  product: Product (FK, null, blank)
+  vendor: CatalogVendor (FK, null, blank)
+  created_at: datetime
+  unique_together (user, product)
+  unique_together (user, vendor)
+}
+
+' ================= Relationships =================
+User ||--o| UserProfile : extends
+User ||--o| CustomerProfile : extends
+User |o--o| CatalogVendor : owns profile (nullable)
+User |o--o| PosVendor : owns POS profile
+User ||--o| Cart : owns active cart
+
+Cart ||--|{ CartItem : contains
+CartItem }o--|| Product : references
+
+CatalogVendor ||--o{ Product : sells
+Category ||--o{ Product : classifies
+UnitOfMeasure ||--o{ ComparisonGroup : base unit of
+ComparisonGroup ||--o{ Product : groups
+
+User ||--o{ Order : places
+CatalogVendor ||--o{ Order : fulfills
+
+Order ||--|{ OrderItem : contains
+OrderItem }o--|| Product : is product
+Order ||--o| Transaction : linked transaction
+Order ||--o| VendorTx : vendor POS record
+
+Transaction ||--o{ Payment : payment attempts
+Transaction ||--o| DeliveryBooking : delivery booking
+Payment }o--|| PaymentStatus : has status
+DeliveryBooking }o--|| DeliveryStatus : has status
+
+User ||--o{ Favorite : favorites
+Product }o--|| Favorite : product
+CatalogVendor }o--|| Favorite : vendor
+
+PosVendor ||--o{ VendorTx : handles
+
+note right of Order
+  One Order holds products from ONE vendor only.
+  Multi-vendor checkout = one Order per vendor
+  (split in OrderListCreateView.post).
+end note
+
+note right of Payment
+  unique_together (provider, provider_reference)
+  guarantees idempotency - no double charges.
+  Store provider references/status only, never
+  raw card numbers or banking passwords.
+  receipt_serial lives on VendorTx (confirm-pickup),
+  not on Payment.
+end note
+
+note right of DeliveryBooking
+  One-to-one with Transaction. Created only for
+  DELIVERY fulfillment after payment is verified.
+  Pickup orders have no delivery booking.
+end note
+
+note right of VendorTx
+  Vendor POS record linked to an Order.
+  receipt_serial generated on confirm-pickup
+  (Format: R-{order.id}-{uuid}).
+end note
+
+@enduml

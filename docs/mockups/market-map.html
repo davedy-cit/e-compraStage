@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Interactive Market Map</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Mandaue Public Market</small></span></a>
+    <nav class="nav">
+      <a href="home.html">Marketplace</a>
+      <a href="market-map.html" class="on">Market Map</a>
+      <a href="favorites-history.html">Favorites</a>
+      <a href="order-tracking.html">Orders</a>
+    </nav>
+    <a class="cart" href="cart-checkout.html">🛒 Cart · 4</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Interactive market map</div>
+      <h1>Mandaue Public Market</h1>
+      <p>Every section, stall number and vendor at a glance. Filter by category to plan your route before you leave home.</p>
+    </div>
+
+    <!-- Filter + finder -->
+    <div class="card card-tight">
+      <div class="row-between">
+        <div class="chips">
+          <a class="chip on" href="market-map.html">All</a>
+          <a class="chip" href="market-map.html">🐟 Fish</a>
+          <a class="chip" href="market-map.html">🥩 Meat</a>
+          <a class="chip" href="market-map.html">🍗 Poultry</a>
+          <a class="chip" href="market-map.html">🍎 Fruits</a>
+          <a class="chip" href="market-map.html">🥬 Vegetables</a>
+          <a class="chip" href="market-map.html">🍚 Rice</a>
+          <a class="chip" href="market-map.html">🫙 Dry goods</a>
+          <a class="chip" href="market-map.html">🧂 Spices</a>
+        </div>
+        <div class="searchbar" style="max-width:290px">
+          <input class="input" type="search" placeholder="Find a stall or vendor…" aria-label="Find a stall">
+          <button class="btn" type="button">Find</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-side" style="grid-template-columns:1fr 280px">
+
+      <!-- The map -->
+      <div class="map">
+
+        <div class="row-between mb12">
+          <span class="badge badge-brand">⬆ Main entrance — A.C. Cortes Ave. side</span>
+          <span class="tiny muted">10 stalls shown · 6 registered vendors</span>
+        </div>
+
+        <div class="section">
+          <h4>Section A — Fish</h4>
+          <div class="stalls">
+            <div class="stall pin">
+              <span class="no">A-12</span>
+              <span class="nm">Pedro's Fresh Catch</span>
+              <span class="cat">🐟 Fish · 6 products</span>
+            </div>
+            <div class="stall">
+              <span class="no">A-14</span>
+              <span class="nm">Ong's Seafood</span>
+              <span class="cat">🐟 Fish · not registered</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h4>Section B — Vegetables</h4>
+          <div class="stalls">
+            <div class="stall pin">
+              <span class="no">B-07</span>
+              <span class="nm">Rosa's Gulay Stand</span>
+              <span class="cat">🥬 Vegetables · 7 products</span>
+            </div>
+            <div class="stall">
+              <span class="no">B-09</span>
+              <span class="nm">Aling Nena's Gulay</span>
+              <span class="cat">🥬 Vegetables · not registered</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h4>Section C — Meat &amp; Poultry</h4>
+          <div class="stalls">
+            <div class="stall pin">
+              <span class="no">C-03</span>
+              <span class="nm">Bautista Meat Shop</span>
+              <span class="cat">🥩 Meat · 4 products</span>
+            </div>
+            <div class="stall pin">
+              <span class="no">C-09</span>
+              <span class="nm">Nena's Manok</span>
+              <span class="cat">🍗 Poultry · 4 products</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h4>Section D — Fruits</h4>
+          <div class="stalls">
+            <div class="stall pin">
+              <span class="no">D-02</span>
+              <span class="nm">Villamor Fruits &amp; Gulay</span>
+              <span class="cat">🍎 Fruits · 5 products</span>
+            </div>
+            <div class="stall">
+              <span class="no">D-05</span>
+              <span class="nm">Cebu Fruit Corner</span>
+              <span class="cat">🍎 Fruits · not registered</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-bottom:0">
+          <h4>Section E — Dry Goods</h4>
+          <div class="stalls">
+            <div class="stall pin">
+              <span class="no">E-01</span>
+              <span class="nm">Tan's Rice &amp; Dry Goods</span>
+              <span class="cat">🍚 Rice · 8 products</span>
+            </div>
+            <div class="stall">
+              <span class="no">E-03</span>
+              <span class="nm">Mandaue Grocery Stall</span>
+              <span class="cat">🫙 Dry goods · not registered</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="stack">
+
+        <div class="card">
+          <div class="card-head"><h3>Legend</h3></div>
+          <div class="stack" style="--gap:8px">
+            <div class="row small"><span class="stall pin" style="min-width:0;padding:4px 8px"><span class="no">A-12</span></span> <span>Vendor selling on E-Compra</span></div>
+            <div class="row small"><span class="stall" style="min-width:0;padding:4px 8px"><span class="no">A-14</span></span> <span>Stall with no online store</span></div>
+            <div class="row small"><span style="display:inline-block;width:14px;height:14px;border:2px dashed var(--brand-line);border-radius:4px"></span> <span>Market section</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Sections</h3><span class="small muted">5</span></div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Section</th><th class="num">Stalls</th><th class="num">Online</th></tr></thead>
+              <tbody>
+                <tr><td><a href="search-results.html">A — Fish</a></td><td class="num">2</td><td class="num">1</td></tr>
+                <tr><td><a href="search-results.html">B — Vegetables</a></td><td class="num">2</td><td class="num">1</td></tr>
+                <tr><td><a href="search-results.html">C — Meat &amp; Poultry</a></td><td class="num">2</td><td class="num">2</td></tr>
+                <tr><td><a href="search-results.html">D — Fruits</a></td><td class="num">2</td><td class="num">1</td></tr>
+                <tr><td><a href="search-results.html">E — Dry Goods</a></td><td class="num">2</td><td class="num">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Registered vendors</h3></div>
+          <div class="stack" style="--gap:10px">
+            <div>
+              <div class="small" style="font-weight:650"><a href="search-results.html">Pedro's Fresh Catch</a></div>
+              <div class="tiny muted">A-12 · 🐟 Fish</div>
+            </div>
+            <div>
+              <div class="small" style="font-weight:650"><a href="search-results.html">Rosa's Gulay Stand</a></div>
+              <div class="tiny muted">B-07 · 🥬 Vegetables</div>
+            </div>
+            <div>
+              <div class="small" style="font-weight:650"><a href="search-results.html">Bautista Meat Shop</a></div>
+              <div class="tiny muted">C-03 · 🥩 Meat</div>
+            </div>
+            <div>
+              <div class="small" style="font-weight:650"><a href="search-results.html">Nena's Manok</a></div>
+              <div class="tiny muted">C-09 · 🍗 Poultry</div>
+            </div>
+            <div>
+              <div class="small" style="font-weight:650"><a href="search-results.html">Villamor Fruits &amp; Gulay</a></div>
+              <div class="tiny muted">D-02 · 🍎 Fruits</div>
+            </div>
+            <div>
+              <div class="small" style="font-weight:650"><a href="search-results.html">Tan's Rice &amp; Dry Goods</a></div>
+              <div class="tiny muted">E-01 · 🍚 Rice</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note tiny">
+          This is a <strong>stall layout inside one market building</strong> — not a street map. That is why no
+          mapping library is needed: sections, stall numbers and vendor pins are all the data the feature requires.
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- Vendors in a section -->
+    <section class="card">
+      <div class="card-head"><h3>Vendors in Section B — Vegetables</h3><span class="badge badge-brand">1 registered</span></div>
+      <div class="grid grid-2">
+        <div class="pcard">
+          <div class="thumb">🥬</div>
+          <div class="body">
+            <div class="name">Rosa's Gulay Stand</div>
+            <div class="vendor">📍 Stall B-07 · Section B – Vegetables</div>
+            <div class="row-wrap">
+              <span class="badge badge-ok"><i class="dot"></i>7 products listed</span>
+              <span class="badge">📞 0917-555-0102</span>
+            </div>
+            <div class="foot">
+              <a class="btn btn-sm btn-primary" href="search-results.html">View store</a>
+              <a class="btn btn-sm" href="favorites-history.html">♡ Favorite</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Getting there</h3></div>
+          <p class="small muted">Enter from the <strong>A.C. Cortes Ave. side</strong>, walk past Section A (Fish) and
+             turn right. Section B is the second row of stalls on your left; B-07 is midway down.</p>
+          <div class="note tiny">Stall numbers ascend along each row — even numbers on one side, odd on the other.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>
