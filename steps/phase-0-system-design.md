@@ -575,8 +575,10 @@ UNION ALL SELECT 'Vendor', COUNT(*) FROM catalog_vendor
 UNION ALL SELECT 'Product', COUNT(*) FROM catalog_product;
 
 -- the idea document's price-comparison example must reproduce exactly:
-SELECT p.name, v.name AS vendor, p.price, p.unit
-FROM catalog_product p JOIN catalog_vendor v ON v.id = p.vendor_id
+SELECT p.name, v.name AS vendor, p.price, uom.code AS unit
+FROM catalog_product p
+JOIN catalog_vendor v ON v.id = p.vendor_id
+JOIN catalog_unitofmeasure uom ON uom.code = p.unit_code
 WHERE p.name LIKE 'Tomato%' ORDER BY p.price;
 ```
 
