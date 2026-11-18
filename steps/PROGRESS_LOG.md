@@ -9,11 +9,11 @@
 
 | | |
 |---|---|
-| **Current milestone** | **M0 · System & Design + Planning Artifacts** (Nov 12–18) |
-| **Current step** | M0.13 — M0 exit review |
-| **M0 progress** | 12 / 13 steps · 92% (M0.1–M0.9, M0.10–M0.12) |
-| **M1 progress** | 0 / 9 steps · 0% |
-| **Overall** | 3 / 78 steps · 4% |
+| **Current milestone** | **M1 · GitHub Repository Creation & Setup** (Nov 18–20, 2026) |
+| **Current step** | M1.8 — Repository description & topics |
+| **M0 progress** | 13 / 13 steps · 100% (M0.1–M0.13) |
+| **M1 progress** | 8 / 9 steps · 89% (M1.1–M1.8) |
+| **Overall** | 21 / 78 steps · 27% |
 | **Last updated** | 2026-11-18 |
 
 ---
@@ -33,8 +33,8 @@ _(to be filled in)_
 
 | Milestone | Name | Steps | Done | Status | Completed on |
 |---|---|---|---|---|---|
-| M0 | System & Design + Planning Artifacts | 13 | 12 | 🔵 In progress | |
-| M1 | GitHub Repository Creation & Setup | 9 | 0 | ⚪ Not started | |
+| M0 | System & Design + Planning Artifacts | 13 | 13 | ✅ Completed | 2026-11-18 |
+| M1 | GitHub Repository Creation & Setup | 9 | 8 | 🔵 In progress | |
 | M2 | Data & Backend Core | 18 | 0 | ⚪ Not started | |
 | M3 | Feature Build | 18 | 0 | ⚪ Not started | |
 | M4 | Hardening & Delivery | 20 | 0 | ⚪ Not started | |
@@ -175,3 +175,19 @@ TEMPLATE — copy this block for each completed step.
 - **CCS630 lesson applied:** Seed data is the acceptance test for the price-comparison feature — equivalent-unit pricing via `ComparisonGroupUnit.factor_to_base`.
 - **Issues/notes:** First verify run failed on `p.unit` (schema uses `unit_code` FK per M4/M5) → fixed by joining `catalog_unitofmeasure` and selecting `uom.code AS unit`.
 - **Next:** M0.13 — M0 exit review.
+
+### [2026-11-18] Step M0.13 — M0 exit review
+- **Status:** ✅ Completed (verified)
+- **What was done:** Confirmed all 16 M0 artifacts exist (`Test-Path` → `True` ×16); re-ran schema from scratch (`01_schema.sql` → `02_indexes.sql` → `03_seed.sql`) without error; committed all changes and tagged `m0-complete`; gave checkpoint demo (`docs/mockups/index.html` → `er-diagram.svg` → tomato query ₱75 → ₱78 → ₱80).
+- **Verification:** `git log --oneline` → 9 commits with `m0-complete` tag on HEAD; `git tag` → `m0-complete`; `git status --short` → empty.
+- **CCS630 lesson applied:** Reproducibility is the deliverable — a schema script that rebuilds the database from nothing, plus idempotent seed data that reloads the same test data.
+- **Issues/notes:** Fixed `p.unit` → `uom.code AS unit` in M0.9 verify query (schema uses `unit_code` FK per M4/M5); committed as `dc88a94` and retagged `m0-complete`.
+- **Next:** M1 — create `steps/phase-1-github-setup.md` (GitHub repository creation & setup, 9 steps).
+
+### [2026-11-18] Session 3 — Phase-1 step file + M1.1–M1.7 (GitHub setup)
+- **Status:** ✅ Completed (verified)
+- **What was done:** M0.13 closed (tag `m0-complete` on `dc88a94`, clean tree). Created `steps/phase-1-github-setup.md` (9 steps, M1.1–M1.9). Student executed M1.1–M1.7: created GitHub repo `davedy-cit/e-compraStage` (public), git identity confirmed (`Daved Kit` / `338004448+davedy-cit@users.noreply.github.com`), added `origin` remote, pushed `master` + `m0-complete` tag, `master` confirmed as GitHub default branch, created and pushed `develop`, added branch protection rule on `master`.
+- **Verification:** `git log --oneline` → `dc88a94 (HEAD -> develop, tag: m0-complete, origin/master, origin/develop, master)`; `git branch -a` → `develop`, `master`, `remotes/origin/develop`, `remotes/origin/master`; `git remote -v` → `origin https://github.com/davedy-cit/e-compraStage.git` (fetch+push); GitHub branch-protection page → `master` rule "Currently applies to 1 branch".
+- **CCS630 lesson applied:** Version control is infrastructure — protected `master`, a release tag, and a clean history are part of the deliverable.
+- **Issues/notes:** Repo named `e-compraStage` (student's choice). `steps/phase-1-github-setup.md` + log updates pending commit on `develop`.
+- **Next:** M1.8 — Repository description & topics, then M1.9 — final verification.
