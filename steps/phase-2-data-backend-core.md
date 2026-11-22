@@ -384,7 +384,7 @@ placeholder blocks `CREATE TABLE auth_user`. The database is empty of users, so 
 
 **Actions.**
 
-1. List the FKs that reference `auth_user` (there are ~7 — profiles, vendor, order, cart, favorites):
+1. List the FKs that reference `auth_user` (there are 7 — profiles, vendor, order, cart, favorites):
 
 ```sql
 SELECT table_name, constraint_name, column_name
@@ -392,31 +392,42 @@ FROM information_schema.key_column_usage
 WHERE table_schema = 'ecompra' AND referenced_table_name = 'auth_user';
 ```
 
-2. Create `sql/04_auth_user_handover.sql` with **two sections**, using exactly the names from step 1:
+2. Create `sql/04_auth_user_handover.sql` with **two sections**, using exactly the names from step 1.
+   ⚠️ MySQL uses `DROP FOREIGN KEY <name>` (not `DROP CONSTRAINT`):
 
 ```sql
 -- Section 1 — run BEFORE `migrate` (one-off)
-ALTER TABLE accounts_userprofile        DROP CONSTRAINT <name>;
-ALTER TABLE accounts_customerprofile    DROP CONSTRAINT <name>;
-ALTER TABLE catalog_vendor           DROP CONSTRAINT <name>;
-ALTER TABLE cart_cart                DROP CONSTRAINT <name>;
-ALTER TABLE orders_order             DROP CONSTRAINT <name>;
-ALTER TABLE favorites_favoriteproduct DROP CONSTRAINT <name>;
-ALTER TABLE favorites_favoritevendor DROP CONSTRAINT <name>;
+ALTER TABLE accounts_userprofile        DROP FOREIGN KEY fk_userprofile_user;
+ALTER TABLE accounts_customerprofile    DROP FOREIGN KEY fk_customerprofile_user;
+ALTER TABLE catalog_vendor              DROP FOREIGN KEY fk_vendor_user;
+ALTER TABLE cart_cart                   DROP FOREIGN KEY fk_cart_user;
+ALTER TABLE orders_order                DROP FOREIGN KEY fk_order_user;
+ALTER TABLE favorites_favoriteproduct   DROP FOREIGN KEY fk_favproduct_user;
+ALTER TABLE favorites_favoritevendor    DROP FOREIGN KEY fk_favvendor_user;
 DROP TABLE auth_user;
 
 -- Section 2 — run AFTER `migrate` (re-points the FKs at the new auth_user)
+-- ⚠️ The M0 schema used BIGINT UNSIGNED for user_id; Django's auth_user.id is INT.
+--     All child tables must be altered first, and FOREIGN_KEY_CHECKS=0 is required
+--     because the new auth_user is empty (existing user_id values have no match yet).
+ALTER TABLE accounts_userprofile        MODIFY user_id int NOT NULL;
+ALTER TABLE accounts_customerprofile    MODIFY user_id int NOT NULL;
+ALTER TABLE cart_cart                   MODIFY user_id int NOT NULL;
+ALTER TABLE catalog_vendor              MODIFY user_id int NOT NULL;
+ALTER TABLE orders_order                MODIFY user_id int NOT NULL;
+ALTER TABLE favorites_favoriteproduct   MODIFY user_id int NOT NULL;
+ALTER TABLE favorites_favoritevendor    MODIFY user_id int NOT NULL;
+
+SET FOREIGN_KEY_CHECKS=0;
 ALTER TABLE accounts_userprofile         ADD CONSTRAINT fk_userprofile_user        FOREIGN KEY (user_id) REFERENCES auth_user (id);
 ALTER TABLE accounts_customerprofile     ADD CONSTRAINT fk_customerprofile_user    FOREIGN KEY (user_id) REFERENCES auth_user (id);
-ALTER TABLE catalog_vendor            ADD CONSTRAINT fk_vendor_user             FOREIGN KEY (user_id) REFERENCES auth_user (id);
-ALTER TABLE cart_cart                 ADD CONSTRAINT fk_cart_user               FOREIGN KEY (user_id) REFERENCES auth_user (id);
-ALTER TABLE orders_order              ADD CONSTRAINT fk_order_user              FOREIGN KEY (user_id) REFERENCES auth_user (id);
-ALTER TABLE favorites_favoriteproduct ADD CONSTRAINT fk_favproduct_user         FOREIGN KEY (user_id) REFERENCES auth_user (id);
-ALTER TABLE favorites_favoritevendor  ADD CONSTRAINT fk_favvendor_user          FOREIGN KEY (user_id) REFERENCES auth_user (id);
+ALTER TABLE catalog_vendor               ADD CONSTRAINT fk_vendor_user             FOREIGN KEY (user_id) REFERENCES auth_user (id);
+ALTER TABLE cart_cart                    ADD CONSTRAINT fk_cart_user               FOREIGN KEY (user_id) REFERENCES auth_user (id);
+ALTER TABLE orders_order                 ADD CONSTRAINT fk_order_user              FOREIGN KEY (user_id) REFERENCES auth_user (id);
+ALTER TABLE favorites_favoriteproduct    ADD CONSTRAINT fk_favproduct_user         FOREIGN KEY (user_id) REFERENCES auth_user (id);
+ALTER TABLE favorites_favoritevendor     ADD CONSTRAINT fk_favvendor_user          FOREIGN KEY (user_id) REFERENCES auth_user (id);
+SET FOREIGN_KEY_CHECKS=1;
 ```
-
-   ⚠️ Constraint names must match step 1's output; FK column names must match each table's real column
-   (`user_id` throughout per the schema).
 
 3. Apply Section 1:
 
@@ -424,26 +435,25 @@ ALTER TABLE favorites_favoritevendor  ADD CONSTRAINT fk_favvendor_user          
 cmd /c "mysql -u root -p ecompra < sql\04_auth_user_handover.sql"
 ```
 
-   (It will fail after the DROP — that is expected; Section 2 is applied later.)
+   (It will error on Section 2 — that is expected; Section 2 is applied after `migrate`.)
 
 4. Migrate — creates `auth_user` (real), `auth_group`, `auth_permission`, `django_session`,
-   `django_content_type`, `django_admin_log`, `django_migrations`:
+   `django_content_type`, `django_admin_log`, `django_migrations` (18 migrations):
 
 ```powershell
 python manage.py migrate
 ```
 
-5. Re-point the FKs — edit the file to comment out Section 1, uncomment nothing, and run only Section 2
-   (simplest: save Section 2 alone as `sql/04b_auth_user_fks.sql` and run it):
+5. Apply Section 2 — simplest: save Section 2 alone as `sql/04b_auth_user_fks.sql` and run it:
 
 ```powershell
 cmd /c "mysql -u root -p ecompra < sql\04b_auth_user_fks.sql"
 ```
 
-6. Amend `sql/01_schema.sql`: **remove** the `auth_user` block and add the comment
+6. Amend `sql/01_schema.sql`: **remove** the `auth_user` block (lines 14–34) and add the comment
    `-- auth_user is created by Django migrations (M2.6); see 04b_auth_user_fks.sql.`
 
-**Expected result.** `migrate` reports applying ~10 migrations; all FKs resolve again.
+**Expected result.** `migrate` reports applying 18 migrations; all FKs resolve again.
 
 **Verify.** Run and paste:
 
@@ -456,13 +466,17 @@ AND NOT EXISTS (SELECT 1 FROM information_schema.tables t2
 SELECT COUNT(*) FROM django_migrations;
 ```
 
-Expected: `table_count` ≈ 35 (28 domain+auth, plus Django's own), `broken_fk` = `0`, migrations recorded > 0.
+Expected: `table_count` = 35 (28 domain + 7 Django), `broken_fk` = `0`, `django_migrations` = 18.
 
 **If it fails.**
 - `ERROR 3730 Cannot drop table referenced by a foreign key` → a child FK was missed in Section 1; the query in
   step 1 shows which.
 - `ERROR 1824 Failed to open the referenced table 'auth_user'` in Section 2 → `migrate` did not run or did not
   create `auth_user`; check `python manage.py showmigrations`.
+- `ERROR 3780 Referencing column 'user_id' and referenced column 'id' ... are incompatible` → child `user_id` is
+  `BIGINT UNSIGNED` but `auth_user.id` is `INT`; run the `MODIFY user_id int NOT NULL` statements in Section 2.
+- `ERROR 1452 Cannot add or update a child row` → `auth_user` is empty but child tables have `user_id` values;
+  wrap Section 2 with `SET FOREIGN_KEY_CHECKS=0` / `SET FOREIGN_KEY_CHECKS=1`.
 - `migrate` errors on an existing table → a `django_*` table already existed; tell the coach which.
 
 > 📌 **CCS630 lesson — schema ownership must be explicit.** One table, one owner: the SQL scripts own the 27
