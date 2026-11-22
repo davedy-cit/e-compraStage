@@ -279,4 +279,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** None.
 - **Next:** M2.14 — CORS + SimpleJWT (install django-cors-headers, djangorestframework-simplejwt, configure middleware, test JWT).
 
+### [2026-11-22] Step M2.14 — CORS + SimpleJWT
+- **Status:** ✅ Completed (verified)
+- **What was done:** Installed django-cors-headers and djangorestframework-simplejwt; added "corsheaders" and "rest_framework_simplejwt" to INSTALLED_APPS; added CorsMiddleware at top of MIDDLEWARE (before CommonMiddleware); configured CORS_ALLOWED_ORIGINS for Vue 3 dev server (http://localhost:5173, http://127.0.0.1:5173) with CORS_ALLOW_CREDENTIALS=True; configured SIMPLE_JWT with 60-min access token, 7-day refresh token, rotation enabled, blacklist after rotation, HS256 algorithm using SECRET_KEY; updated REST_FRAMEWORK with JWTAuthentication + SessionAuthentication as default auth, and IsAuthenticated as default permission; added JWT token endpoints to config/urls.py: /api/auth/token/, /api/auth/token/refresh/, /api/auth/token/verify/.
+- **Verification:** python manage.py check → System check identified no issues (0 silenced); POST /api/auth/token/ returns access+refresh tokens for admin/Admin2627; POST /api/auth/token/refresh/ rotates tokens and returns new access+refresh; POST /api/auth/token/verify/ returns 200 for valid token; GET /api/catalog/products/ with Bearer token returns 34 products (authenticated); CORS preflight OPTIONS returns correct headers (Access-Control-Allow-Origin: http://localhost:5173, Access-Control-Allow-Credentials: true, allow-headers includes authorization); Swagger UI and ReDoc still load.
+- **CCS630 lesson applied:** Authentication is a cross-cutting concern — JWT keeps the API stateless while CORS enables the Vue 3 frontend (separate origin) to call the API with credentials. Token rotation + blacklist mitigates token theft; short access token lifetime limits exposure window.
+- **Issues/notes:** Default permission is now IsAuthenticated — all API endpoints require JWT (or session) auth. Public endpoints (schema, Swagger, ReDoc) still work because they don't require authentication. Frontend login flow: POST /api/auth/token/ with username/password → store access+refresh → use Bearer access for API calls → refresh when 401.
+- **Next:** M2.15 — pytest + first database tests (install pytest, pytest-django, create test database clone, write tests).
+
 
