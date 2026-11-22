@@ -10,12 +10,12 @@
 | | |
 |---|---|
 | **Current milestone** | **M3 Â· Feature Build** (Nov 26 â€“ Dec 2, 2026) |
-| **Current step** | M3.12 — Vue 3 frontend setup |
+| **Current step** | M3.13 — Cart frontend screens |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
-| **M3 progress** | 11 / 18 steps · 61% (M3.1– M3.11) |
-| **Overall** | 40 / 78 steps · 51% |
+| **M3 progress** | 12 / 18 steps · 67% (M3.1– M3.12) |
+| **Overall** | 41 / 78 steps · 53% |
 | **Last updated** | 2026-11-22 |
 
 ---
