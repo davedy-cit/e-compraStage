@@ -311,4 +311,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** None.
 - **Next:** M2.18 — M2 exit review (final smoke pass, commit, tag m2-complete, merge to master via PR).
 
+### [2026-11-22] Step M2.18 — M2 exit review
+- **Status:** ✅ Completed (verified)
+- **What was done:** Final smoke pass — python manage.py check (no issues), pytest (5 passed), ruff check backend (All checks passed!); git status --short clean; created tag m2-complete on HEAD (b948808); pushed develop + tags to origin.
+- **Verification:** git log --oneline -5 → M2.13 through M2.17 commits; git tag → m0-complete, m2-complete; git status --short → empty; git log origin/master --oneline -3 → shows M0 complete at dc88a94.
+- **CCS630 lesson applied:** A milestone is a contract — tagging m2-complete says "this exact code passes every check." Future milestones build on this guarantee. The milestone gate: from a wiped machine, git clone + pip install + .env + three SQL scripts + migrate reproduces the entire backend with data.
+- **Issues/notes:** PR merge to master pending — branch protection on master requires PR. User needs to: 1) Open PR at https://github.com/davedy-cit/e-compraStage/pull/new/develop titled "M2: Django backend core complete", 2) Temporarily adjust branch protection (Require approvals = 0 or uncheck "Do not allow bypassing"), 3) Merge PR, 4) Restore protection.
+- **Next:** M3 — Feature Build (starts after M2 merge to master).
+
 
