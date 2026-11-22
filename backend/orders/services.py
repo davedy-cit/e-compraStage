@@ -1,6 +1,15 @@
 """Business logic for order lifecycle transitions."""
 
-from orders.models import Order, TransactionStatus
+from cart.models import Cart, CartItem
+from catalog.models import Product
+from orders.models import (
+    FulfillmentMethod,
+    Order,
+    OrderItem,
+    Transaction,
+    TransactionStatus,
+    TransactionType,
+)
 
 
 ALLOWED_TRANSITIONS = {
@@ -24,3 +33,49 @@ def transition_order_status(order, new_status_code):
     order.status_code = TransactionStatus.objects.get(code=new_status_code)
     order.save()
     return order
+
+
+def checkout_cart(user):
+    """Split cart by vendor and create orders + transactions."""
+    cart, _ = Cart.objects.get_or_create(user=user)
+    items = (
+        CartItem.objects.filter(cart=cart)
+        .select_related("product", "product__vendor")
+    )
+
+    if not items.exists():
+        raise ValueError("Cart is empty")
+
+    by_vendor = {}
+    for item in items:
+        by_vendor.setdefault(item.product.vendor_id, []).append(item)
+
+    order_ids = []
+    for vendor_id, vendor_items in by_vendor.items():
+        total = sum(
+            (item.product.price * item.quantity) for item in vendor_items
+        )
+        order = Order.objects.create(
+            user=user,
+            vendor_id=vendor_id,
+            status_code=TransactionStatus.objects.get(code="PENDING_PAYMENT"),
+            fulfillment_code=FulfillmentMethod.objects.get(code="DELIVERY"),
+            total_amount=total,
+            notes="",
+        )
+        for item in vendor_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                unit_price=item.product.price,
+            )
+        Transaction.objects.create(
+            order=order,
+            transaction_type=TransactionType.objects.get(code="ONLINE_ORDER"),
+            reference_no=f"TXN-{order.id}-{vendor_id}",
+        )
+        order_ids.append(order.id)
+
+    CartItem.objects.filter(cart=cart).delete()
+    return order_ids

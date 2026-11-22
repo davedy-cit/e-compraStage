@@ -539,10 +539,18 @@
    ```python
    from catalog.models import Product
    from cart.models import Cart, CartItem
-   from orders.models import Order, OrderItem, Transaction, TransactionStatus, TransactionType
+   from orders.models import (
+       FulfillmentMethod,
+       Order,
+       OrderItem,
+       Transaction,
+       TransactionStatus,
+       TransactionType,
+   )
 
 
    def checkout_cart(user):
+       """Split cart by vendor and create orders + transactions."""
        cart, _ = Cart.objects.get_or_create(user=user)
        items = (
            CartItem.objects.filter(cart=cart)
@@ -564,8 +572,8 @@
            order = Order.objects.create(
                user=user,
                vendor_id=vendor_id,
-               status_code=TransactionStatus.objects.get(code="PENDING"),
-               fulfillment_code="DELIVERY",
+               status_code=TransactionStatus.objects.get(code="PENDING_PAYMENT"),
+               fulfillment_code=FulfillmentMethod.objects.get(code="DELIVERY"),
                total_amount=total,
                notes="",
            )
@@ -578,7 +586,7 @@
                )
            Transaction.objects.create(
                order=order,
-               transaction_type=TransactionType.objects.get(code="SALE"),
+               transaction_type=TransactionType.objects.get(code="ONLINE_ORDER"),
                reference_no=f"TXN-{order.id}-{vendor_id}",
            )
            order_ids.append(order.id)
@@ -972,4 +980,5 @@ git status --short
 ---
 
 **Next.** M4 â€” Hardening & Delivery (Dec 3â€“12): security hardening, performance, backup/recovery, deployment docs, final defense preparation.
+
 
