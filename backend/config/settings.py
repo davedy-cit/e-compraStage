@@ -210,3 +210,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),
 }
+
+# pytest: use test database clone (test_ecompra created manually)
+import sys
+if "pytest" in sys.modules:
+    DATABASES["default"]["NAME"] = "test_ecompra"
+    DATABASES["default"]["TEST"] = {"NAME": "test_ecompra"}

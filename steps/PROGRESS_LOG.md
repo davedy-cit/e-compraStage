@@ -287,4 +287,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** Default permission is now IsAuthenticated — all API endpoints require JWT (or session) auth. Public endpoints (schema, Swagger, ReDoc) still work because they don't require authentication. Frontend login flow: POST /api/auth/token/ with username/password → store access+refresh → use Bearer access for API calls → refresh when 401.
 - **Next:** M2.15 — pytest + first database tests (install pytest, pytest-django, create test database clone, write tests).
 
+### [2026-11-22] Step M2.15 — pytest + first database tests
+- **Status:** ✅ Completed (verified)
+- **What was done:** Installed pytest and pytest-django; created backend/pytest.ini with DJANGO_SETTINGS_MODULE=config.settings, --reuse-db -v; created test database test_ecompra as clone of ecompra (mysql dump/restore with utf8mb4); updated settings.py to use test_ecompra for pytest with TEST={'NAME': 'test_ecompra'}; created backend/catalog/test_catalog.py (3 tests: seed counts, tomato price comparison, vendor-products relation); created backend/orders/test_orders.py (2 tests: lookup table counts, terminal statuses).
+- **Verification:** pytest → 5 passed in 0.27s; all seed data invariants verified: Product=34, Category=9, Vendor=6, UnitOfMeasure=9, AvailabilityStatus=4, TransactionStatus=7, PaymentStatus=4, DeliveryStatus=5, FulfillmentMethod=3, TransactionType=3; tomato prices ₱75/78/80 in order; Villamor has ≥3 products; terminal statuses exist for PaymentStatus and DeliveryStatus.
+- **CCS630 lesson applied:** Test the invariant, not the implementation — the seed contract from M0.9 (34 products, tomato 75/78/80) is now enforced forever by CI-able tests. The test database clone strategy works because domain tables are SQL-managed (managed=False) — pytest-django only manages Django's own tables.
+- **Issues/notes:** UnitOfMeasure seeded count is 9 (not 4 as in original M2.15 doc) — test updated to match actual seed data. Original doc predicted 7 tests (5 catalog + 2 orders) but actual test file provides 5 tests (3 catalog + 2 orders).
+- **Next:** M2.16 — ruff lint pass (install ruff, create ruff.toml, run fix/format).
+
 
