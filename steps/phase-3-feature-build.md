@@ -203,21 +203,18 @@
 
 **Actions.**
 
-1. Add a `checkout` action to `orders/views.py`:
+1. Add imports and `CheckoutView` to `backend/orders/views.py`:
 
    ```python
    from rest_framework import status
-   from rest_framework.decorators import action
    from rest_framework.permissions import IsAuthenticated
    from rest_framework.response import Response
+   from rest_framework.views import APIView
 
-   from catalog.models import Product
    from cart.models import Cart, CartItem
-   from orders.models import Order, OrderItem, Transaction, TransactionStatus, TransactionType
-   from vendors.models import VendorTransaction
+   from orders.models import Order, OrderItem, Transaction, TransactionStatus, TransactionType, FulfillmentMethod
 
 
-   # Add to OrdersViewSet or as standalone APIView:
    class CheckoutView(APIView):
        permission_classes = [IsAuthenticated]
 
@@ -237,6 +234,10 @@
                by_vendor.setdefault(item.product.vendor_id, []).append(item)
 
            orders = []
+           pending_status = TransactionStatus.objects.get(code="PENDING_PAYMENT")
+           delivery_method = FulfillmentMethod.objects.get(code="DELIVERY")
+           online_order_type = TransactionType.objects.get(code="ONLINE_ORDER")
+
            for vendor_id, vendor_items in by_vendor.items():
                total = sum(
                    (item.product.price * item.quantity) for item in vendor_items
@@ -244,8 +245,8 @@
                order = Order.objects.create(
                    user=user,
                    vendor_id=vendor_id,
-                   status_code="PENDING",
-                   fulfillment_code="DELIVERY",
+                   status_code=pending_status,
+                   fulfillment_code=delivery_method,
                    total_amount=total,
                    notes="",
                )
@@ -258,7 +259,7 @@
                    )
                Transaction.objects.create(
                    order=order,
-                   transaction_type="SALE",
+                   transaction_type=online_order_type,
                    reference_no=f"TXN-{order.id}-{vendor_id}",
                )
                orders.append(order.id)
@@ -272,11 +273,16 @@
            )
    ```
 
-**Expected result.** Checkout endpoint creates one order per vendor from cart items.
+   **Fixes vs original spec:**
+   - `status_code`, `fulfillment_code`, `transaction_type` are FK fields — use `Model.objects.get(code=...)` lookups instead of raw strings.
+   - Seed data has no `"PENDING"` TransactionStatus (uses `"PENDING_PAYMENT"`) and no `"SALE"` TransactionType (uses `"ONLINE_ORDER"`).
+   - Removed unused imports (`Product`, `VendorTransaction`, `action`).
+
+**Expected result.** Checkout endpoint creates one order per vendor from cart items, each with a linked Transaction.
 
 **Verify.** `python manage.py check` → System check identified no issues (0 silenced).
 
-**If it fails.** Check that `TransactionStatus` has a "PENDING" code and `FulfillmentMethod` has "DELIVERY".
+**If it fails.** Verify seed data contains `PENDING_PAYMENT` TransactionStatus, `DELIVERY` FulfillmentMethod, and `ONLINE_ORDER` TransactionType codes.
 
 ---
 
