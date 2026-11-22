@@ -271,4 +271,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** Spectacular (Swagger/ReDoc) and JWT endpoints deferred to M2.13/M2.14 when those packages are installed. Current config/urls.py only includes app URLs.
 - **Next:** M2.13 — OpenAPI schema + Swagger UI.
 
+### [2026-11-22] Step M2.13 — OpenAPI schema + Swagger UI
+- **Status:** ✅ Completed (verified)
+- **What was done:** Installed drf-spectacular; added "rest_framework" and "drf_spectacular" to INSTALLED_APPS; added REST_FRAMEWORK with DEFAULT_SCHEMA_CLASS pointing to drf_spectacular.openapi.AutoSchema; added SPECTACULAR_SETTINGS (title, description, version, SERVE_INCLUDE_SCHEMA=False, COMPONENT_SPLIT_REQUEST=True, SCHEMA_PATH_PREFIX="/api/"); added SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView endpoints to config/urls.py at /api/schema/, /api/schema/swagger-ui/, /api/schema/redoc/.
+- **Verification:** python manage.py check → System check identified no issues (0 silenced); GET /api/schema/ returns OpenAPI 3.0.3 with 14 paths across catalog, orders, vendors, favorites; GET /api/schema/swagger-ui/ returns Swagger UI HTML (title "E-Compra API"); GET /api/schema/redoc/ returns ReDoc HTML. All 14 endpoints documented.
+- **CCS630 lesson applied:** The OpenAPI schema is the living contract — it tells the frontend (Vue 3 from M0.2) exactly what endpoints exist, what parameters they accept, and what responses look like. No separate docs to maintain; the code IS the documentation.
+- **Issues/notes:** None.
+- **Next:** M2.14 — CORS + SimpleJWT (install django-cors-headers, djangorestframework-simplejwt, configure middleware, test JWT).
+
 
