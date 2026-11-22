@@ -245,3 +245,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Next:** M2.10 — DRF + core serializers.
 
 
+### [2026-11-22] Step M2.10 — DRF + core serializers
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created serializers.py for 4 apps using correct FK field names from M2.5 models: catalog (ProductSerializer with unit_code/availability_code sources, CategorySerializer, VendorSerializer, UnitOfMeasureSerializer, AvailabilityStatusSerializer), orders (OrderSerializer with nested items/transaction, lookup serializers for 5 status tables), vendors (PosVendorSerializer, VendorTransactionSerializer), favorites (FavoriteProductSerializer with nested ProductSerializer, FavoriteVendorSerializer with nested VendorSerializer).
+- **Verification:** python manage.py check → System check identified no issues (0 silenced); python manage.py shell imports → all 4 app serializer modules load without error.
+- **CCS630 lesson applied:** The serializer is the API contract — it decides exactly which columns leave the database, the API version of choosing a projection in SQL. FK field names must match model field names (unit_code not unit, vailability_code not vailability).
+- **Issues/notes:** ProductSerializer uses source=\"unit_code.code\" and source=\"availability_code.code\" because model FK fields are named unit_code/vailability_code matching db_column. OrderSerializer uses status_code/ulfillment_code for FK fields and adds status_display/ulfillment_display for related descriptions.
+- **Next:** M2.11 — Read-only API views.
+
+
