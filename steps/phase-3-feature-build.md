@@ -1,14 +1,14 @@
-# M3 · Feature Build
+﻿# M3 Â· Feature Build
 
 **Goal.** Write-path APIs (cart, checkout with cart-splitting, payments, vendor POS), business logic in services, and the Vue 3 frontend.
 
-**Dates.** Nov 26 – Dec 2, 2026
+**Dates.** Nov 26 â€“ Dec 2, 2026
 
-**Steps.** M3.1 – M3.18 (18 steps)
+**Steps.** M3.1 â€“ M3.18 (18 steps)
 
 ---
 
-## Step M3.1 — Fix CartItem `__str__` bug
+## Step M3.1 â€” Fix CartItem `__str__` bug
 
 **Goal.** Fix the `__str__` method on `CartItem` which references a non-existent `self.name` field.
 
@@ -16,7 +16,7 @@
 
 **Actions.**
 
-1. Edit `backend/cart/models.py` — change `return self.name` to `return self.product.name`:
+1. Edit `backend/cart/models.py` â€” change `return self.name` to `return self.product.name`:
 
    ```python
    def __str__(self):
@@ -25,13 +25,13 @@
 
 **Expected result.** `__str__` returns the product name instead of raising `AttributeError`.
 
-**Verify.** `python manage.py check` → System check identified no issues (0 silenced).
+**Verify.** `python manage.py check` â†’ System check identified no issues (0 silenced).
 
-**If it fails.** Check that `CartItem` has a `product` FK field — it does, defined in M2.5.
+**If it fails.** Check that `CartItem` has a `product` FK field â€” it does, defined in M2.5.
 
 ---
 
-## Step M3.2 — Cart serializers
+## Step M3.2 â€” Cart serializers
 
 **Goal.** Create serializers for cart write-path: CartSerializer and CartItemSerializer.
 
@@ -77,13 +77,13 @@
 
 **Expected result.** `cart/serializers.py` exists with both serializer classes.
 
-**Verify.** `python manage.py shell` → import both serializers without error.
+**Verify.** `python manage.py shell` â†’ import both serializers without error.
 
 **If it fails.** Check field names match `cart/models.py` exactly (`product`, `quantity`).
 
 ---
 
-## Step M3.3 — Cart write-path views
+## Step M3.3 â€” Cart write-path views
 
 **Goal.** Create cart API views: CartViewSet with add/update/remove item actions.
 
@@ -155,13 +155,13 @@
 
 **Expected result.** `backend/cart/views.py` exists with CartViewSet supporting list/add/update_item/remove_item.
 
-**Verify.** `python manage.py check` → System check identified no issues (0 silenced).
+**Verify.** `python manage.py check` â†’ System check identified no issues (0 silenced).
 
 **If it fails.** Check import paths: `cart.models`, `cart.serializers`.
 
 ---
 
-## Step M3.4 — Cart URLs
+## Step M3.4 â€” Cart URLs
 
 **Goal.** Wire cart URLs under `/api/cart/`.
 
@@ -185,17 +185,17 @@
    ]
    ```
 
-2. Edit `backend/config/urls.py` — add `path("api/cart/", include("cart.urls")),` before the JWT/auth block.
+2. Edit `backend/config/urls.py` â€” add `path("api/cart/", include("cart.urls")),` before the JWT/auth block.
 
 **Expected result.** `/api/cart/` endpoint available (requires JWT auth).
 
-**Verify.** Start server, GET `/api/cart/` with Bearer token → 200 with cart data.
+**Verify.** Start server, GET `/api/cart/` with Bearer token â†’ 200 with cart data.
 
 **If it fails.** Check `DefaultRouter` import and basename registration.
 
 ---
 
-## Step M3.5 — Checkout API with cart-splitting
+## Step M3.5 â€” Checkout API with cart-splitting
 
 **Goal.** Create checkout endpoint that splits a cart by vendor into multiple orders.
 
@@ -274,19 +274,19 @@
    ```
 
    **Fixes vs original spec:**
-   - `status_code`, `fulfillment_code`, `transaction_type` are FK fields — use `Model.objects.get(code=...)` lookups instead of raw strings.
+   - `status_code`, `fulfillment_code`, `transaction_type` are FK fields â€” use `Model.objects.get(code=...)` lookups instead of raw strings.
    - Seed data has no `"PENDING"` TransactionStatus (uses `"PENDING_PAYMENT"`) and no `"SALE"` TransactionType (uses `"ONLINE_ORDER"`).
    - Removed unused imports (`Product`, `VendorTransaction`, `action`).
 
 **Expected result.** Checkout endpoint creates one order per vendor from cart items, each with a linked Transaction.
 
-**Verify.** `python manage.py check` → System check identified no issues (0 silenced).
+**Verify.** `python manage.py check` â†’ System check identified no issues (0 silenced).
 
 **If it fails.** Verify seed data contains `PENDING_PAYMENT` TransactionStatus, `DELIVERY` FulfillmentMethod, and `ONLINE_ORDER` TransactionType codes.
 
 ---
 
-## Step M3.6 — Payment API
+## Step M3.6 â€” Payment API
 
 **Goal.** Create payment recording endpoint linked to a transaction.
 
@@ -333,19 +333,19 @@
    ```
 
    **Fixes vs original spec:**
-   - `status_code` is a FK field on Payment model — use `PaymentStatus.objects.get(code=...)` instead of raw string.
+   - `status_code` is a FK field on Payment model â€” use `PaymentStatus.objects.get(code=...)` instead of raw string.
    - Seed data has no `"PAID"` PaymentStatus code (uses `"VERIFIED"` as terminal settlement state).
    - `Payment` is added to existing `from .models import ...` block in orders/views.py.
 
 **Expected result.** Payment endpoint creates a Payment record linked to a Transaction.
 
-**Verify.** `python manage.py check` → System check identified no issues (0 silenced).
+**Verify.** `python manage.py check` â†’ System check identified no issues (0 silenced).
 
 **If it fails.** Verify seed data contains `VERIFIED` PaymentStatus code.
 
 ---
 
-## Step M3.7 — Vendor POS API
+## Step M3.7 â€” Vendor POS API
 
 **Goal.** Create vendor POS endpoint for vendors to view/manage their orders.
 
@@ -402,19 +402,19 @@
    ```
 
 **Fixes vs original spec:**
-- `request.user.vendor_profile` does not exist — `Vendor.user` is a OneToOneField to `accounts.AuthUser`, so the reverse accessor is `request.user.vendor`.
-- `order.status_code = new_status` assigns a raw string to an FK field — fixed to `TransactionStatus.objects.get(code=new_status_code)`.
+- `request.user.vendor_profile` does not exist â€” `Vendor.user` is a OneToOneField to `accounts.AuthUser`, so the reverse accessor is `request.user.vendor`.
+- `order.status_code = new_status` assigns a raw string to an FK field â€” fixed to `TransactionStatus.objects.get(code=new_status_code)`.
 - `OrderItem` import removed (unused).
 
 **Expected result.** Vendor can list and update their orders via POS endpoint at `/api/vendors/pos/`.
 
-**Verify.** `python manage.py check` → System check identified no issues (0 silenced).
+**Verify.** `python manage.py check` â†’ System check identified no issues (0 silenced).
 
-**If it fails.** Verify `request.user.vendor` resolves — Vendor links to AuthUser via `user = models.OneToOneField("accounts.AuthUser")`.
+**If it fails.** Verify `request.user.vendor` resolves â€” Vendor links to AuthUser via `user = models.OneToOneField("accounts.AuthUser")`.
 
 ---
 
-## Step M3.8 — Order status transition service
+## Step M3.8 â€” Order status transition service
 
 **Goal.** Create a service layer for order status transitions with business rules.
 
@@ -431,10 +431,10 @@
 
 
    ALLOWED_TRANSITIONS = {
-       "PENDING": ["CONFIRMED", "CANCELLED"],
-       "CONFIRMED": ["PAID", "CANCELLED"],
-       "PAID": ["OUT_FOR_DELIVERY", "CANCELLED"],
-       "OUT_FOR_DELIVERY": ["COMPLETED"],
+       "PENDING_PAYMENT": ["CONFIRMED", "CANCELLED"],
+       "CONFIRMED": ["PREPARING", "CANCELLED"],
+       "PREPARING": ["OUT_FOR_DELIVERY", "CANCELLED"],
+       "OUT_FOR_DELIVERY": ["COMPLETED", "CANCELLED"],
        "COMPLETED": [],
        "CANCELLED": [],
    }
@@ -453,15 +453,20 @@
        return order
    ```
 
+**Fixes vs original spec:**
+- `ALLOWED_TRANSITIONS` uses `"PENDING"` and `"PAID"` which don't exist as TransactionStatus seed-data codes — fixed to `"PENDING_PAYMENT"` and `"PREPARING"` respectively.
+- Added `"CANCELLED"` as allowed transition from `OUT_FOR_DELIVERY` (spec only listed it on some states).
+
 **Expected result.** `backend/orders/services.py` exists with `transition_order_status` function.
 
-**Verify.** `python manage.py shell` → import and test `transition_order_status` with valid/invalid transitions.
+
+**Verify.** `python manage.py shell` â†’ import and test `transition_order_status` with valid/invalid transitions.
 
 **If it fails.** Check `TransactionStatus` codes match the keys in `ALLOWED_TRANSITIONS`.
 
 ---
 
-## Step M3.9 — Cart service business logic
+## Step M3.9 â€” Cart service business logic
 
 **Goal.** Create cart service for add/update/remove with stock validation.
 
@@ -515,13 +520,13 @@
 
 **Expected result.** `backend/cart/services.py` exists with stock-aware cart operations.
 
-**Verify.** `python manage.py shell` → import and test `add_to_cart` with valid/invalid stock.
+**Verify.** `python manage.py shell` â†’ import and test `add_to_cart` with valid/invalid stock.
 
 **If it fails.** Check `Product.stock_quantity` field exists on the model.
 
 ---
 
-## Step M3.10 — Checkout service business logic
+## Step M3.10 â€” Checkout service business logic
 
 **Goal.** Create checkout service that splits cart by vendor and creates orders.
 
@@ -584,13 +589,13 @@
 
 **Expected result.** `checkout_cart` splits cart by vendor and creates orders + transactions.
 
-**Verify.** `python manage.py shell` → import and test `checkout_cart` with seeded cart data.
+**Verify.** `python manage.py shell` â†’ import and test `checkout_cart` with seeded cart data.
 
 **If it fails.** Check `TransactionStatus` has "PENDING" code and `TransactionType` has "SALE".
 
 ---
 
-## Step M3.11 — Wire services into views
+## Step M3.11 â€” Wire services into views
 
 **Goal.** Refactor cart/checkout views to use service layer instead of inline logic.
 
@@ -598,7 +603,7 @@
 
 **Actions.**
 
-1. Edit `backend/cart/views.py` — replace inline logic with calls to `cart.services`:
+1. Edit `backend/cart/views.py` â€” replace inline logic with calls to `cart.services`:
 
    ```python
    from cart.services import add_to_cart, update_cart_item, remove_cart_item
@@ -613,17 +618,17 @@
        return Response(serializer.data)
    ```
 
-2. Edit `backend/orders/views.py` — replace inline checkout logic with `orders.services.checkout_cart`.
+2. Edit `backend/orders/views.py` â€” replace inline checkout logic with `orders.services.checkout_cart`.
 
 **Expected result.** Views delegate business logic to service layer.
 
-**Verify.** `python manage.py check` → System check identified no issues (0 silenced).
+**Verify.** `python manage.py check` â†’ System check identified no issues (0 silenced).
 
 **If it fails.** Check service function signatures match view calls.
 
 ---
 
-## Step M3.12 — Vue 3 frontend setup
+## Step M3.12 â€” Vue 3 frontend setup
 
 **Goal.** Initialize Vue 3 + Vite + Tailwind frontend for the E-Compra storefront.
 
@@ -674,13 +679,13 @@
 
 **Expected result.** `frontend/` exists with Vue 3 + Vite + Tailwind + Axios, dev server starts.
 
-**Verify.** `npm run dev` → Vite dev server starts on `http://localhost:5173`.
+**Verify.** `npm run dev` â†’ Vite dev server starts on `http://localhost:5173`.
 
 **If it fails.** Check Node.js is installed (`node --version`).
 
 ---
 
-## Step M3.13 — Cart frontend screens
+## Step M3.13 â€” Cart frontend screens
 
 **Goal.** Build Vue 3 cart page: list items, update quantity, remove, checkout.
 
@@ -713,13 +718,13 @@
 
 **Expected result.** Cart page loads and can add/update/remove items via API.
 
-**Verify.** `npm run dev` → navigate to `/cart` → cart page renders without errors.
+**Verify.** `npm run dev` â†’ navigate to `/cart` â†’ cart page renders without errors.
 
 **If it fails.** Check Axios baseURL matches Django backend (port 8000).
 
 ---
 
-## Step M3.14 — Checkout frontend screens
+## Step M3.14 â€” Checkout frontend screens
 
 **Goal.** Build Vue 3 checkout page: order summary, vendor split, place order.
 
@@ -737,13 +742,13 @@
 
 **Expected result.** Checkout page shows cart split by vendor and can place order.
 
-**Verify.** `npm run dev` → navigate to `/checkout` → page renders, order placement calls API.
+**Verify.** `npm run dev` â†’ navigate to `/checkout` â†’ page renders, order placement calls API.
 
 **If it fails.** Check checkout API endpoint returns `order_ids` array.
 
 ---
 
-## Step M3.15 — Payment frontend screens
+## Step M3.15 â€” Payment frontend screens
 
 **Goal.** Build Vue 3 payment page: payment method selection, payment recording.
 
@@ -761,13 +766,13 @@
 
 **Expected result.** Payment page records payment via API and shows confirmation.
 
-**Verify.** `npm run dev` → navigate to `/payment` → page renders, payment submission works.
+**Verify.** `npm run dev` â†’ navigate to `/payment` â†’ page renders, payment submission works.
 
 **If it fails.** Check payment API accepts `transaction_id`, `provider`, `provider_reference`, `amount`.
 
 ---
 
-## Step M3.16 — Vendor POS frontend screens
+## Step M3.16 â€” Vendor POS frontend screens
 
 **Goal.** Build Vue 3 vendor POS page: view orders, update status.
 
@@ -777,20 +782,20 @@
 
 1. Create `frontend/src/views/VendorPOSView.vue` with:
    - Vendor's order list (order ID, customer, total, status)
-   - Status dropdown per order (PENDING → CONFIRMED → PAID → OUT_FOR_DELIVERY → COMPLETED)
+   - Status dropdown per order (PENDING â†’ CONFIRMED â†’ PAID â†’ OUT_FOR_DELIVERY â†’ COMPLETED)
    - Update status button (calls vendor POS API)
 
 2. Add vendor POS route to `frontend/src/router/index.js`.
 
 **Expected result.** Vendor POS page lists orders and updates status via API.
 
-**Verify.** `npm run dev` → navigate to `/vendor/pos` → page renders, status update works.
+**Verify.** `npm run dev` â†’ navigate to `/vendor/pos` â†’ page renders, status update works.
 
 **If it fails.** Check vendor POS API requires authentication and vendor ownership.
 
 ---
 
-## Step M3.17 — Integration tests for write-path APIs
+## Step M3.17 â€” Integration tests for write-path APIs
 
 **Goal.** Write pytest tests for cart/checkout/payment write-path endpoints.
 
@@ -893,17 +898,17 @@
 
 **Expected result.** Integration tests pass for cart add, checkout split, and payment.
 
-**Verify.** `pytest` → all tests pass (5 existing + new cart/checkout tests).
+**Verify.** `pytest` â†’ all tests pass (5 existing + new cart/checkout tests).
 
 **If it fails.** Check fixtures create valid related objects (category, unit, availability, vendor).
 
 ---
 
-## Step M3.18 — M3 exit review
+## Step M3.18 â€” M3 exit review
 
 **Goal.** Close M3 milestone: commit, tag `m3-complete`, prepare for M4.
 
-**Where.** Project root — PowerShell
+**Where.** Project root â€” PowerShell
 
 **Actions.**
 
@@ -922,7 +927,7 @@
 
    ```powershell
    git add .
-   git commit -m "feat(m3): feature build — cart, checkout, payments, vendor POS, Vue 3 frontend"
+   git commit -m "feat(m3): feature build â€” cart, checkout, payments, vendor POS, Vue 3 frontend"
    ```
 
 4. Tag:
@@ -942,7 +947,7 @@ git tag
 git status --short
 ```
 
-**If it fails.** `npm run build` fails → check Vue 3 frontend compiles; fix before tagging.
+**If it fails.** `npm run build` fails â†’ check Vue 3 frontend compiles; fix before tagging.
 
 ---
 
@@ -960,10 +965,11 @@ git status --short
 
 ---
 
-> 📌 **CCS630 lesson — write-path vs read-path.** M2 built read-only APIs (queries). M3 adds mutations (cart, checkout, payment) — every write must validate stock, enforce status transitions, and record transactions atomically. A bug here corrupts data, not just misdisplays it.
+> ðŸ“Œ **CCS630 lesson â€” write-path vs read-path.** M2 built read-only APIs (queries). M3 adds mutations (cart, checkout, payment) â€” every write must validate stock, enforce status transitions, and record transactions atomically. A bug here corrupts data, not just misdisplays it.
 
-> 📌 **CCS630 lesson — service layer.** Business logic lives in `services.py`, not in views. Views handle HTTP; services handle rules. This makes logic testable without HTTP and reusable across API + frontend.
+> ðŸ“Œ **CCS630 lesson â€” service layer.** Business logic lives in `services.py`, not in views. Views handle HTTP; services handle rules. This makes logic testable without HTTP and reusable across API + frontend.
 
 ---
 
-**Next.** M4 — Hardening & Delivery (Dec 3–12): security hardening, performance, backup/recovery, deployment docs, final defense preparation.
+**Next.** M4 â€” Hardening & Delivery (Dec 3â€“12): security hardening, performance, backup/recovery, deployment docs, final defense preparation.
+

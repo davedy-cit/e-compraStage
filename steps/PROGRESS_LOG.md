@@ -10,12 +10,12 @@
 | | |
 |---|---|
 | **Current milestone** | **M3 Â· Feature Build** (Nov 26 â€“ Dec 2, 2026) |
-| **Current step** | M3.8 â€” Order status transition service |
+| **Current step** | M3.9 — Cart service business logic |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
-| **M3 progress** | 7 / 18 steps Â· 39% (M3.1â€“M3.7) |
-| **Overall** | 36 / 78 steps Â· 46% |
+| **M3 progress** | 8 / 18 steps · 44% (M3.1– M3.8) |
+| **Overall** | 37 / 78 steps · 47% |
 | **Last updated** | 2026-11-22 |
 
 ---
@@ -365,9 +365,12 @@ TEMPLATE â€” copy this block for each completed step.
 
 ### [2026-11-27] Step M3.7 — Vendor POS API
 - **Status:** ✅ Completed (verified)
-- **What was done:** Added VendorPOSView to ackend/vendors/views.py and pos/ route to ackend/vendors/urls.py. GET lists the vendor's own orders (filtered by equest.user.vendor), POST updates an order's status via FK lookup TransactionStatus.objects.get(code=...).
+- **What was done:** Added VendorPOSView to ackend/vendors/views.py and pos/ route to ackend/vendors/urls.py. GET lists the vendor's own orders (filtered by 
+equest.user.vendor), POST updates an order's status via FK lookup TransactionStatus.objects.get(code=...).
 - **Verification:** python manage.py check → System check identified no issues (0 silenced).
 - **CCS630 lesson applied:** FK fields require object lookups (TransactionStatus.objects.get(code=...)), not raw strings. Reverse OneToOne accessor from AuthUser to Vendor is endor (default related_name), not endor_profile.
-- **Issues/notes:** Original spec used equest.user.vendor_profile which doesn't exist — fixed to equest.user.vendor. Original spec assigned raw string to order.status_code FK — fixed to TransactionStatus object lookup.
+- **Issues/notes:** Original spec used 
+equest.user.vendor_profile which doesn't exist — fixed to 
+equest.user.vendor. Original spec assigned raw string to order.status_code FK — fixed to TransactionStatus object lookup.
 - **Next:** M3.8 — Order status transition service.
 
