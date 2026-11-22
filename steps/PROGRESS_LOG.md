@@ -303,4 +303,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** _inspectdb_all.py was UTF-16 encoded (Django inspectdb output) — converted to UTF-8 for ruff compatibility. Two E402 issues in settings.py required manual fix (moving imports to module top level).
 - **Next:** M2.17 — Freeze requirements, .gitattributes, backend README.
 
+### [2026-11-22] Step M2.17 — Freeze requirements, .gitattributes, backend README
+- **Status:** ✅ Completed (verified)
+- **What was done:** Froze exact dependency versions from pip freeze (19 packages including transitive deps); updated root requirements.txt with all pinned versions; created .gitattributes at project root with text=auto for * and explicit text for *.sql, *.py, *.md, *.txt, *.toml, *.ini to end LF/CRLF warnings; created backend/README.md documenting full stack (Django 6.1.3, DRF 3.18.3, MySQL 8.4/utf8mb4, PyMySQL, drf-spectacular, SimpleJWT, CORS, pytest, ruff), setup steps (clone, venv, deps, .env, schema/seed/migrate/handover/superuser/runserver), M2 API surface (14 catalog/orders/vendors/favorites endpoints + JWT + Swagger/ReDoc), testing (test_ecompra clone + pytest), and linting (ruff check/format).
+- **Verification:** Get-Content requirements.txt → 19 pinned packages; git status --short → M requirements.txt, ?? .gitattributes, ?? backend/README.md; pytest → 5 passed; python manage.py check → no issues; ruff check backend → All checks passed!
+- **CCS630 lesson applied:** The environment is part of the schema — requirements.txt is to Python what 01_schema.sql is to MySQL: the script that rebuilds it from nothing. .gitattributes makes the repo line-ending agnostic so Windows/macOS/Linux contributors don't fight whitespace.
+- **Issues/notes:** None.
+- **Next:** M2.18 — M2 exit review (final smoke pass, commit, tag m2-complete, merge to master via PR).
+
 

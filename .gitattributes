@@ -1,0 +1,7 @@
+* text=auto
+*.sql text
+*.py text
+*.md text
+*.txt text
+*.toml text
+*.ini text
