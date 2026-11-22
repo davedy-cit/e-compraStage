@@ -9,12 +9,13 @@
 
 | | |
 |---|---|
-| **Current milestone** | **M1 · GitHub Repository Creation & Setup** (Nov 18–20, 2026) |
-| **Current step** | M1.8 — Repository description & topics |
+| **Current milestone** | **M2 · Data & Backend Core** (Nov 19 – Dec 2, 2026) |
+| **Current step** | M2.7 — ORM round-trip verification |
 | **M0 progress** | 13 / 13 steps · 100% (M0.1–M0.13) |
-| **M1 progress** | 8 / 9 steps · 89% (M1.1–M1.8) |
-| **Overall** | 21 / 78 steps · 27% |
-| **Last updated** | 2026-11-18 |
+| **M1 progress** | 9 / 9 steps · 100% (M1.1–M1.9) |
+| **M2 progress** | 6 / 18 steps · 33% (M2.1–M2.6) |
+| **Overall** | 28 / 78 steps · 36% |
+| **Last updated** | 2026-11-22 |
 
 ---
 
@@ -34,8 +35,8 @@ _(to be filled in)_
 | Milestone | Name | Steps | Done | Status | Completed on |
 |---|---|---|---|---|---|
 | M0 | System & Design + Planning Artifacts | 13 | 13 | ✅ Completed | 2026-11-18 |
-| M1 | GitHub Repository Creation & Setup | 9 | 8 | 🔵 In progress | |
-| M2 | Data & Backend Core | 18 | 0 | ⚪ Not started | |
+| M1 | GitHub Repository Creation & Setup | 9 | 9 | ✅ Completed | 2026-11-18 |
+| M2 | Data & Backend Core | 18 | 4 | 🔵 In progress | |
 | M3 | Feature Build | 18 | 0 | ⚪ Not started | |
 | M4 | Hardening & Delivery | 20 | 0 | ⚪ Not started | |
 
@@ -191,3 +192,26 @@ TEMPLATE — copy this block for each completed step.
 - **CCS630 lesson applied:** Version control is infrastructure — protected `master`, a release tag, and a clean history are part of the deliverable.
 - **Issues/notes:** Repo named `e-compraStage` (student's choice). `steps/phase-1-github-setup.md` + log updates pending commit on `develop`.
 - **Next:** M1.8 — Repository description & topics, then M1.9 — final verification.
+
+### [2026-11-18] Session 3 (cont.) — M1.9 close-out
+- **Status:** ✅ Completed (verified)
+- **What was done:** Committed `steps/phase-1-github-setup.md` + log updates on `develop`; pushed to GitHub. M1.8 (description/topics) set via GitHub About panel.
+- **Verification:** commit `c562080 docs(m1): phase-1 github setup steps and progress log update` (2 files, 282 insertions); `git push origin develop` → `dc88a94..c562080 develop -> develop`; `git status --short` → empty.
+- **Issues/notes:** Commit landed on `develop` — `master` is protected (M1.7), so M2+ work flows through `develop` and reaches `master` via PR. LF→CRLF warnings on commit are cosmetic (no `.gitattributes` yet; can add one in M2).
+- **Next:** M2.1 — Django project skeleton; create `steps/phase-2-data-backend-core.md`.
+
+### [2026-11-22] Step M2.5 — Clean up the models, per app
+- **Status:** ✅ Completed (verified)
+- **What was done:** Fixed all model issues across all six apps' `models.py`: replaced `models.DB_CASCADE` → `models.CASCADE` and `models.DB_SET_NULL` → `models.SET_NULL` globally; fixed wrong/undefined class references (`CatalogAvailabilitystatus` → `"AvailabilityStatus"`, `CatalogComparisongroup` → `"ComparisonGroup"`, `CatalogCategory` → `"Category"`, `CatalogProduct` → `"Product"`, `CatalogVendor` → `"Vendor"`, `CatalogUnitofmeasure` → `"UnitOfMeasure"`, `OrdersTransaction` → `"Transaction"`, `OrdersDeliverystatus` → `"DeliveryStatus"`, `OrdersPaymentstatus` → `"PaymentStatus"`, `OrdersTransactionstatus` → `"TransactionStatus"`, `OrdersFulfillmentmethod` → `"FulfillmentMethod"`, `Transactiontype` → `"TransactionType"`, `CatalogInventoryreason` → `"InventoryReason"`); fixed cross-app references as string refs (`'accounts.AuthUser'`, `'catalog.Product'`, `'catalog.Vendor'`, `'orders.Order'`, `'orders.TransactionStatus'`); removed unused imports in `cart/models.py`; fixed `__str__` indentation inside `CartItem` class in `cart/models.py`.
+- **Verification:** `python manage.py check` → `System check identified no issues (0 silenced)`.
+- **CCS630 lesson applied:** Cross-app FKs must use string references with app label (`'app_label.ModelName'`) to avoid import-order issues; `DB_` prefix is not valid Django — `on_delete` options are `CASCADE`, `SET_NULL`, `DO_NOTHING`, etc.
+- **Issues/notes:** All 28 models now define `managed = False` and `db_table` mapping to existing SQL schema tables.
+- **Next:** M2.6 — migrate Django core tables + auth_user handover (drop M0 placeholder auth_user, run migrate, re-point ~7 FKs via `sql/04b_auth_user_fks.sql`).
+
+### [2026-11-22] Step M2.6 — Migrate + auth_user handover
+- **Status:** ✅ Completed (verified)
+- **What was done:** Dropped 7 FK constraints referencing the M0 placeholder `auth_user` table and dropped the table itself (`sql/04_auth_user_handover.sql` Section 1); ran `python manage.py migrate` — 18 Django migrations applied, creating the real `auth_user` (with `int` PK), `auth_group`, `auth_permission`, `django_session`, `django_content_type`, `django_admin_log`, `django_migrations`; fixed column type mismatch on all 7 child tables (`user_id BIGINT UNSIGNED` → `int NOT NULL`) and re-added all 7 FKs with `FOREIGN_KEY_CHECKS=0` to bypass validation against empty `auth_user` (`sql/04b_auth_user_fks.sql`); amended `sql/01_schema.sql` — removed the auth_user stub block, added comment referencing Django migrations.
+- **Verification:** `mysql -u root -pAdmin2627 -e "SELECT COUNT(*) AS table_count ...; SELECT COUNT(*) AS broken_fk ...; SELECT COUNT(*) FROM django_migrations;" ecompra` → `table_count` = 35 (28 domain + 7 Django), `broken_fk` = 0, `django_migrations` = 18.
+- **CCS630 lesson applied:** Schema ownership must be explicit — one table, one owner (SQL scripts own domain tables; Django migrations own auth/sessions). Mixing owners on one table is how "works here, breaks there" bugs are born.
+- **Issues/notes:** The M0 `auth_user` stub used `BIGINT UNSIGNED`; Django's `auth_user.id` is `int`. All 7 child tables' `user_id` columns were altered to match.
+- **Next:** M2.7 — ORM round-trip verification.

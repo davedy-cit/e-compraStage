@@ -11,27 +11,7 @@ DROP DATABASE IF EXISTS ecompra;
 CREATE DATABASE ecompra CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE ecompra;
 
--- ---------------------------------------------------------------------------
--- 0. Django's built-in user table (stub).
---    Django owns this table via its own migrations. The stub exists so this
---    script is runnable on a fresh MySQL instance; IF NOT EXISTS makes it a
---    harmless no-op once Django has created the real thing.
--- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS auth_user (
-  id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  password      VARCHAR(128)    NOT NULL,
-  last_login    DATETIME(6)     NULL,
-  is_superuser  TINYINT(1)      NOT NULL DEFAULT 0,
-  username      VARCHAR(150)    NOT NULL,
-  first_name    VARCHAR(150)    NOT NULL DEFAULT '',
-  last_name     VARCHAR(150)    NOT NULL DEFAULT '',
-  email         VARCHAR(254)    NOT NULL DEFAULT '',
-  is_staff      TINYINT(1)      NOT NULL DEFAULT 0,
-  is_active     TINYINT(1)      NOT NULL DEFAULT 1,
-  date_joined   DATETIME(6)     NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_auth_user_username (username)
-) ENGINE=InnoDB;
+-- auth_user is created by Django migrations (M2.6); see 04b_auth_user_fks.sql.
 
 -- ---------------------------------------------------------------------------
 -- 1. Profiles

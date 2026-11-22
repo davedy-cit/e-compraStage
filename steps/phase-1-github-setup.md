@@ -242,6 +242,19 @@ git status --short
    - Branch protection on `master` is active
    - Description and topics are set
 
+2. Commit the phase-1 artifacts and final verification
+
+```powershell
+git add steps/PROGRESS_LOG.md steps/phase-1-github-setup.md
+git commit -m @'
+docs(m1): phase-1 github setup steps and progress log update
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>
+'@
+git push origin develop
+git status --short
+```
+
 **Expected result.** Everything matches; `git status --short` is empty.
 
 **Verify.** Paste the outputs of the git commands above and confirm the GitHub page matches.
