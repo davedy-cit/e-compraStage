@@ -3,13 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cart.models import Cart, CartItem
-
 from .models import (
     DeliveryStatus,
     FulfillmentMethod,
-    Order,
-    OrderItem,
     Payment,
     PaymentStatus,
     Transaction,
@@ -23,6 +19,7 @@ from .serializers import (
     TransactionStatusSerializer,
     TransactionTypeSerializer,
 )
+from .services import checkout_cart
 
 
 class TransactionStatusList(generics.ListAPIView):
@@ -54,59 +51,12 @@ class CheckoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = request.user
-        cart, _ = Cart.objects.get_or_create(user=user)
-        items = (
-            CartItem.objects.filter(cart=cart)
-            .select_related("product", "product__vendor")
-        )
-
-        if not items.exists():
-            return Response(
-                {"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Split by vendor
-        by_vendor = {}
-        for item in items:
-            by_vendor.setdefault(item.product.vendor_id, []).append(item)
-
-        orders = []
-        pending_status = TransactionStatus.objects.get(code="PENDING_PAYMENT")
-        delivery_method = FulfillmentMethod.objects.get(code="DELIVERY")
-        online_order_type = TransactionType.objects.get(code="ONLINE_ORDER")
-
-        for vendor_id, vendor_items in by_vendor.items():
-            total = sum(
-                (item.product.price * item.quantity) for item in vendor_items
-            )
-            order = Order.objects.create(
-                user=user,
-                vendor_id=vendor_id,
-                status_code=pending_status,
-                fulfillment_code=delivery_method,
-                total_amount=total,
-                notes="",
-            )
-            for item in vendor_items:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    quantity=item.quantity,
-                    unit_price=item.product.price,
-                )
-            Transaction.objects.create(
-                order=order,
-                transaction_type=online_order_type,
-                reference_no=f"TXN-{order.id}-{vendor_id}",
-            )
-            orders.append(order.id)
-
-        # Clear cart
-        CartItem.objects.filter(cart=cart).delete()
-
+        try:
+            order_ids = checkout_cart(request.user)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-            {"order_ids": orders, "status": "checkout_complete"},
+            {"order_ids": order_ids, "status": "checkout_complete"},
             status=status.HTTP_201_CREATED,
         )
 
