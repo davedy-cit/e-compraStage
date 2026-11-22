@@ -353,46 +353,64 @@
 
 **Actions.**
 
-1. Add a `VendorPOSView` to `backend/vendors/views.py`:
+1. Add `VendorPOSView` to `backend/vendors/views.py`:
 
    ```python
-   from rest_framework import status
+   from rest_framework import generics, status
    from rest_framework.permissions import IsAuthenticated
    from rest_framework.response import Response
    from rest_framework.views import APIView
 
-   from orders.models import Order, OrderItem
+   from orders.models import Order, TransactionStatus
    from orders.serializers import OrderSerializer
+
+   from .models import PosVendor
+   from .serializers import PosVendorSerializer
+
+
+   class PosVendorList(generics.ListAPIView):
+       queryset = PosVendor.objects.select_related("catalog_vendor")
+       serializer_class = PosVendorSerializer
 
 
    class VendorPOSView(APIView):
        permission_classes = [IsAuthenticated]
 
        def get(self, request):
-           # Vendor views their own orders
-           orders = Order.objects.filter(vendor=request.user.vendor_profile)
+           orders = Order.objects.filter(vendor=request.user.vendor)
            serializer = OrderSerializer(orders, many=True, context={"request": request})
            return Response(serializer.data)
 
        def post(self, request):
            order_id = request.data.get("order_id")
-           new_status = request.data.get("status_code")
+           new_status_code = request.data.get("status_code")
            try:
-               order = Order.objects.get(id=order_id, vendor=request.user.vendor_profile)
+               order = Order.objects.get(id=order_id, vendor=request.user.vendor)
            except Order.DoesNotExist:
                return Response(
                    {"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND
                )
-           order.status_code = new_status
+           order.status_code = TransactionStatus.objects.get(code=new_status_code)
            order.save()
            return Response(OrderSerializer(order, context={"request": request}).data)
    ```
 
-**Expected result.** Vendor can list and update their orders via POS endpoint.
+2. Add route to `backend/vendors/urls.py`:
+
+   ```python
+   path("pos/", views.VendorPOSView.as_view(), name="vendor-pos"),
+   ```
+
+**Fixes vs original spec:**
+- `request.user.vendor_profile` does not exist — `Vendor.user` is a OneToOneField to `accounts.AuthUser`, so the reverse accessor is `request.user.vendor`.
+- `order.status_code = new_status` assigns a raw string to an FK field — fixed to `TransactionStatus.objects.get(code=new_status_code)`.
+- `OrderItem` import removed (unused).
+
+**Expected result.** Vendor can list and update their orders via POS endpoint at `/api/vendors/pos/`.
 
 **Verify.** `python manage.py check` → System check identified no issues (0 silenced).
 
-**If it fails.** Check `request.user.vendor_profile` exists — Userprofile links to Vendor.
+**If it fails.** Verify `request.user.vendor` resolves — Vendor links to AuthUser via `user = models.OneToOneField("accounts.AuthUser")`.
 
 ---
 
