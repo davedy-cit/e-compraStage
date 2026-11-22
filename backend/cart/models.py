@@ -1,9 +1,10 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Cart(models.Model):
     user = models.OneToOneField("accounts.AuthUser", models.CASCADE, primary_key=True)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = False
@@ -12,10 +13,10 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     id = models.BigAutoField(primary_key=True)
-    cart = models.ForeignKey("Cart", models.CASCADE)
+    cart = models.ForeignKey("Cart", models.CASCADE, related_name="items")
     product = models.ForeignKey("catalog.Product", models.CASCADE)
     quantity = models.IntegerField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = False

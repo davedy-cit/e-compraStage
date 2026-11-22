@@ -374,3 +374,12 @@ equest.user.vendor_profile which doesn't exist — fixed to
 equest.user.vendor. Original spec assigned raw string to order.status_code FK — fixed to TransactionStatus object lookup.
 - **Next:** M3.8 — Order status transition service.
 
+
+### [2026-11-22] Step M3.17 — Integration tests for write-path APIs (fix vendor POS status transition validation)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Fixed VendorPOSView in `backend/vendors/views.py` to use the `transition_order_status` service function from `orders/services.py` instead of directly setting the status. This enforces the allowed status transitions: PENDING_PAYMENT → CONFIRMED → PREPARING → OUT_FOR_DELIVERY → COMPLETED, with CANCELLED allowed from any state. Invalid transitions (e.g., PENDING_PAYMENT → OUT_FOR_DELIVERY skipping intermediate steps) now return 400.
+- **Verification:** `pytest orders/test_checkout.py::test_vendor_pos_update_status orders/test_checkout.py::test_vendor_pos_invalid_status_transition -v` → 2 passed; full test suite `pytest -v` → 28 passed.
+- **CCS630 lesson applied:** Business logic belongs in the service layer, not in views. The `transition_order_status` function validates transitions using the ALLOWED_TRANSITIONS dictionary, ensuring data integrity at the application level.
+- **Issues/notes:** The VendorPOSView was bypassing the service layer validation. Now it properly uses the service, which is consistent with the service-layer pattern used in CheckoutView and PaymentView.
+- **Next:** M3.18 — M3 exit review.
+

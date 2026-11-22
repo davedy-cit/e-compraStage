@@ -3,8 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from orders.models import Order, TransactionStatus
+from orders.models import Order
 from orders.serializers import OrderSerializer
+from orders.services import transition_order_status
 
 from .models import PosVendor
 from .serializers import PosVendorSerializer
@@ -32,6 +33,8 @@ class VendorPOSView(APIView):
             return Response(
                 {"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        order.status_code = TransactionStatus.objects.get(code=new_status_code)
-        order.save()
+        try:
+            order = transition_order_status(order, new_status_code)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(OrderSerializer(order, context={"request": request}).data)

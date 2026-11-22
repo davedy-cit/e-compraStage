@@ -20,6 +20,8 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
+from orders.views import CheckoutView, PaymentView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/catalog/", include("catalog.urls")),
@@ -27,6 +29,9 @@ urlpatterns = [
     path("api/vendors/", include("vendors.urls")),
     path("api/favorites/", include("favorites.urls")),
     path("api/cart/", include("cart.urls")),
+    # Checkout & Payment at root API level (per spec)
+    path("api/checkout/", CheckoutView.as_view(), name="checkout"),
+    path("api/payment/", PaymentView.as_view(), name="payment"),
     # JWT auth
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
