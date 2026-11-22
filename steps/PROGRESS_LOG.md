@@ -254,3 +254,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Next:** M2.11 — Read-only API views.
 
 
+### [2026-11-22] Step M2.11 — Read-only API views
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created views.py for 4 apps with read-only generics.ListAPIView/RetrieveAPIView: catalog (6 views: ProductList, ProductDetail, CategoryList, VendorList, UnitOfMeasureList, AvailabilityStatusList), orders (5 lookup views: TransactionStatusList, TransactionTypeList, PaymentStatusList, DeliveryStatusList, FulfillmentMethodList), vendors (1 view: PosVendorList), favorites (2 views: FavoriteProductList, FavoriteVendorList with user filtering). All use correct select_related fields (unit_code, availability_code, etc.) matching M2.5 model FK names.
+- **Verification:** python manage.py check → System check identified no issues (0 silenced); all 4 view modules import cleanly; Select-String count → 14 classes.
+- **CCS630 lesson applied:** Search is a query plan — ?q= becomes a LIKE %…% over catalog_product.name — the exact query ix_product_name (M0.8) was built to serve. You will EXPLAIN this in M4.
+- **Issues/notes:** Favorites views filter by request.user (requires auth/JWT from M2.14); is_orderable filter traverses availability_code__is_orderable (AvailabilityStatus model). Documentation count said 13 but actual is 14 (6+5+1+2).
+- **Next:** M2.12 — URLs + browsable API root.
+
+
