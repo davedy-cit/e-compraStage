@@ -10,12 +10,12 @@
 | | |
 |---|---|
 | **Current milestone** | **M3 Â· Feature Build** (Nov 26 â€“ Dec 2, 2026) |
-| **Current step** | M3.16 — Vendor POS frontend screens |
+| **Current step** | M3.17 — Integration tests for write-path APIs |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
-| **M3 progress** | 15 / 18 steps · 83% (M3.1– M3.15) |
-| **Overall** | 44 / 78 steps · 56% |
+| **M3 progress** | 16 / 18 steps · 89% (M3.1– M3.16) |
+| **Overall** | 45 / 78 steps · 58% |
 | **Last updated** | 2026-11-22 |
 
 ---
