@@ -9,12 +9,13 @@
 
 | | |
 |---|---|
-| **Current milestone** | **M2 Â· Data & Backend Core** (Nov 19 â€“ Dec 2, 2026) |
-| **Current step** | M2.8 â€” Register the models in the admin |
+| **Current milestone** | **M3 Â· Feature Build** (Nov 26 â€“ Dec 2, 2026) |
+| **Current step** | M3.6 â€” Payment API |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
-| **M2 progress** | 7 / 18 steps Â· 39% (M2.1â€“M2.7) |
-| **Overall** | 29 / 78 steps Â· 37% |
+| **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
+| **M3 progress** | 6 / 18 steps Â· 33% (M3.1â€“M3.6) |
+| **Overall** | 35 / 78 steps Â· 45% |
 | **Last updated** | 2026-11-22 |
 
 ---
@@ -36,8 +37,8 @@ _(to be filled in)_
 |---|---|---|---|---|---|
 | M0 | System & Design + Planning Artifacts | 13 | 13 | âœ… Completed | 2026-11-18 |
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
-| M2 | Data & Backend Core | 18 | 4 | ðŸ”µ In progress | |
-| M3 | Feature Build | 18 | 0 | âšª Not started | |
+| M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
+| M3 | Feature Build | 18 | 6 | ðŸ”µ In progress | |
 | M4 | Hardening & Delivery | 20 | 0 | âšª Not started | |
 
 ---
@@ -318,5 +319,46 @@ TEMPLATE â€” copy this block for each completed step.
 - **CCS630 lesson applied:** A milestone is a contract — tagging m2-complete says "this exact code passes every check." Future milestones build on this guarantee. The milestone gate: from a wiped machine, git clone + pip install + .env + three SQL scripts + migrate reproduces the entire backend with data.
 - **Issues/notes:** PR merge to master pending — branch protection on master requires PR. User needs to: 1) Open PR at https://github.com/davedy-cit/e-compraStage/pull/new/develop titled "M2: Django backend core complete", 2) Temporarily adjust branch protection (Require approvals = 0 or uncheck "Do not allow bypassing"), 3) Merge PR, 4) Restore protection.
 - **Next:** M3 — Feature Build (starts after M2 merge to master).
+
+
+### [2026-11-26] Step M3.1 — Fix CartItem `__str__` bug
+- **Status:** âœ… Completed (verified)
+- **What was done:** Fixed `CartItem.__str__` in `backend/cart/models.py` from `return self.name` (non-existent field) to `return self.product.name`.
+- **Verification:** `python manage.py check` â†’ `System check identified no issues (0 silenced)`; commit `fb180a8 feat(m3.1): fix CartItem __str__ references self.name instead of self.product.name`.
+- **CCS630 lesson applied:** FK field names match `db_column`, not related model names — `self.product` is the FK object, `self.product.name` accesses the related field.
+- **Issues/none:** none.
+- **Next:** M3.2 — Cart serializers.
+
+### [2026-11-26] Step M3.2 — Cart serializers
+- **Status:** âœ… Completed (verified)
+- **What was done:** Created `backend/cart/serializers.py` with `CartItemSerializer` (product_name, product_price via `source=`) and `CartSerializer` (nested items, SerializerMethodFields for item_count/total_amount).
+- **Verification:** `python manage.py check` â†’ `System check identified no issues (0 silenced)`; commit `90a7206 feat(m3.2): add cart serializers (CartSerializer, CartItemSerializer)`.
+- **CCS630 lesson applied:** The serializer is the API contract — source fields project exactly which columns leave the database.
+- **Issues/none:** none.
+- **Next:** M3.3 — Cart write-path views.
+
+### [2026-11-26] Step M3.3 — Cart write-path views
+- **Status:** âœ… Completed (verified)
+- **What was done:** Created `backend/cart/views.py` with `CartViewSet(viewsets.ViewSet)` exposing list/add/update_item/remove_item actions, permission_classes=[IsAuthenticated]; created `backend/cart/urls.py` with DefaultRouter; wired `api/cart/` into config/urls.py.
+- **Verification:** `python manage.py check` â†’ `System check identified no issues (0 silenced)`; commits `7a586d4 feat(m3.3): add cart write-path views` and `2a5266a feat(m3.4): wire cart URLs under /api/cart/`.
+- **CCS630 lesson applied:** ViewSet actions map HTTP methods to cart mutations; DefaultRouter auto-generates URL patterns.
+- **Issues/none:** none.
+- **Next:** M3.5 — CheckoutView with cart-splitting.
+
+### [2026-11-27] Step M3.5 — CheckoutView with cart-splitting by vendor
+- **Status:** âœ… Completed (verified)
+- **What was done:** Added `CheckoutView` to `backend/orders/views.py` — groups cart items by product.vendor_id, creates one Order per vendor, creates OrderItems and Transactions per order, clears cart on completion. Uses FK lookups: `TransactionStatus.objects.get(code="PENDING_PAYMENT")`, `FulfillmentMethod.objects.get(code="DELIVERY")`, `TransactionType.objects.get(code="ONLINE_ORDER")`.
+- **Verification:** `python manage.py check` â†’ `System check identified no issues (0 silenced)`; commit `e5e468e feat(m3.5): add CheckoutView with cart-splitting by vendor`.
+- **CCS630 lesson applied:** Cart-splitting by vendor is a domain requirement — one order per vendor enables per-vendor fulfillment and payments.
+- **Issues/notes:** Original spec used raw string `status_code="PENDING"` and `transaction_type="SALE"` — both wrong; `status_code` is a FK to TransactionStatus and no `SALE` code exists. Fixed to FK object lookups with correct seed-data codes.
+- **Next:** M3.6 — Payment API.
+
+### [2026-11-27] Step M3.6 — Payment API
+- **Status:** âœ… Completed (verified)
+- **What was done:** Added `PaymentView` to `backend/orders/views.py` and `payment/` route to `backend/orders/urls.py`. PaymentView creates a Payment record linked to a Transaction with FK lookup `PaymentStatus.objects.get(code="VERIFIED")`. Added `Payment` to model imports.
+- **Verification:** `python manage.py check` â†’ `System check identified no issues (0 silenced)`; commit `c9041cd feat(m3.6): add PaymentView for recording payments linked to transactions`; `git push origin develop` â†’ `e5e468e..c9041cd develop -> develop`.
+- **CCS630 lesson applied:** FK fields on managed=False models require object lookups (`PaymentStatus.objects.get(code=...)`), not raw strings; seed data codes must be verified before writing code.
+- **Issues/notes:** Original spec used `status_code="PAID"` but no `PAID` PaymentStatus code exists in seed data — uses `VERIFIED` as terminal settlement state instead.
+- **Next:** M3.7 — Vendor POS API.
 
 
