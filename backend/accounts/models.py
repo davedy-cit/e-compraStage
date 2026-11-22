@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Customerprofile(models.Model):
-    user = models.OneToOneField('AuthUser', models.CASCADE, primary_key=True)
+    user = models.OneToOneField("AuthUser", models.CASCADE, primary_key=True)
     phone = models.CharField(max_length=32)
     address = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField()
@@ -10,18 +10,18 @@ class Customerprofile(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'accounts_customerprofile'
+        db_table = "accounts_customerprofile"
 
 
 class Userprofile(models.Model):
-    user = models.OneToOneField('AuthUser', models.CASCADE, primary_key=True)
+    user = models.OneToOneField("AuthUser", models.CASCADE, primary_key=True)
     is_vendor = models.IntegerField()
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
 
     class Meta:
         managed = False
-        db_table = 'accounts_userprofile'
+        db_table = "accounts_userprofile"
 
 
 class AuthUser(models.Model):
@@ -39,8 +39,7 @@ class AuthUser(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'auth_user'
+        db_table = "auth_user"
 
     def __str__(self):
         return self.name
-

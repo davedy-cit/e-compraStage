@@ -1,8 +1,6 @@
 import pytest
-from orders.models import (
-    TransactionStatus, PaymentStatus, DeliveryStatus,
-    FulfillmentMethod, TransactionType
-)
+
+from orders.models import DeliveryStatus, FulfillmentMethod, PaymentStatus, TransactionStatus, TransactionType
 
 
 @pytest.mark.django_db

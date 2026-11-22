@@ -1,5 +1,6 @@
 import pytest
-from catalog.models import Product, Category, Vendor, UnitOfMeasure, AvailabilityStatus
+
+from catalog.models import AvailabilityStatus, Category, Product, UnitOfMeasure, Vendor
 
 
 @pytest.mark.django_db

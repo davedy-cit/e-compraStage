@@ -295,4 +295,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** UnitOfMeasure seeded count is 9 (not 4 as in original M2.15 doc) — test updated to match actual seed data. Original doc predicted 7 tests (5 catalog + 2 orders) but actual test file provides 5 tests (3 catalog + 2 orders).
 - **Next:** M2.16 — ruff lint pass (install ruff, create ruff.toml, run fix/format).
 
+### [2026-11-22] Step M2.16 — ruff lint pass
+- **Status:** ✅ Completed (verified)
+- **What was done:** Installed ruff 0.17.6; created ruff.toml at project root with line-length=110, excluded .venv/backups/tools/migrations, lint select=[E,F,W,I,UP,B,C4,T20] ignore=[E501], format with double quotes and space indentation; ran ruff check backend --fix (fixed 55 issues), ruff format backend (reformatted 38 files), fixed remaining E402 issues in settings.py by moving timedelta and sys imports to top of file, converted _inspectdb_all.py from UTF-16 to UTF-8.
+- **Verification:** ruff check backend → All checks passed!; pytest → 5 passed; python manage.py check → System check identified no issues (0 silenced).
+- **CCS630 lesson applied:** Lint is a review you get for free — import sorting (I) prevents circular-import bugs in Django apps; bugbear (B) catches real bugs like unused variables; pyupgrade (UP) modernizes syntax automatically.
+- **Issues/notes:** _inspectdb_all.py was UTF-16 encoded (Django inspectdb output) — converted to UTF-8 for ruff compatibility. Two E402 issues in settings.py required manual fix (moving imports to module top level).
+- **Next:** M2.17 — Freeze requirements, .gitattributes, backend README.
+
 
