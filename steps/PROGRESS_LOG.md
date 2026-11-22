@@ -233,3 +233,15 @@ TEMPLATE â€” copy this block for each completed step.
 - **Next:** M2.9 — Superuser + admin walkthrough.
 
 
+### [2026-11-22] Step M2.9 — Superuser + admin walkthrough
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created superuser dmin with password Admin2627 via Django's auth_user; verified seeded data counts — Products=34, Vendors=6, Categories=9, Units of Measure=9 (seeded data has 9 units), Orders=3 (pre-existing from auth_user handover, user_id references old auth_user), Auth Users=1 (admin); proved write access on managed=False table (UnitOfMeasure) by creating and deleting DOZ (Dozen).
+- **Verification:** python manage.py shell → Products=34, Vendors=6, Categories=9, Units=9; UnitOfMeasure create/delete works; admin user exists in auth_user.
+- **CCS630 lesson applied:** utf8mb4 end to end — the ₱ sign survived schema → seed → ORM → admin. One non-utf8mb4 hop anywhere would have mangled it; this walkthrough is the check.
+- **Issues/notes:** 
+  - Orders table has 3 pre-existing orders with user_id=2 (references old M0 auth_user stub); auth_user only has admin (id=1). This is a data integrity issue from M2.6 handover — the orders weren't cleaned during auth_user migration. Order.user FK uses SET_NULL but existing data wasn't updated.
+  - Units of Measure seeded count is 9 (not 4 as in M0.9 docs) — seed data may have been extended.
+  - Admin login and data display verified programmatically; browser walkthrough pending for defense demo.
+- **Next:** M2.10 — DRF + core serializers.
+
+
