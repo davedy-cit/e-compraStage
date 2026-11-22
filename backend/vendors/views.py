@@ -1,11 +1,10 @@
+from orders.models import Order
+from orders.serializers import OrderSerializer
+from orders.services import transition_order_status
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from orders.models import Order
-from orders.serializers import OrderSerializer
-from orders.services import transition_order_status
 
 from .models import PosVendor
 from .serializers import PosVendorSerializer
@@ -30,9 +29,7 @@ class VendorPOSView(APIView):
         try:
             order = Order.objects.get(id=order_id, vendor=request.user.vendor)
         except Order.DoesNotExist:
-            return Response(
-                {"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
         try:
             order = transition_order_status(order, new_status_code)
         except ValueError as e:

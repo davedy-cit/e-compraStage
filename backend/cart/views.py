@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from cart.models import Cart, CartItem
-from cart.serializers import CartSerializer, CartItemSerializer
+from cart.serializers import CartSerializer
 from cart.services import add_to_cart, remove_cart_item, update_cart_item
 
 

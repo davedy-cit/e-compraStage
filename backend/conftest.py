@@ -1,9 +1,10 @@
-import pytest
 from datetime import datetime
-from django.contrib.auth.hashers import make_password
+
+import pytest
 from accounts.models import AuthUser
-from catalog.models import Product, Vendor, Category, UnitOfMeasure, AvailabilityStatus
 from cart.models import Cart, CartItem
+from catalog.models import AvailabilityStatus, Category, Product, UnitOfMeasure, Vendor
+from django.contrib.auth.hashers import make_password
 
 
 def _create_auth_user(username, email, password="testpass", **kwargs):
@@ -38,6 +39,7 @@ def vendor_user():
 @pytest.fixture
 def api_client():
     from rest_framework.test import APIClient
+
     return APIClient()
 
 
@@ -45,8 +47,7 @@ def api_client():
 def category():
     now = datetime.now()
     return Category.objects.create(
-        name="Produce", slug="produce", is_active=1,
-        created_at=now, updated_at=now
+        name="Produce", slug="produce", is_active=1, created_at=now, updated_at=now
     )
 
 
@@ -54,8 +55,7 @@ def category():
 def unit():
     now = datetime.now()
     return UnitOfMeasure.objects.create(
-        code="PCS", name="Piece", description="Per piece", is_active=1,
-        created_at=now, updated_at=now
+        code="PCS", name="Piece", description="Per piece", is_active=1, created_at=now, updated_at=now
     )
 
 
@@ -63,8 +63,7 @@ def unit():
 def availability():
     # AvailabilityStatus does NOT have created_at/updated_at - use get_or_create
     return AvailabilityStatus.objects.get_or_create(
-        code="IN_STOCK",
-        defaults={"description": "In stock", "sort_order": 1, "is_orderable": 1}
+        code="IN_STOCK", defaults={"description": "In stock", "sort_order": 1, "is_orderable": 1}
     )[0]
 
 
@@ -79,7 +78,8 @@ def vendor(vendor_user):
         contact_email="vendor@test.com",
         is_active=1,
         user=vendor_user,
-        created_at=now, updated_at=now
+        created_at=now,
+        updated_at=now,
     )
 
 
@@ -95,7 +95,8 @@ def second_vendor():
         contact_email="vendor2@test.com",
         is_active=1,
         user=user,
-        created_at=now, updated_at=now
+        created_at=now,
+        updated_at=now,
     )
 
 
@@ -115,7 +116,8 @@ def product(category, unit, availability, vendor):
         low_stock_threshold=5,
         stall_location="A1",
         comparison_group=None,
-        created_at=now, updated_at=now
+        created_at=now,
+        updated_at=now,
     )
 
 
@@ -135,7 +137,8 @@ def low_stock_product(category, unit, availability, vendor):
         low_stock_threshold=5,
         stall_location="A1",
         comparison_group=None,
-        created_at=now, updated_at=now
+        created_at=now,
+        updated_at=now,
     )
 
 
@@ -155,7 +158,8 @@ def second_vendor_product(category, unit, availability, second_vendor):
         low_stock_threshold=5,
         stall_location="B2",
         comparison_group=None,
-        created_at=now, updated_at=now
+        created_at=now,
+        updated_at=now,
     )
 
 
@@ -174,38 +178,36 @@ def multi_vendor_cart(user, product, second_vendor_product):
 @pytest.fixture
 def transaction_status_pending():
     from orders.models import TransactionStatus
+
     # TransactionStatus does NOT have created_at/updated_at
     return TransactionStatus.objects.get_or_create(
-        code="PENDING_PAYMENT",
-        defaults={"description": "Pending Payment", "sort_order": 1}
+        code="PENDING_PAYMENT", defaults={"description": "Pending Payment", "sort_order": 1}
     )[0]
 
 
 @pytest.fixture
 def fulfillment_method_delivery():
     from orders.models import FulfillmentMethod
+
     # FulfillmentMethod does NOT have created_at/updated_at
-    return FulfillmentMethod.objects.get_or_create(
-        code="DELIVERY",
-        defaults={"description": "Delivery"}
-    )[0]
+    return FulfillmentMethod.objects.get_or_create(code="DELIVERY", defaults={"description": "Delivery"})[0]
 
 
 @pytest.fixture
 def transaction_type_online():
     from orders.models import TransactionType
+
     # TransactionType does NOT have created_at/updated_at
     return TransactionType.objects.get_or_create(
-        code="ONLINE_ORDER",
-        defaults={"description": "Online Order"}
+        code="ONLINE_ORDER", defaults={"description": "Online Order"}
     )[0]
 
 
 @pytest.fixture
 def payment_status_verified():
     from orders.models import PaymentStatus
+
     # PaymentStatus does NOT have created_at/updated_at
     return PaymentStatus.objects.get_or_create(
-        code="VERIFIED",
-        defaults={"description": "Verified", "is_terminal": 1}
+        code="VERIFIED", defaults={"description": "Verified", "is_terminal": 1}
     )[0]

@@ -27,6 +27,4 @@ class CartSerializer(serializers.ModelSerializer):
         return obj.items.count()
 
     def get_total_amount(self, obj):
-        return sum(
-            (item.product.price * item.quantity) for item in obj.items.all()
-        )
+        return sum((item.product.price * item.quantity) for item in obj.items.all())

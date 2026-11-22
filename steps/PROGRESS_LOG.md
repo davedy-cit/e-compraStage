@@ -383,3 +383,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** The VendorPOSView was bypassing the service layer validation. Now it properly uses the service, which is consistent with the service-layer pattern used in CheckoutView and PaymentView.
 - **Next:** M3.18 — M3 exit review.
 
+### [2026-11-22] Step M3.18 — M3 exit review
+- **Status:** ✅ Completed (verified)
+- **What was done:** Final smoke pass — `python manage.py check` (no issues), `pytest` (28 passed), `ruff check backend` (all checks passed); frontend `npm run build` succeeded after fixing Tailwind v4 PostCSS plugin (`@tailwindcss/postcss`) and Vite path alias (`@` → `./src`). Tagged `m3-complete` on HEAD.
+- **Verification:** `git log --oneline -5` shows M3.13–M3.18 commits; `git tag` shows `m0-complete`, `m2-complete`, `m3-complete`; `git status --short` → empty after commit.
+- **CCS630 lesson applied:** A milestone is a contract — tagging `m3-complete` says "this exact code passes every check." The milestone gate: from a wiped machine, `git clone` + `pip install` + `npm install` + three SQL scripts + migrate reproduces the entire full-stack application.
+- **Issues/notes:** Fixed two frontend build issues during M3.18: (1) Tailwind CSS v4 requires `@tailwindcss/postcss` package instead of `tailwindcss` PostCSS plugin, (2) Vite `@` path alias was missing in `vite.config.js`. Both fixed before successful build.
+- **Next:** M4 — Hardening & Delivery (20 steps, Dec 3–12, 2026).
+

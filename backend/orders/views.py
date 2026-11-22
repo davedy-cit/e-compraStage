@@ -73,9 +73,7 @@ class PaymentView(APIView):
         try:
             transaction = Transaction.objects.get(id=transaction_id)
         except Transaction.DoesNotExist:
-            return Response(
-                {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND)
 
         verified_status = PaymentStatus.objects.get(code="VERIFIED")
         payment = Payment.objects.create(

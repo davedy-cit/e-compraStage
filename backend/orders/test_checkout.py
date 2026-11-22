@@ -1,9 +1,11 @@
-import pytest
 from datetime import datetime
-from django.contrib.auth.hashers import make_password
+
+import pytest
 from accounts.models import AuthUser
-from orders.models import Order, Transaction, Payment
 from cart.models import Cart, CartItem
+from django.contrib.auth.hashers import make_password
+
+from orders.models import Order, Payment, Transaction
 
 
 def _create_test_user(username, email):
@@ -62,7 +64,9 @@ def test_checkout_creates_correct_order_totals(api_client, user, product, second
     """Verify order totals match cart item totals."""
     api_client.force_authenticate(user=user)
     api_client.post("/api/cart/add/", {"product_id": product.id, "quantity": 2})  # 2 * 10.00 = 20.00
-    api_client.post("/api/cart/add/", {"product_id": second_vendor_product.id, "quantity": 3})  # 3 * 15.00 = 45.00
+    api_client.post(
+        "/api/cart/add/", {"product_id": second_vendor_product.id, "quantity": 3}
+    )  # 3 * 15.00 = 45.00
 
     resp = api_client.post("/api/checkout/")
     assert resp.status_code == 201
@@ -77,7 +81,9 @@ def test_checkout_creates_correct_order_totals(api_client, user, product, second
 
 
 @pytest.mark.django_db
-def test_payment_records_successfully(api_client, user, product, payment_status_verified, transaction_type_online):
+def test_payment_records_successfully(
+    api_client, user, product, payment_status_verified, transaction_type_online
+):
     """Test payment recording for a transaction."""
     api_client.force_authenticate(user=user)
     # First, checkout to create order and transaction
@@ -89,12 +95,15 @@ def test_payment_records_successfully(api_client, user, product, payment_status_
     transaction = Transaction.objects.get(order_id=order_id)
 
     # Record payment
-    resp = api_client.post("/api/payment/", {
-        "transaction_id": transaction.id,
-        "provider": "gcash",
-        "provider_reference": "GCASH-12345",
-        "amount": str(transaction.order.total_amount),
-    })
+    resp = api_client.post(
+        "/api/payment/",
+        {
+            "transaction_id": transaction.id,
+            "provider": "gcash",
+            "provider_reference": "GCASH-12345",
+            "amount": str(transaction.order.total_amount),
+        },
+    )
 
     assert resp.status_code == 201
     assert resp.data["status"] == "VERIFIED"
@@ -104,25 +113,27 @@ def test_payment_records_successfully(api_client, user, product, payment_status_
 @pytest.mark.django_db
 def test_payment_invalid_transaction_returns_404(api_client, user):
     api_client.force_authenticate(user=user)
-    resp = api_client.post("/api/payment/", {
-        "transaction_id": 99999,
-        "provider": "gcash",
-        "provider_reference": "GCASH-12345",
-        "amount": "10.00",
-    })
+    resp = api_client.post(
+        "/api/payment/",
+        {
+            "transaction_id": 99999,
+            "provider": "gcash",
+            "provider_reference": "GCASH-12345",
+            "amount": "10.00",
+        },
+    )
     assert resp.status_code == 404
 
 
 @pytest.mark.django_db
 def test_vendor_pos_list_orders(api_client, vendor_user, vendor, product):
     """Test vendor can list their orders via POS."""
-    from orders.models import Order, TransactionStatus, FulfillmentMethod, TransactionType
+    from orders.models import FulfillmentMethod, Order, TransactionStatus, TransactionType
 
     # Create a user and place an order
     customer = _create_test_user("customer", "customer@test.com")
 
     # Create cart and add item
-    from cart.models import Cart, CartItem
     now = datetime.now()
     cart = Cart.objects.create(user=customer, created_at=now)
     CartItem.objects.create(cart=cart, product=product, quantity=1, created_at=now)
@@ -157,7 +168,7 @@ def test_vendor_pos_list_orders(api_client, vendor_user, vendor, product):
 @pytest.mark.django_db
 def test_vendor_pos_update_status(api_client, vendor_user, vendor, product):
     """Test vendor can update order status via POS."""
-    from orders.models import Order, TransactionStatus, FulfillmentMethod, TransactionType
+    from orders.models import FulfillmentMethod, Order, TransactionStatus, TransactionType
 
     customer = _create_test_user("customer2", "customer2@test.com")
 
@@ -181,10 +192,13 @@ def test_vendor_pos_update_status(api_client, vendor_user, vendor, product):
 
     # Vendor updates status
     api_client.force_authenticate(user=vendor_user)
-    resp = api_client.post("/api/vendors/pos/", {
-        "order_id": order.id,
-        "status_code": "CONFIRMED",
-    })
+    resp = api_client.post(
+        "/api/vendors/pos/",
+        {
+            "order_id": order.id,
+            "status_code": "CONFIRMED",
+        },
+    )
 
     assert resp.status_code == 200
     assert resp.data["status_code"] == "CONFIRMED"
@@ -196,7 +210,7 @@ def test_vendor_pos_update_status(api_client, vendor_user, vendor, product):
 @pytest.mark.django_db
 def test_vendor_pos_invalid_status_transition(api_client, vendor_user, vendor, product):
     """Test invalid status transition is rejected."""
-    from orders.models import Order, TransactionStatus, FulfillmentMethod, TransactionType
+    from orders.models import FulfillmentMethod, Order, TransactionStatus, TransactionType
 
     customer = _create_test_user("customer3", "customer3@test.com")
 
@@ -220,10 +234,13 @@ def test_vendor_pos_invalid_status_transition(api_client, vendor_user, vendor, p
 
     # Try invalid transition: PENDING_PAYMENT -> OUT_FOR_DELIVERY (skipping CONFIRMED, PREPARING)
     api_client.force_authenticate(user=vendor_user)
-    resp = api_client.post("/api/vendors/pos/", {
-        "order_id": order.id,
-        "status_code": "OUT_FOR_DELIVERY",
-    })
+    resp = api_client.post(
+        "/api/vendors/pos/",
+        {
+            "order_id": order.id,
+            "status_code": "OUT_FOR_DELIVERY",
+        },
+    )
 
     # Should fail - not allowed transition
     assert resp.status_code == 400

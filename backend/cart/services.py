@@ -1,6 +1,7 @@
 """Business logic for cart operations."""
 
 from catalog.models import Product
+
 from cart.models import Cart, CartItem
 
 
