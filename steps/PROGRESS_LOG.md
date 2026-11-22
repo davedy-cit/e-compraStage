@@ -224,3 +224,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Issues/notes:** Fixed verification script in phase-2-data-backend-core.md to use correct field names (`unit_code`, `availability_code` for select_related and serializers).
 - **Next:** M2.8 â€” Register the models in the admin.
 
+### [2026-11-22] Step M2.8 — Register the models in the admin
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created admin.py for all 6 apps with proper list_display, list_filter, search_fields matching actual model field names: accounts (AuthUser, Userprofile, Customerprofile), catalog (Product, Vendor, Category, UnitOfMeasure, ComparisonGroup + 4 simple registers), cart (Cart, CartItem), orders (Order, OrderItem, Transaction, Payment, DeliveryBooking + 5 lookup registers), vendors (PosVendor, VendorTransaction), favorites (FavoriteProduct, FavoriteVendor).
+- **Verification:** python manage.py check → System check identified no issues (0 silenced); Select-String -Pattern "register" → 28 lines (≥ 27 expected).
+- **CCS630 lesson applied:** Admin is the cheapest CRUD proof — before a single API exists, the admin demonstrates the full read/write path to every table, and later it is your data-fixing tool during the defense demo. Field names in list_display must match model field names exactly (e.g., unit_code not unit, status_code not status).
+- **Issues/notes:** Fixed admin list_display fields to use actual model field names from M2.5 (e.g., unit_code, vailability_code, status_code, ulfillment_code).
+- **Next:** M2.9 — Superuser + admin walkthrough.
+
+
