@@ -294,12 +294,9 @@
 
 **Actions.**
 
-1. Add a `PaymentView` to `orders/views.py`:
+1. Add `Payment` to model imports and add `PaymentView` to `orders/views.py`:
 
    ```python
-   from orders.models import Payment, PaymentStatus
-
-
    class PaymentView(APIView):
        permission_classes = [IsAuthenticated]
 
@@ -316,12 +313,13 @@
                    {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
                )
 
+           verified_status = PaymentStatus.objects.get(code="VERIFIED")
            payment = Payment.objects.create(
                transaction=transaction,
                provider=provider,
                provider_reference=provider_reference,
                amount=amount,
-               status_code="PAID",
+               status_code=verified_status,
            )
 
            return Response(
@@ -334,11 +332,16 @@
            )
    ```
 
+   **Fixes vs original spec:**
+   - `status_code` is a FK field on Payment model — use `PaymentStatus.objects.get(code=...)` instead of raw string.
+   - Seed data has no `"PAID"` PaymentStatus code (uses `"VERIFIED"` as terminal settlement state).
+   - `Payment` is added to existing `from .models import ...` block in orders/views.py.
+
 **Expected result.** Payment endpoint creates a Payment record linked to a Transaction.
 
 **Verify.** `python manage.py check` → System check identified no issues (0 silenced).
 
-**If it fails.** Check that `PaymentStatus` has a "PAID" code.
+**If it fails.** Verify seed data contains `VERIFIED` PaymentStatus code.
 
 ---
 

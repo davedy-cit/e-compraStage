@@ -8,4 +8,6 @@ urlpatterns = [
     path("payment-statuses/", views.PaymentStatusList.as_view(), name="payment-status-list"),
     path("delivery-statuses/", views.DeliveryStatusList.as_view(), name="delivery-status-list"),
     path("fulfillment-methods/", views.FulfillmentMethodList.as_view(), name="fulfillment-method-list"),
+    path("checkout/", views.CheckoutView.as_view(), name="checkout"),
+    path("payment/", views.PaymentView.as_view(), name="payment"),
 ]

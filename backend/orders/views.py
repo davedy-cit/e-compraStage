@@ -10,6 +10,7 @@ from .models import (
     FulfillmentMethod,
     Order,
     OrderItem,
+    Payment,
     PaymentStatus,
     Transaction,
     TransactionStatus,
@@ -106,5 +107,40 @@ class CheckoutView(APIView):
 
         return Response(
             {"order_ids": orders, "status": "checkout_complete"},
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class PaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        transaction_id = request.data.get("transaction_id")
+        provider = request.data.get("provider")
+        provider_reference = request.data.get("provider_reference")
+        amount = request.data.get("amount")
+
+        try:
+            transaction = Transaction.objects.get(id=transaction_id)
+        except Transaction.DoesNotExist:
+            return Response(
+                {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        verified_status = PaymentStatus.objects.get(code="VERIFIED")
+        payment = Payment.objects.create(
+            transaction=transaction,
+            provider=provider,
+            provider_reference=provider_reference,
+            amount=amount,
+            status_code=verified_status,
+        )
+
+        return Response(
+            {
+                "payment_id": payment.id,
+                "status": payment.status_code.code,
+                "amount": str(payment.amount),
+            },
             status=status.HTTP_201_CREATED,
         )
