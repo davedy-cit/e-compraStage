@@ -263,3 +263,12 @@ TEMPLATE â€” copy this block for each completed step.
 - **Next:** M2.12 — URLs + browsable API root.
 
 
+### [2026-11-22] Step M2.12 — URLs + browsable API root
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created urls.py for 4 apps (catalog 6 patterns, orders 5, vendors 1, favorites 2) and wired into config/urls.py under /api/catalog/, /api/orders/, /api/vendors/, /api/favorites/. All endpoints tested and return seeded data with ₱ prices intact.
+- **Verification:** python manage.py check passes; server starts; tested endpoints: /api/catalog/products/ (34 products), ?q=tomato (3 tomatoes ₱75/78/80), /api/catalog/categories/ (9), /api/catalog/vendors/ (6), /api/catalog/units/ (9), /api/catalog/availability/ (2 orderable), /api/orders/transaction-statuses/ (7). All return real seeded data with correct nesting.
+- **CCS630 lesson applied:** The API is the mockup's backend twin — each mockup screen from M0.10 names the data it needs; these endpoints are where that data starts to exist for real.
+- **Issues/notes:** Spectacular (Swagger/ReDoc) and JWT endpoints deferred to M2.13/M2.14 when those packages are installed. Current config/urls.py only includes app URLs.
+- **Next:** M2.13 — OpenAPI schema + Swagger UI.
+
+
