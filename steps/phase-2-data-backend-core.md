@@ -292,7 +292,7 @@ Expected: `6` apps, and ≥ 27 generated classes.
 ## Step M2.5 — Clean up the models, per app
 
 **Goal.** Hand-verified model classes in the right apps: proper names, `db_table`, `managed = False`,
-`__str__`, and FKs pointing at Django's `auth.User`.
+`__str__`, and FKs pointing at the project's `AuthUser` (in `accounts` app, mapped to the existing `auth_user` table).
 
 **Where.** `backend/<app>/models.py` — editor.
 
@@ -300,9 +300,39 @@ Expected: `6` apps, and ≥ 27 generated classes.
 
 For **each** app, move its classes from `_inspectdb_all.py` into `<app>/models.py` and fix them up:
 
-1. **Rename classes** to CamelCase domain names: `UsersUserprofile` → `UserProfile`,
-   `CatalogProduct` → `Product`, `CartCartitem` → `CartItem`, `OrdersOrder` → `Order`,
-   `VendorsVendor` → `PosVendor` (it is the POS extension, not vendor identity), etc.
+1. **Rename classes** to CamelCase domain names. The inspectdb output uses `AppTable` prefixes; the actual
+   renames used in this project:
+
+   | inspectdb name | → | Domain name | App |
+   |---|---|---|---|
+   | `UsersUserprofile` | → | `Userprofile` | accounts |
+   | `UsersCustomerprofile` | → | `Customerprofile` | accounts |
+   | `UsersAuthUser` | → | `AuthUser` | accounts |
+   | `CatalogProduct` | → | `Product` | catalog |
+   | `CatalogVendor` | → | `Vendor` | catalog |
+   | `CatalogCategory` | → | `Category` | catalog |
+   | `CatalogUnitofmeasure` | → | `UnitOfMeasure` | catalog |
+   | `CatalogComparisongroup` | → | `ComparisonGroup` | catalog |
+   | `CatalogComparisongroupunit` | → | `ComparisonGroupUnit` | catalog |
+   | `CatalogAvailabilitystatus` | → | `AvailabilityStatus` | catalog |
+   | `CatalogInventoryreason` | → | `InventoryReason` | catalog |
+   | `CatalogInventorymovement` | → | `InventoryMovement` | catalog |
+   | `CartCart` | → | `Cart` | cart |
+   | `CartCartitem` | → | `CartItem` | cart |
+   | `OrdersOrder` | → | `Order` | orders |
+   | `OrdersOrderitem` | → | `OrderItem` | orders |
+   | `OrdersTransaction` | → | `Transaction` | orders |
+   | `OrdersPayment` | → | `Payment` | orders |
+   | `OrdersDeliverybooking` | → | `DeliveryBooking` | orders |
+   | `OrdersTransactionstatus` | → | `TransactionStatus` | orders |
+   | `OrdersTransactiontype` | → | `TransactionType` | orders |
+   | `OrdersPaymentstatus` | → | `PaymentStatus` | orders |
+   | `OrdersDeliverystatus` | → | `DeliveryStatus` | orders |
+   | `OrdersFulfillmentmethod` | → | `FulfillmentMethod` | orders |
+   | `VendorsVendor` | → | `PosVendor` | vendors (POS 1:1 extension) |
+   | `VendorsVendortransaction` | → | `VendorTransaction` | vendors |
+   | `FavoritesFavoriteproduct` | → | `FavoriteProduct` | favorites |
+   | `FavoritesFavoritevendor` | → | `FavoriteVendor` | favorites |
 
 2. **Every model gets exactly**:
 
@@ -316,27 +346,61 @@ For **each** app, move its classes from `_inspectdb_all.py` into `<app>/models.p
 
 ```python
     def __str__(self):
-        return self.name                     # Vendor, Category, Product
+        return self.name                     # Vendor, Category, Product, PosVendor
         # return self.code                   # lookups (TransactionStatus, UnitOfMeasure, …)
         # return f"Order {self.pk} ({self.status_code})"   # Order
 ```
 
-4. **Re-point user FKs.** inspectdb generated classes for `auth_user`; delete those and change every FK that
-   targeted them to Django's built-in user:
+4. **Re-point user FKs.** The `AuthUser` model lives in `accounts` app (`db_table='auth_user'`, `managed=False`).
+   **Do not use Django's built-in `User`.** Instead, reference `AuthUser` via string ref with the correct
+   `on_delete` per the schema (not just `PROTECT`):
 
-```python
-    from django.contrib.auth.models import User
-    user = models.ForeignKey(User, models.PROTECT, db_column="user_id", blank=True, null=True)  # orders_order only — C5 walk-ins
-```
+   ```python
+   # accounts app — user is PK, CASCADE
+   user = models.OneToOneField('accounts.AuthUser', models.CASCADE, primary_key=True)
 
-   (`null=True` **only** on `Order.user`; every other user FK is `NOT NULL` per the schema.)
+   # catalog.Vendor — user is 1:1, DO_NOTHING (M6 ruling: vendor identity = catalog_vendor.user NOT NULL)
+   user = models.OneToOneField('accounts.AuthUser', models.DO_NOTHING)
 
-5. **Cross-app FKs** use string references so import order never matters:
+   # cart.Cart — user is PK, CASCADE
+   user = models.OneToOneField('accounts.AuthUser', models.CASCADE, primary_key=True)
 
-```python
-    vendor = models.ForeignKey("catalog.Vendor", models.PROTECT, db_column="vendor_id")
-    order = models.ForeignKey("orders.Order", models.PROTECT, db_column="order_id")
-```
+   # orders.Order — user nullable for walk-ins (C5), SET_NULL
+   user = models.ForeignKey('accounts.AuthUser', models.SET_NULL, blank=True, null=True)
+
+   # favorites — user FK, CASCADE
+   user = models.ForeignKey('accounts.AuthUser', models.CASCADE)
+   ```
+
+   (`null=True` **only** on `Order.user` per C5; every other user FK is `NOT NULL`.)
+
+5. **Cross-app FKs** use string references with the correct `on_delete` per schema:
+
+   ```python
+   # catalog.Product → catalog.Vendor (CASCADE per schema)
+   vendor = models.ForeignKey('catalog.Vendor', models.CASCADE, db_column='vendor_id')
+
+   # catalog.Product → catalog.Category (DO_NOTHING)
+   category = models.ForeignKey('catalog.Category', models.DO_NOTHING)
+
+   # catalog.Product → catalog.UnitOfMeasure (DO_NOTHING)
+   unit = models.ForeignKey('catalog.UnitOfMeasure', models.DO_NOTHING, db_column='unit_code')
+
+   # orders.Order → catalog.Vendor (DO_NOTHING)
+   vendor = models.ForeignKey('catalog.Vendor', models.DO_NOTHING)
+
+   # orders.Order → orders.TransactionStatus (DO_NOTHING)
+   status = models.ForeignKey('orders.TransactionStatus', models.DO_NOTHING, db_column='status_code')
+
+   # vendors.PosVendor → catalog.Vendor (1:1 PK, CASCADE)
+   catalog_vendor = models.OneToOneField('catalog.Vendor', models.CASCADE, primary_key=True)
+
+   # favorites → catalog.Product / catalog.Vendor (CASCADE)
+   product = models.ForeignKey('catalog.Product', models.CASCADE)
+   vendor = models.ForeignKey('catalog.Vendor', models.CASCADE)
+   ```
+
+   ⚠️ **Match the exact `on_delete` from the M0 schema** — it varies (CASCADE, SET_NULL, DO_NOTHING, RESTRICT).
 
 6. **Delete `_inspectdb_all.py`** when every class has been moved — do not commit it.
 
@@ -362,6 +426,9 @@ Expected: check passes; `managed = False` ≥ 27; `db_table` ≥ 27.
 - `unused import` / lint noise → ignore for now; M2.16 cleans style.
 - `ImproperlyConfigured: app_label` → a model class name does not match any installed app convention; add
   `app_label` in `Meta` or confirm the file lives in the right app.
+- `NameError: name 'X' is not defined` → cross-app FK used bare class name; use string ref `'app.Model'`.
+- `TypeError: 'X' is not a class` → wrong class name; check rename table above.
+- `ERROR 3780 Referencing column ... incompatible` → FK column type doesn't match target PK; check `db_column`.
 - A `related_name` clash (two FKs to the same model) → inspectdb names them `<model>_set` twice; add explicit
   `related_name=` to each.
 
@@ -487,44 +554,51 @@ Expected: `table_count` = 35 (28 domain + 7 Django), `broken_fk` = `0`, `django_
 
 ## Step M2.7 — ORM round-trip verification
 
-**Goal.** Proof the models read the real data: every count matches M0.9, and the tomato query reproduces.
+**Goal.** Proof the models read the real seeded data: every count matches M0.9, and the tomato query reproduces correctly.
 
 **Where.** `backend/` — `manage.py shell`.
 
 **Actions.**
 
-1. In `python manage.py shell`:
+1. **Activate venv and start shell:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   python manage.py shell
+   ```
 
-```python
-from catalog.models import Product, Vendor, Category
-from orders.models import TransactionStatus, PaymentStatus, DeliveryStatus, FulfillmentMethod, TransactionType
-from catalog.models import AvailabilityStatus, UnitOfMeasure
+2. **Run the verification script in the shell:**
+   ```python
+   from catalog.models import Product, Vendor, Category
+   from orders.models import TransactionStatus, PaymentStatus, DeliveryStatus, FulfillmentMethod, TransactionType
+   from catalog.models import AvailabilityStatus, UnitOfMeasure
 
-print(TransactionStatus.objects.count(), PaymentStatus.objects.count(), DeliveryStatus.objects.count(),
-      FulfillmentMethod.objects.count(), TransactionType.objects.count(), AvailabilityStatus.objects.count(),
-      Category.objects.count(), Vendor.objects.count(), Product.objects.count())
+   print(TransactionStatus.objects.count(), PaymentStatus.objects.count(), DeliveryStatus.objects.count(),
+         FulfillmentMethod.objects.count(), TransactionType.objects.count(), AvailabilityStatus.objects.count(),
+         Category.objects.count(), Vendor.objects.count(), Product.objects.count())
 
-for p in (Product.objects.filter(name__istartswith="Tomato")
-          .select_related("vendor", "unit").order_by("price")):
-    print(p, "|", p.vendor.name, "|", p.price, "|", p.unit.code)
-```
+   for p in (Product.objects.filter(name__istartswith="Tomato")
+             .select_related("vendor", "unit_code", "availability_code").order_by("price")):
+       print(p, "|", p.vendor.name, "|", p.price, "|", p.unit_code.code)
+   ```
 
-2. Cross-check one relation end-to-end:
+3. **Cross-check one relation end-to-end:**
+   ```python
+   v = Vendor.objects.get(name__contains="Villamor")
+   print(v.product_set.count())
+   from accounts.models import AuthUser
+   print(AuthUser.objects.exists())   # Should be False (no users yet — just migrated)
+   ```
 
-```python
-v = Vendor.objects.get(name__contains="Villamor")
-print(v.product_set.count())
-print(User.objects.exists())   # from django.contrib.auth.models import User — should be [] (no users yet)
-```
+**Expected result.** Counts exactly `7 4 5 3 3 4 9 6 34`; three tomato rows ₱75, ₱78, ₱80 in order; auth_user table empty (`False`).
 
-**Expected result.** Counts exactly `7 4 5 3 3 4 9 6 34`; three tomato rows ₱75, ₱78, ₱80 in order; user table empty.
-
-**Verify.** Paste the shell output.
+**Verify.** Paste the shell output here.
 
 **If it fails.**
 - `ProgrammingError (1146): table doesn't exist` → a `db_table` is misspelled in M2.5.
-- Wrong counts → you are pointed at the wrong database; check `.env`.
-- Tomato order differs → ordering fell back to the default; the `.order_by("price")` must be present.
+- Wrong counts → pointed at wrong database; check `.env`.
+- Tomato order differs → `.order_by("price")` must be present.
+- `NameError: name 'User' is not defined` → project uses custom `AuthUser` in `accounts` app, not Django's built-in User.
+- `FieldError: Invalid field name(s) given in select_related: 'unit'` → the FK field is named `unit_code` (matching `db_column`), not `unit`; use `select_related("unit_code", "availability_code")` and access via `p.unit_code.code`, `p.availability_code.code`.
 
 > 📌 **CCS630 lesson — the ORM is a lens on the schema, not a replacement for it.** If the ORM and the seed data
 > disagree, the bug is in the mapping — and this exact test is how you find it.
@@ -533,40 +607,173 @@ print(User.objects.exists())   # from django.contrib.auth.models import User —
 
 ## Step M2.8 — Register the models in the admin
 
-**Goal.** Every domain model visible and manageable in Django admin with useful columns.
+**Goal.** Every domain model visible and manageable in Django admin with useful columns matching actual model field names.
 
 **Where.** `backend/<app>/admin.py` — editor.
 
 **Actions.**
 
-1. Pattern per app (example for `catalog/admin.py`):
+1. **Create `backend/accounts/admin.py`:**
+   ```python
+   from django.contrib import admin
+   from .models import AuthUser, Userprofile, Customerprofile
 
-```python
-from django.contrib import admin
-from .models import Product, Vendor, Category
+   @admin.register(AuthUser)
+   class AuthUserAdmin(admin.ModelAdmin):
+       list_display = ("id", "username", "email", "first_name", "last_name", "is_staff", "is_active", "date_joined")
+       list_filter = ("is_staff", "is_active", "is_superuser")
+       search_fields = ("username", "email", "first_name", "last_name")
+       readonly_fields = ("date_joined", "last_login", "password")
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "vendor", "category", "price", "unit", "stock_quantity", "availability")
-    list_filter = ("category", "availability", "vendor")
-    search_fields = ("name",)
+   @admin.register(Userprofile)
+   class UserprofileAdmin(admin.ModelAdmin):
+       list_display = ("user", "is_vendor", "created_at", "updated_at")
+       list_filter = ("is_vendor",)
 
-@admin.register(Vendor)
-class VendorAdmin(admin.ModelAdmin):
-    list_display = ("name", "stall_location", "market_section", "user")
-    search_fields = ("name",)
+   @admin.register(Customerprofile)
+   class CustomerprofileAdmin(admin.ModelAdmin):
+       list_display = ("user", "phone", "created_at", "updated_at")
+   ```
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "is_active")
-    prepopulated_fields = {}  # slug is read-only here (managed=False tables are still writable)
-```
+2. **Create `backend/catalog/admin.py`:**
+   ```python
+   from django.contrib import admin
+   from .models import (
+       Product, Vendor, Category, UnitOfMeasure, ComparisonGroup,
+       ComparisonGroupUnit, AvailabilityStatus, InventoryReason, InventoryMovement
+   )
 
-2. Register **all** models in their apps' `admin.py` — the 5 order lookups and inventory tables get plain
-   `admin.site.register(Model)`; the big tables (`Product`, `Order`, `Transaction`, `Payment`) get
-   `list_display`/`list_filter`/`search_fields` as above.
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       list_display = ("name", "vendor", "category", "price", "unit", "stock_quantity", "availability", "low_stock_threshold")
+       list_filter = ("category", "availability", "vendor")
+       search_fields = ("name",)
+       readonly_fields = ("created_at", "updated_at")
 
-**Expected result.** `/admin/` lists all 27 domain models grouped by app.
+   @admin.register(Vendor)
+   class VendorAdmin(admin.ModelAdmin):
+       list_display = ("name", "stall_location", "market_section", "contact_phone", "contact_email", "is_active", "user")
+       list_filter = ("is_active",)
+       search_fields = ("name", "stall_location", "contact_email")
+       readonly_fields = ("created_at", "updated_at")
+
+   @admin.register(Category)
+   class CategoryAdmin(admin.ModelAdmin):
+       list_display = ("name", "slug", "is_active", "created_at", "updated_at")
+       prepopulated_fields = {}
+       search_fields = ("name",)
+
+   @admin.register(UnitOfMeasure)
+   class UnitOfMeasureAdmin(admin.ModelAdmin):
+       list_display = ("code", "name", "is_active")
+       search_fields = ("code", "name")
+
+   @admin.register(ComparisonGroup)
+   class ComparisonGroupAdmin(admin.ModelAdmin):
+       list_display = ("code", "name", "base_unit", "is_active")
+       search_fields = ("code", "name")
+
+   admin.site.register(ComparisonGroupUnit)
+   admin.site.register(AvailabilityStatus)
+   admin.site.register(InventoryReason)
+   admin.site.register(InventoryMovement)
+   ```
+
+3. **Create `backend/cart/admin.py`:**
+   ```python
+   from django.contrib import admin
+   from .models import Cart, CartItem
+
+   @admin.register(Cart)
+   class CartAdmin(admin.ModelAdmin):
+       list_display = ("user", "created_at")
+       search_fields = ("user__username",)
+
+   @admin.register(CartItem)
+   class CartItemAdmin(admin.ModelAdmin):
+       list_display = ("cart", "product", "quantity", "created_at")
+       list_filter = ("cart__user",)
+       search_fields = ("product__name",)
+   ```
+
+4. **Create `backend/orders/admin.py`:**
+   ```python
+   from django.contrib import admin
+   from .models import (
+       Order, OrderItem, Transaction, Payment, DeliveryBooking,
+       TransactionStatus, TransactionType, PaymentStatus, DeliveryStatus, FulfillmentMethod
+   )
+
+   @admin.register(Order)
+   class OrderAdmin(admin.ModelAdmin):
+       list_display = ("id", "user", "customer_label", "vendor", "status", "fulfillment", "total_amount", "created_at")
+       list_filter = ("status", "fulfillment", "vendor")
+       search_fields = ("id", "user__username", "customer_label", "vendor__name")
+       readonly_fields = ("created_at", "updated_at")
+
+   @admin.register(OrderItem)
+   class OrderItemAdmin(admin.ModelAdmin):
+       list_display = ("order", "product", "quantity", "unit_price")
+       search_fields = ("order__id", "product__name")
+
+   @admin.register(Transaction)
+   class TransactionAdmin(admin.ModelAdmin):
+       list_display = ("id", "order", "transaction_type", "reference_no", "created_at")
+       search_fields = ("reference_no", "order__id")
+
+   @admin.register(Payment)
+   class PaymentAdmin(admin.ModelAdmin):
+       list_display = ("id", "transaction", "provider", "amount", "status", "paid_at")
+       list_filter = ("status", "provider")
+       search_fields = ("provider_reference",)
+
+   @admin.register(DeliveryBooking)
+   class DeliveryBookingAdmin(admin.ModelAdmin):
+       list_display = ("id", "transaction", "provider", "booking_reference", "status", "fee", "delivered_at")
+       list_filter = ("status", "provider")
+       search_fields = ("booking_reference",)
+
+   admin.site.register(TransactionStatus)
+   admin.site.register(TransactionType)
+   admin.site.register(PaymentStatus)
+   admin.site.register(DeliveryStatus)
+   admin.site.register(FulfillmentMethod)
+   ```
+
+5. **Create `backend/vendors/admin.py`:**
+   ```python
+   from django.contrib import admin
+   from .models import PosVendor, VendorTransaction
+
+   @admin.register(PosVendor)
+   class PosVendorAdmin(admin.ModelAdmin):
+       list_display = ("catalog_vendor", "stall_name", "stall_location")
+       search_fields = ("stall_name", "catalog_vendor__name")
+
+   @admin.register(VendorTransaction)
+   class VendorTransactionAdmin(admin.ModelAdmin):
+       list_display = ("id", "vendor", "order", "status", "receipt_serial", "receipt_attempt", "created_at")
+       list_filter = ("status",)
+       search_fields = ("receipt_serial", "order__id")
+   ```
+
+6. **Create `backend/favorites/admin.py`:**
+   ```python
+   from django.contrib import admin
+   from .models import FavoriteProduct, FavoriteVendor
+
+   @admin.register(FavoriteProduct)
+   class FavoriteProductAdmin(admin.ModelAdmin):
+       list_display = ("user", "product", "created_at")
+       search_fields = ("user__username", "product__name")
+
+   @admin.register(FavoriteVendor)
+   class FavoriteVendorAdmin(admin.ModelAdmin):
+       list_display = ("user", "vendor", "created_at")
+       search_fields = ("user__username", "vendor__name")
+   ```
+
+**Expected result.** `/admin/` lists all 27 domain models grouped by app with useful columns.
 
 **Verify.** Run and paste:
 
@@ -574,11 +781,12 @@ class CategoryAdmin(admin.ModelAdmin):
 Select-String -Path accounts\admin.py,catalog\admin.py,cart\admin.py,orders\admin.py,vendors\admin.py,favorites\admin.py -Pattern "register" | Measure-Object -Line
 ```
 
-Expected: ≥ 27 register lines.
+Expected: ≥ 27 register lines (3 accounts + 9 catalog + 2 cart + 10 orders + 2 vendors + 2 favorites = 28, but some use `admin.site.register`).
 
 **If it fails.**
 - `AdminSite already registered` → a model registered twice; remove the duplicate.
-- `list_display` field error → the field name does not exist on the model; check M2.5's rename.
+- `list_display` field error → the field name does not exist on the model; check M2.5's actual field names (e.g., `availability` not `availability_code`, `unit` not `unit_code`).
+- `ImproperlyConfigured: ModelAdmin` → missing `list_display` tuple comma on single item.
 
 > 📌 **CCS630 lesson — admin is the cheapest CRUD proof.** Before a single API exists, the admin demonstrates the
 > full read/write path to every table — and later it is your data-fixing tool during the defense demo.
@@ -587,35 +795,56 @@ Expected: ≥ 27 register lines.
 
 ## Step M2.9 — Superuser + admin walkthrough
 
-**Goal.** A superuser account, and a click-through of the seeded data in the admin.
+**Goal.** A superuser account in Django's `auth_user`, and a click-through of the seeded data in the admin proving read/write on `managed = False` tables.
 
 **Where.** `backend/` — PowerShell, browser.
 
 **Actions.**
 
-1. Create the superuser:
+1. **Activate venv and create the superuser:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   python manage.py createsuperuser
+   ```
+   - Username: `admin`
+   - Email: your email
+   - Password: a password you will remember for the defense (e.g., `Admin2627`)
+   - If prompted "Superuser creation skipped" → answer `no` and provide valid username.
 
-```powershell
-python manage.py createsuperuser
-```
+2. **Start server and open admin:**
+   ```powershell
+   python manage.py runserver
+   ```
+   Open `http://127.0.0.1:8000/admin/`, log in with `admin` / your password.
 
-   (username `admin`, your email, a password you will remember for the defense).
+3. **Walk and confirm each section:**
+   - **Catalog → Products** → shows **34** seeded products; prices display **₱** correctly (no `?` or mojibake)
+   - **Catalog → Vendors** → shows **6** seeded vendors with stall locations
+   - **Catalog → Categories** → shows **9** categories
+   - **Catalog → Units of measure** → shows **4** units (KG, PC, G, ML)
+   - **Orders → Orders** → empty (no orders yet — correct)
+   - **Auth → Users** → shows only `admin` (the superuser you just created)
+   - **Auth → Groups / Permissions** → Django's built-in auth tables populated by migrations
 
-2. `python manage.py runserver`, open `http://127.0.0.1:8000/admin/`, log in.
+4. **Prove write access on a managed=False table:**
+   - Go to **Catalog → Units of measure → Add**
+   - Enter: Code=`doz`, Name=`Dozen`, Description=`Twelve pieces`, Is_active=✓
+   - Save → row appears in list
+   - Select the `doz` row → Delete → confirm → row removed
+   - This proves the ORM can write to SQL-managed tables.
 
-3. Walk and confirm: **Catalog → Products** shows the 34 seeded products with ₱ prices (no encoding garbage);
-   **Orders → Orders** is empty (no orders yet — correct); **Auth → Users** shows only `admin`.
+**Expected result.** Admin login works; all seeded data renders with ₱ intact; add/delete works on managed=False table.
 
-4. Add one row through the UI: **Catalog → Units of measure → Add** (`doz`, "Dozen", is_active ✓), then delete it
-   again. This proves write access works on a `managed = False` table.
-
-**Expected result.** Admin login works; seeded data renders; add/delete works.
-
-**Verify.** Paste: the admin Products list count (should show 34) and confirm the ₱ sign renders correctly.
+**Verify.** Paste:
+- Admin Products list count (should show **34**)
+- Confirm ₱ sign renders correctly (not `?` or `â€¡`)
+- Confirm Units of measure add/delete worked
 
 **If it fails.**
 - `Superuser creation skipped` → answer `no` to the "bypass" prompt and provide a valid username.
-- ₱ renders as `?` → the connection charset is wrong; check the `OPTIONS` in M2.3.
+- ₱ renders as `?` or garbled → the connection charset is wrong; check `DATABASES['default']['OPTIONS']['charset'] = 'utf8mb4'` in `config/settings.py` (M2.3).
+- `ProgrammingError (1146)` on a table → `db_table` misspelled in M2.5.
+- "Table 'ecompra.django_admin_log' doesn't exist" → migrations didn't run; run `python manage.py migrate`.
 
 > 📌 **CCS630 lesson — utf8mb4 end to end.** The ₱ sign survived schema → seed → ORM → admin. One non-utf8mb4 hop
 > anywhere would have mangled it; this walkthrough is the check.
@@ -624,59 +853,181 @@ python manage.py createsuperuser
 
 ## Step M2.10 — DRF + core serializers
 
-**Goal.** REST framework installed and serializers for the customer-facing read model.
+**Goal.** REST framework installed and serializers for all customer-facing read models using correct FK field names from M2.5 models.
 
 **Where.** `backend/` — PowerShell, editor.
 
 **Actions.**
 
-1. Install (unpinned; versions get frozen in M2.17):
+1. **Activate venv and install (unpinned; versions get frozen in M2.17):**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   pip install djangorestframework
+   ```
 
-```powershell
-pip install djangorestframework
-```
+2. **Edit `backend/config/settings.py`:** add `"rest_framework"` to `INSTALLED_APPS`.
 
-2. `INSTALLED_APPS`: add `"rest_framework"`.
+3. **Create `backend/catalog/serializers.py`:**
+   ```python
+   from rest_framework import serializers
+   from .models import Product, Category, Vendor, UnitOfMeasure, AvailabilityStatus
 
-3. `backend/catalog/serializers.py`:
+   class CategorySerializer(serializers.ModelSerializer):
+       class Meta:
+           model = Category
+           fields = ("id", "name", "slug")
 
-```python
-from rest_framework import serializers
-from .models import Product, Category, Vendor
+   class VendorSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = Vendor
+           fields = ("id", "name", "stall_location", "market_section", "contact_phone", "contact_email")
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ("id", "name", "slug")
+   class ProductSerializer(serializers.ModelSerializer):
+       vendor = VendorSerializer(read_only=True)
+       category = CategorySerializer(read_only=True)
+       unit = serializers.CharField(source="unit_code.code", read_only=True)
+       availability = serializers.CharField(source="availability_code.code", read_only=True)
 
-class VendorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vendor
-        fields = ("id", "name", "stall_location", "market_section")
+       class Meta:
+           model = Product
+           fields = ("id", "name", "description", "image_url", "vendor", "category", "unit", "price",
+                     "stock_quantity", "low_stock_threshold", "availability", "stall_location", "comparison_group")
 
-class ProductSerializer(serializers.ModelSerializer):
-    vendor = VendorSerializer(read_only=True)
-    category = CategorySerializer(read_only=True)
-    unit = serializers.CharField(source="unit.code", read_only=True)
-    availability = serializers.CharField(source="availability.code", read_only=True)
+   class UnitOfMeasureSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = UnitOfMeasure
+           fields = ("code", "name", "description")
 
-    class Meta:
-        model = Product
-        fields = ("id", "name", "vendor", "category", "unit", "price",
-                  "stock_quantity", "availability")
-```
+   class AvailabilityStatusSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = AvailabilityStatus
+           fields = ("code", "description", "is_orderable")
+   ```
 
-**Expected result.** DRF installed; serializers import cleanly.
+4. **Create `backend/orders/serializers.py`:**
+   ```python
+   from rest_framework import serializers
+   from .models import (
+       Order, OrderItem, Transaction, Payment, DeliveryBooking,
+       TransactionStatus, TransactionType, PaymentStatus, DeliveryStatus, FulfillmentMethod
+   )
+
+   class TransactionStatusSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = TransactionStatus
+           fields = ("code", "description")
+
+   class TransactionTypeSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = TransactionType
+           fields = ("code", "description")
+
+   class PaymentStatusSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = PaymentStatus
+           fields = ("code", "description", "is_terminal")
+
+   class DeliveryStatusSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = DeliveryStatus
+           fields = ("code", "description", "is_terminal")
+
+   class FulfillmentMethodSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = FulfillmentMethod
+           fields = ("code", "description")
+
+   class OrderItemSerializer(serializers.ModelSerializer):
+       product_name = serializers.CharField(source="product.name", read_only=True)
+       class Meta:
+           model = OrderItem
+           fields = ("id", "product", "product_name", "quantity", "unit_price")
+
+   class TransactionSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = Transaction
+           fields = ("id", "order", "transaction_type", "reference_no", "created_at")
+
+   class PaymentSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = Payment
+           fields = ("id", "transaction", "provider", "provider_reference", "amount", "status", "paid_at")
+
+   class DeliveryBookingSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = DeliveryBooking
+           fields = ("id", "transaction", "provider", "booking_reference", "tracking_url", "fee", "status", "booked_at", "delivered_at")
+
+   class OrderSerializer(serializers.ModelSerializer):
+       items = OrderItemSerializer(many=True, read_only=True)
+       transaction = TransactionSerializer(read_only=True)
+       status_display = serializers.CharField(source="status.description", read_only=True)
+       fulfillment_display = serializers.CharField(source="fulfillment.description", read_only=True)
+
+       class Meta:
+           model = Order
+           fields = ("id", "user", "customer_label", "vendor", "status", "status_display",
+                     "fulfillment", "fulfillment_display", "total_amount", "notes",
+                     "created_at", "updated_at", "items", "transaction")
+   ```
+
+5. **Create `backend/vendors/serializers.py`:**
+   ```python
+   from rest_framework import serializers
+   from .models import PosVendor, VendorTransaction
+
+   class PosVendorSerializer(serializers.ModelSerializer):
+       catalog_vendor_name = serializers.CharField(source="catalog_vendor.name", read_only=True)
+       class Meta:
+           model = PosVendor
+           fields = ("catalog_vendor", "catalog_vendor_name", "stall_name", "stall_location")
+
+   class VendorTransactionSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = VendorTransaction
+           fields = ("id", "vendor", "order", "status", "receipt_serial", "receipt_attempt", "created_at")
+   ```
+
+6. **Create `backend/favorites/serializers.py`:**
+   ```python
+   from rest_framework import serializers
+   from .models import FavoriteProduct, FavoriteVendor
+   from catalog.serializers import ProductSerializer, VendorSerializer
+
+   class FavoriteProductSerializer(serializers.ModelSerializer):
+       product = ProductSerializer(read_only=True)
+       class Meta:
+           model = FavoriteProduct
+           fields = ("id", "product", "created_at")
+
+   class FavoriteVendorSerializer(serializers.ModelSerializer):
+       vendor = VendorSerializer(read_only=True)
+       class Meta:
+           model = FavoriteVendor
+           fields = ("id", "vendor", "created_at")
+   ```
+
+**Expected result.** DRF installed; all serializer files import cleanly.
 
 **Verify.**
-
 ```powershell
-python manage.py shell -c "from catalog.serializers import ProductSerializer; print('serializers ok')"
+python manage.py shell -c "
+from catalog.serializers import ProductSerializer, CategorySerializer, VendorSerializer
+from orders.serializers import OrderSerializer, TransactionStatusSerializer
+from vendors.serializers import PosVendorSerializer
+from favorites.serializers import FavoriteProductSerializer
+print('catalog serializers ok')
+print('orders serializers ok')
+print('vendors serializers ok')
+print('favorites serializers ok')
+"
 ```
+Expected: all four lines print.
 
-Expected: `serializers ok`.
-
-**If it fails.** `source="unit.code"` errors → the FK name differs from M2.5; align.
+**If it fails.**
+- `source="unit.code"` errors → the FK field name on the model differs; check M2.5 (should be `unit` not `unit_code`, `availability` not `availability_code`).
+- `ImproperlyConfigured: Could not resolve URL` → `rest_framework` not in `INSTALLED_APPS`.
+- Circular import → use string references in serializer relations or import inside method.
 
 > 📌 **CCS630 lesson — the serializer is the API contract.** It decides exactly which columns leave the database —
 > the API version of choosing a projection in SQL.
@@ -685,51 +1036,129 @@ Expected: `serializers ok`.
 
 ## Step M2.11 — Read-only API views
 
-**Goal.** List/detail endpoints for products, plus category and vendor lists — the customer browse path.
+**Goal.** List/detail endpoints for products, categories, vendors — the customer browse path. Plus lookup endpoints for orders.
 
-**Where.** `backend/catalog/views.py` — editor.
+**Where.** `backend/catalog/views.py`, `backend/orders/views.py`, `backend/vendors/views.py` — editor.
 
 **Actions.**
 
-```python
-from django.db.models import Q
-from rest_framework import generics
-from .models import Product, Category, Vendor
-from .serializers import ProductSerializer, CategorySerializer, VendorSerializer
+1. **Create `backend/catalog/views.py`:**
+   ```python
+   from django.db.models import Q
+   from rest_framework import generics
+   from .models import Product, Category, Vendor, UnitOfMeasure, AvailabilityStatus
+   from .serializers import ProductSerializer, CategorySerializer, VendorSerializer, UnitOfMeasureSerializer, AvailabilityStatusSerializer
 
-class ProductList(generics.ListAPIView):
-    serializer_class = ProductSerializer
+   class ProductList(generics.ListAPIView):
+       serializer_class = ProductSerializer
 
-    def get_queryset(self):
-        qs = (Product.objects.filter(availability__is_orderable=True)
-              .select_related("vendor", "category", "unit", "availability"))
-        q = self.request.query_params.get("q")
-        cat = self.request.query_params.get("category")
-        if q:
-            qs = qs.filter(Q(name__icontains=q) | Q(vendor__name__icontains=q))
-        if cat:
-            qs = qs.filter(category__slug=cat)
-        return qs.order_by("name")
+       def get_queryset(self):
+           qs = (Product.objects.filter(availability_code__is_orderable=True)
+                 .select_related("vendor", "category", "unit_code", "availability_code"))
+           q = self.request.query_params.get("q")
+           cat = self.request.query_params.get("category")
+           if q:
+               qs = qs.filter(Q(name__icontains=q) | Q(vendor__name__icontains=q))
+           if cat:
+               qs = qs.filter(category__slug=cat)
+           return qs.order_by("name")
 
-class ProductDetail(generics.RetrieveAPIView):
-    queryset = Product.objects.select_related("vendor", "category", "unit", "availability")
-    serializer_class = ProductSerializer
+   class ProductDetail(generics.RetrieveAPIView):
+       queryset = Product.objects.select_related("vendor", "category", "unit_code", "availability_code")
+       serializer_class = ProductSerializer
 
-class CategoryList(generics.ListAPIView):
-    queryset = Category.objects.filter(is_active=True)
-    serializer_class = CategorySerializer
+   class CategoryList(generics.ListAPIView):
+       queryset = Category.objects.filter(is_active=True)
+       serializer_class = CategorySerializer
 
-class VendorList(generics.ListAPIView):
-    queryset = Vendor.objects.all()
-    serializer_class = VendorSerializer
+   class VendorList(generics.ListAPIView):
+       queryset = Vendor.objects.all()
+       serializer_class = VendorSerializer
+
+   class UnitOfMeasureList(generics.ListAPIView):
+       queryset = UnitOfMeasure.objects.filter(is_active=True)
+       serializer_class = UnitOfMeasureSerializer
+
+   class AvailabilityStatusList(generics.ListAPIView):
+       queryset = AvailabilityStatus.objects.filter(is_orderable=True)
+       serializer_class = AvailabilityStatusSerializer
+   ```
+
+2. **Create `backend/orders/views.py`:**
+   ```python
+   from rest_framework import generics
+   from .models import (
+       TransactionStatus, TransactionType, PaymentStatus,
+       DeliveryStatus, FulfillmentMethod
+   )
+   from .serializers import (
+       TransactionStatusSerializer, TransactionTypeSerializer,
+       PaymentStatusSerializer, DeliveryStatusSerializer, FulfillmentMethodSerializer
+   )
+
+   class TransactionStatusList(generics.ListAPIView):
+       queryset = TransactionStatus.objects.all()
+       serializer_class = TransactionStatusSerializer
+
+   class TransactionTypeList(generics.ListAPIView):
+       queryset = TransactionType.objects.all()
+       serializer_class = TransactionTypeSerializer
+
+   class PaymentStatusList(generics.ListAPIView):
+       queryset = PaymentStatus.objects.all()
+       serializer_class = PaymentStatusSerializer
+
+   class DeliveryStatusList(generics.ListAPIView):
+       queryset = DeliveryStatus.objects.all()
+       serializer_class = DeliveryStatusSerializer
+
+   class FulfillmentMethodList(generics.ListAPIView):
+       queryset = FulfillmentMethod.objects.all()
+       serializer_class = FulfillmentMethodSerializer
+   ```
+
+3. **Create `backend/vendors/views.py`:**
+   ```python
+   from rest_framework import generics
+   from .models import PosVendor
+   from .serializers import PosVendorSerializer
+
+   class PosVendorList(generics.ListAPIView):
+       queryset = PosVendor.objects.select_related("catalog_vendor")
+       serializer_class = PosVendorSerializer
+   ```
+
+4. **Create `backend/favorites/views.py`:**
+   ```python
+   from rest_framework import generics
+   from .models import FavoriteProduct, FavoriteVendor
+   from .serializers import FavoriteProductSerializer, FavoriteVendorSerializer
+
+   class FavoriteProductList(generics.ListAPIView):
+       serializer_class = FavoriteProductSerializer
+
+       def get_queryset(self):
+           return FavoriteProduct.objects.filter(user=self.request.user).select_related("product")
+
+   class FavoriteVendorList(generics.ListAPIView):
+       serializer_class = FavoriteVendorSerializer
+
+       def get_queryset(self):
+           return FavoriteVendor.objects.filter(user=self.request.user).select_related("vendor")
+   ```
+
+**Expected result.** 13 working read-only views across 4 apps (6 catalog + 5 orders + 1 vendors + 2 favorites).
+
+**Verify.**
+```powershell
+Select-String -Path catalog\views.py,orders\views.py,vendors\views.py,favorites\views.py -Pattern "^class " | Measure-Object -Line
 ```
+Expected: 13 classes.
 
-**Expected result.** Four working read-only views.
-
-**Verify.** Paste the file's `Select-String "^class "` count → 4.
-
-**If it fails.** `is_orderable` unknown → that field lives on `AvailabilityStatus` (M0 schema); the related name
-traverses `availability__is_orderable`.
+**If it fails.**
+- `is_orderable` unknown → field lives on `AvailabilityStatus` model; the related name traverses `availability__is_orderable`.
+- `select_related` field error → check FK field names in M2.5 (e.g., `unit` not `unit_code`, `availability` not `availability_code`).
+- `request.user` in favorites → requires authentication (JWT from M2.14); for now use `AllowAny` or skip favorites views until M2.14.
 
 > 📌 **CCS630 lesson — search is a query plan.** `?q=` becomes a `LIKE %…%` over `catalog_product.name` — the
 > exact query `ix_product_name` (M0.8) was built to serve. You will `EXPLAIN` this in M4.
@@ -738,48 +1167,98 @@ traverses `availability__is_orderable`.
 
 ## Step M2.12 — URLs + browsable API root
 
-**Goal.** A tidy URL tree under `/api/` and a working browsable API.
+**Goal.** A tidy URL tree under `/api/` with all app endpoints included, and a working browsable API.
 
-**Where.** `backend/config/urls.py`, `backend/catalog/urls.py`.
+**Where.** `backend/config/urls.py`, `backend/catalog/urls.py`, `backend/orders/urls.py`, `backend/vendors/urls.py`, `backend/favorites/urls.py`.
 
 **Actions.**
 
-1. Create `backend/catalog/urls.py`:
+1. **Create `backend/catalog/urls.py`:**
+   ```python
+   from django.urls import path
+   from . import views
 
-```python
-from django.urls import path
-from . import views
+   urlpatterns = [
+       path("products/", views.ProductList.as_view(), name="product-list"),
+       path("products/<int:pk>/", views.ProductDetail.as_view(), name="product-detail"),
+       path("categories/", views.CategoryList.as_view(), name="category-list"),
+       path("vendors/", views.VendorList.as_view(), name="vendor-list"),
+       path("units/", views.UnitOfMeasureList.as_view(), name="unit-list"),
+       path("availability/", views.AvailabilityStatusList.as_view(), name="availability-list"),
+   ]
+   ```
 
-urlpatterns = [
-    path("products/", views.ProductList.as_view(), name="product-list"),
-    path("products/<int:pk>/", views.ProductDetail.as_view(), name="product-detail"),
-    path("categories/", views.CategoryList.as_view(), name="category-list"),
-    path("vendors/", views.VendorList.as_view(), name="vendor-list"),
-]
-```
+2. **Create `backend/orders/urls.py`:**
+   ```python
+   from django.urls import path
+   from . import views
 
-2. Edit `backend/config/urls.py`:
+   urlpatterns = [
+       path("transaction-statuses/", views.TransactionStatusList.as_view(), name="transaction-status-list"),
+       path("transaction-types/", views.TransactionTypeList.as_view(), name="transaction-type-list"),
+       path("payment-statuses/", views.PaymentStatusList.as_view(), name="payment-status-list"),
+       path("delivery-statuses/", views.DeliveryStatusList.as_view(), name="delivery-status-list"),
+       path("fulfillment-methods/", views.FulfillmentMethodList.as_view(), name="fulfillment-method-list"),
+   ]
+   ```
 
-```python
-from django.contrib import admin
-from django.urls import path, include
+3. **Create `backend/vendors/urls.py`:**
+   ```python
+   from django.urls import path
+   from . import views
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include("catalog.urls")),
-]
-```
+   urlpatterns = [
+       path("pos-vendors/", views.PosVendorList.as_view(), name="pos-vendor-list"),
+   ]
+   ```
 
-3. `python manage.py runserver`, open:
-   - `http://127.0.0.1:8000/api/products/` → JSON list (DRF browsable UI)
-   - `http://127.0.0.1:8000/api/products/?q=tomato` → filtered
-   - `http://127.0.0.1:8000/api/products/1/` → detail
+4. **Create `backend/favorites/urls.py`:**
+   ```python
+   from django.urls import path
+   from . import views
 
-**Expected result.** All three URLs return real seeded data with ₱ intact.
+   urlpatterns = [
+       path("products/", views.FavoriteProductList.as_view(), name="favorite-product-list"),
+       path("vendors/", views.FavoriteVendorList.as_view(), name="favorite-vendor-list"),
+   ]
+   ```
 
-**Verify.** Paste the JSON of `?q=tomato` (should include the three tomato products, cheapest first when sorted).
+5. **Edit `backend/config/urls.py`:**
+   ```python
+   from django.contrib import admin
+   from django.urls import path, include
 
-**If it fails.** `No module named catalog.urls` → the file name is `urls.py` inside the app, not the project.
+   urlpatterns = [
+       path("admin/", admin.site.urls),
+       path("api/catalog/", include("catalog.urls")),
+       path("api/orders/", include("orders.urls")),
+       path("api/vendors/", include("vendors.urls")),
+       path("api/favorites/", include("favorites.urls")),
+   ]
+   ```
+
+6. **Run server and verify:**
+   ```powershell
+   python manage.py runserver
+   ```
+   Open in browser:
+   - `http://127.0.0.1:8000/api/catalog/products/` → JSON list (DRF browsable UI)
+   - `http://127.0.0.1:8000/api/catalog/products/?q=tomato` → filtered (3 tomato products, sorted by name)
+   - `http://127.0.0.1:8000/api/catalog/products/1/` → detail
+   - `http://127.0.0.1:8000/api/catalog/categories/` → 9 categories
+   - `http://127.0.0.1:8000/api/catalog/vendors/` → 6 vendors
+   - `http://127.0.0.1:8000/api/orders/transaction-statuses/` → 7 statuses
+   - `http://127.0.0.1:8000/api/orders/fulfillment-methods/` → 3 methods
+   - `http://127.0.0.1:8000/api/vendors/pos-vendors/` → 6 POS vendors
+
+**Expected result.** All endpoints return real seeded data with ₱ intact.
+
+**Verify.** Paste the JSON of `api/catalog/products/?q=tomato` (should include three tomato products).
+
+**If it fails.**
+- `No module named catalog.urls` → the file name is `urls.py` inside the app folder, not the project.
+- `ModuleNotFoundError: No module named 'orders'` → check `INSTALLED_APPS` includes all 6 apps.
+- 404 on an endpoint → check `include()` path matches the app's `urls.py` location.
 
 > 📌 **CCS630 lesson — the API is the mockup's backend twin.** Each mockup screen from M0.10 names the data it
 > needs; these endpoints are where that data starts to exist for real.
@@ -788,41 +1267,85 @@ urlpatterns = [
 
 ## Step M2.13 — OpenAPI schema + Swagger UI
 
-**Goal.** Machine-readable API documentation, auto-generated.
+**Goal.** Machine-readable API documentation, auto-generated from all endpoints.
 
 **Where.** `backend/` — PowerShell, editor.
 
 **Actions.**
 
-1. `pip install drf-spectacular`; add `"drf_spectacular"` to `INSTALLED_APPS`.
-2. In settings:
+1. **Activate venv and install:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   pip install drf-spectacular
+   ```
 
-```python
-REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-}
+2. **Edit `backend/config/settings.py`:**
+   - Add `"drf_spectacular"` to `INSTALLED_APPS` (after `rest_framework`)
+   - Add at the end of the file:
+   ```python
+   REST_FRAMEWORK = {
+       "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+   }
 
-SPECTACULAR_SETTINGS = {
-    "TITLE": "E-Compra API",
-    "DESCRIPTION": "Public-market marketplace — CCS630 capstone",
-    "VERSION": "0.1.0",
-}
-```
+   SPECTACULAR_SETTINGS = {
+       "TITLE": "E-Compra API",
+       "DESCRIPTION": "Public-market marketplace — CCS630 capstone",
+       "VERSION": "0.1.0",
+       "SERVE_INCLUDE_SCHEMA": False,
+       "COMPONENT_SPLIT_REQUEST": True,
+       "SCHEMA_PATH_PREFIX": "/api/",
+   }
+   ```
 
-3. In `config/urls.py`:
+3. **Edit `backend/config/urls.py`:**
+   ```python
+   from django.contrib import admin
+   from django.urls import path, include
+   from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
-```python
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+   urlpatterns = [
+       path("admin/", admin.site.urls),
+       path("api/catalog/", include("catalog.urls")),
+       path("api/orders/", include("orders.urls")),
+       path("api/vendors/", include("vendors.urls")),
+       path("api/favorites/", include("favorites.urls")),
+       # OpenAPI schema & docs
+       path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+       path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+       path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+   ]
+   ```
 
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-```
+4. **Run server and verify:**
+   ```powershell
+   python manage.py runserver
+   ```
+   Open:
+   - `http://127.0.0.1:8000/api/schema/swagger-ui/` → Swagger UI with all endpoints
+   - `http://127.0.0.1:8000/api/schema/redoc/` → ReDoc alternative
+   - `http://127.0.0.1:8000/api/schema/` → Raw OpenAPI 3.0 JSON
 
-**Expected result.** Swagger UI renders with products/categories/vendors endpoints listed.
+**Expected result.** Swagger UI renders with all 13 endpoints listed under catalog/orders/vendors/favorites.
 
-**Verify.** Paste confirmation that `http://127.0.0.1:8000/api/schema/swagger-ui/` renders (screenshot or describe).
+**Verify.** Paste confirmation that Swagger UI loads and shows:
+- `/api/catalog/products/` (GET, GET by ID)
+- `/api/catalog/categories/`
+- `/api/catalog/vendors/`
+- `/api/catalog/units/`
+- `/api/catalog/availability/`
+- `/api/orders/transaction-statuses/`
+- `/api/orders/transaction-types/`
+- `/api/orders/payment-statuses/`
+- `/api/orders/delivery-statuses/`
+- `/api/orders/fulfillment-methods/`
+- `/api/vendors/pos-vendors/`
+- `/api/favorites/products/` (requires auth - will show 401)
+- `/api/favorites/vendors/` (requires auth - will show 401)
 
-**If it fails.** `spec invalid` warnings → note them; usually a serializer without a model field mapping.
+**If it fails.**
+- `spec invalid` warnings → note them; usually a serializer without a model field mapping or missing `fields`.
+- `ImproperlyConfigured: Could not resolve URL` → `drf_spectacular` not in `INSTALLED_APPS` or `REST_FRAMEWORK` dict missing.
+- Empty schema → `SCHEMA_PATH_PREFIX` doesn't match your URL pattern; adjust to `/api/`.
 
 > 📌 **CCS630 lesson — documentation that cannot drift.** The schema is generated from the code; a stale API doc
 > becomes impossible.
@@ -831,56 +1354,134 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 ## Step M2.14 — CORS + SimpleJWT
 
-**Goal.** The future Vue frontend (localhost:5173) may call the API; users may authenticate with JWT.
+**Goal.** CORS configured for future Vue frontend (localhost:5173); JWT authentication via SimpleJWT using Django's `auth_user` table (created in M2.6).
 
 **Where.** `backend/` — PowerShell, editor.
 
 **Actions.**
 
-1. `pip install django-cors-headers djangorestframework-simplejwt`
-2. `INSTALLED_APPS`: add `"corsheaders"`; `MIDDLEWARE`: `"corsheaders.middleware.CorsMiddleware"` — **above**
-   `CommonMiddleware`.
-3. Settings:
+1. **Activate venv and install:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   pip install django-cors-headers djangorestframework-simplejwt
+   ```
 
-```python
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+2. **Edit `backend/config/settings.py`:**
+   - Add to `INSTALLED_APPS` (order matters — `corsheaders` before `django.contrib.auth`):
+     ```python
+     INSTALLED_APPS = [
+         "corsheaders",
+         "rest_framework",
+         "drf_spectacular",
+         "django.contrib.admin",
+         "django.contrib.auth",
+         "django.contrib.contenttypes",
+         "django.contrib.sessions",
+         "django.contrib.messages",
+         "django.contrib.staticfiles",
+         # local apps
+         "accounts",
+         "catalog",
+         "cart",
+         "orders",
+         "vendors",
+         "favorites",
+     ]
+     ```
+   - Add to `MIDDLEWARE` — **`CorsMiddleware` must be above `CommonMiddleware`:**
+     ```python
+     MIDDLEWARE = [
+         "corsheaders.middleware.CorsMiddleware",
+         "django.middleware.security.SecurityMiddleware",
+         "django.contrib.sessions.middleware.SessionMiddleware",
+         "django.middleware.common.CommonMiddleware",
+         "django.middleware.csrf.CsrfViewMiddleware",
+         "django.contrib.auth.middleware.AuthenticationMiddleware",
+         "django.contrib.messages.middleware.MessageMiddleware",
+         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+     ]
+     ```
+   - Add CORS settings:
+     ```python
+     CORS_ALLOWED_ORIGINS = [
+         "http://localhost:5173",
+         "http://127.0.0.1:5173",
+     ]
+     CORS_ALLOW_CREDENTIALS = True
+     ```
+   - Update `REST_FRAMEWORK` to include JWT authentication:
+     ```python
+     from datetime import timedelta
 
-from datetime import timedelta
-REST_FRAMEWORK.update({
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-})
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-```
+     REST_FRAMEWORK = {
+         "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+         "DEFAULT_AUTHENTICATION_CLASSES": (
+             "rest_framework_simplejwt.authentication.JWTAuthentication",
+         ),
+     }
 
-4. In `config/urls.py`:
+     SIMPLE_JWT = {
+         "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+         "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+         "ROTATE_REFRESH_TOKENS": True,
+         "BLACKLIST_AFTER_ROTATION": True,
+         "AUTH_HEADER_TYPES": ("Bearer",),
+     }
+     ```
 
-```python
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+3. **Edit `backend/config/urls.py`:**
+   ```python
+   from django.contrib import admin
+   from django.urls import path, include
+   from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+   from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-```
+   urlpatterns = [
+       path("admin/", admin.site.urls),
+       path("api/catalog/", include("catalog.urls")),
+       path("api/orders/", include("orders.urls")),
+       path("api/vendors/", include("vendors.urls")),
+       path("api/favorites/", include("favorites.urls")),
+       # OpenAPI schema & docs
+       path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+       path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+       path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+       # JWT auth
+       path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+       path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+   ]
+   ```
 
-**Expected result.** POSTing superuser credentials to `/api/token/` returns `access` + `refresh`.
+4. **Run server and test JWT:**
+   ```powershell
+   python manage.py runserver
+   ```
+   In a **new PowerShell window** (keep server running):
+   ```powershell
+   $body = '{"username":"admin","password":"Admin2627"}'
+   Invoke-RestMethod -Uri http://127.0.0.1:8000/api/token/ -Method Post -ContentType "application/json" -Body $body
+   ```
+   Expected: JSON with `access` and `refresh` keys (do not paste tokens).
 
-**Verify.** In PowerShell:
+5. **Test authenticated request:**
+   ```powershell
+   $token = "<paste_access_token_from_above>"
+   $headers = @{ Authorization = "Bearer $token" }
+   Invoke-RestMethod -Uri http://127.0.0.1:8000/api/favorites/products/ -Headers $headers
+   ```
+   Should return `[]` (empty list for new user) or 200 OK.
 
-```powershell
-$body = '{"username":"admin","password":"<your superuser password>"}'
-Invoke-RestMethod -Uri http://127.0.0.1:8000/api/token/ -Method Post -ContentType "application/json" -Body $body | ConvertTo-Json
-```
+**Expected result.** POST `/api/token/` returns `access` + `refresh`; authenticated requests work.
 
-Expected: JSON with `access` and `refresh` keys. (Do **not** paste the tokens themselves — just confirm the keys exist.)
+**Verify.** Paste confirmation that:
+- Token endpoint returns both keys
+- Authenticated request to `/api/favorites/products/` returns 200 (not 401)
 
-**If it fails.** 401 → wrong credentials; 404 → urls not saved; `corsheaders` import error → middleware order.
+**If it fails.**
+- 401 Unauthorized → wrong credentials; superuser must exist in `auth_user` (M2.9).
+- 404 Not Found → URLs not saved or server not restarted.
+- `corsheaders` import error → middleware order; `CorsMiddleware` must be **first** or above `CommonMiddleware`.
+- `AttributeError: 'User' object has no attribute '...'` → SimpleJWT uses Django's `auth_user`; our custom `AuthUser` is mapped to that table via `db_table='auth_user'` so it works.
 
 > 📌 **CCS630 lesson — CORS is the browser's rule, JWT is yours.** CORS protects the *user's* browser from other
 > sites; JWT is how *your* API knows who is calling. Both will be load-bearing in M3.
@@ -889,70 +1490,127 @@ Expected: JSON with `access` and `refresh` keys. (Do **not** paste the tokens th
 
 ## Step M2.15 — pytest + first database tests
 
-**Goal.** A test runner wired to Django, with a seeded test database, proving the schema again from the test side.
+**Goal.** A test runner wired to Django, with a seeded test database (cloned from `ecompra`), proving the schema and seed data invariants from the test side.
 
 **Where.** `backend/` — PowerShell, editor.
 
 **Actions.**
 
-1. `pip install pytest pytest-django`
-2. Create `backend/pytest.ini`:
+1. **Activate venv and install:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   pip install pytest pytest-django
+   ```
 
-```ini
-[pytest]
-DJANGO_SETTINGS_MODULE = config.settings
-python_files = test_*.py
-```
+2. **Create `backend/pytest.ini`:**
+   ```ini
+   [pytest]
+   DJANGO_SETTINGS_MODULE = config.settings
+   python_files = test_*.py
+   python_functions = test_*
+   addopts = --reuse-db -v
+   ```
 
-3. Create the test database **as a copy of `ecompra`** (the migrations only know Django's own tables; the 27
-   domain tables are SQL-managed, so the test DB inherits them by clone):
-
-```powershell
-cmd /c 'mysql -u root -p -e "DROP DATABASE IF EXISTS test_ecompra; CREATE DATABASE test_ecompra CHARACTER SET utf8mb4;"'
-cmd /c "mysqldump -u root -p ecompra > ..\backups\test_seed.sql"
-cmd /c 'mysql -u root -p test_ecompra < ..\backups\test_seed.sql'
-```
-
+3. **Create the test database as a clone of `ecompra`** (migrations only know Django's tables; the 27 domain tables are SQL-managed, so the test DB inherits them by clone):
+   ```powershell
+   cmd /c 'mysql -u root -p -e "DROP DATABASE IF EXISTS test_ecompra; CREATE DATABASE test_ecompra CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"'
+   cmd /c "mysqldump -u root -p ecompra > ..\backups\test_seed.sql"
+   cmd /c 'mysql -u root -p test_ecompra < ..\backups\test_seed.sql'
+   ```
    (`backups/` is gitignored — the dump must never be committed.)
 
-4. Add to `config/settings.py`:
+4. **Edit `backend/config/settings.py`** — add at the end:
+   ```python
+   import sys
+   if "pytest" in sys.modules:
+       DATABASES["default"]["NAME"] = "test_ecompra"
+   ```
 
-```python
-import sys
-if "pytest" in sys.modules:
-    DATABASES["default"]["NAME"] = "test_ecompra"
-```
+5. **Create `backend/catalog/test_catalog.py`:**
+   ```python
+   import pytest
+   from catalog.models import Product, Category, Vendor, UnitOfMeasure, AvailabilityStatus
 
-5. Create `backend/catalog/test_catalog.py`:
+   @pytest.mark.django_db
+   def test_seed_counts():
+       assert Product.objects.count() == 34
+       assert Category.objects.count() == 9
+       assert Vendor.objects.count() == 6
+       assert UnitOfMeasure.objects.count() == 4
+       assert AvailabilityStatus.objects.count() == 4
 
-```python
-import pytest
-from .models import Product
+   @pytest.mark.django_db
+   def test_tomato_price_comparison():
+       rows = list(Product.objects.filter(name__istartswith="Tomato").order_by("price"))
+       assert [r.price for r in rows] == [75, 78, 80]
 
-@pytest.mark.django_db
-def test_seed_counts():
-    assert Product.objects.count() == 34
+   @pytest.mark.django_db
+   def test_vendor_products_relation():
+       villamor = Vendor.objects.get(name__contains="Villamor")
+       assert villamor.product_set.count() >= 3  # seeded products
+   ```
 
-@pytest.mark.django_db
-def test_tomato_price_comparison():
-    rows = list(Product.objects.filter(name__istartswith="Tomato").order_by("price"))
-    assert [r.price for r in rows] == [75, 78, 80]
-```
+6. **Create `backend/orders/test_orders.py`:**
+   ```python
+   import pytest
+   from orders.models import (
+       TransactionStatus, PaymentStatus, DeliveryStatus,
+       FulfillmentMethod, TransactionType
+   )
 
-6. Run:
+   @pytest.mark.django_db
+   def test_lookup_table_counts():
+       assert TransactionStatus.objects.count() == 7
+       assert PaymentStatus.objects.count() == 4
+       assert DeliveryStatus.objects.count() == 5
+       assert FulfillmentMethod.objects.count() == 3
+       assert TransactionType.objects.count() == 3
 
-```powershell
-pytest --reuse-db
-```
+   @pytest.mark.django_db
+   def test_terminal_statuses():
+       # At least one terminal status per type
+       assert PaymentStatus.objects.filter(is_terminal=True).exists()
+       assert DeliveryStatus.objects.filter(is_terminal=True).exists()
+   ```
 
-**Expected result.** 2 passed.
+6. **Create `backend/orders/test_orders.py`:**
+   ```python
+   import pytest
+   from orders.models import (
+       TransactionStatus, PaymentStatus, DeliveryStatus,
+       FulfillmentMethod, TransactionType
+   )
 
-**Verify.** Paste the pytest summary line.
+   @pytest.mark.django_db
+   def test_lookup_table_counts():
+       assert TransactionStatus.objects.count() == 7
+       assert PaymentStatus.objects.count() == 4
+       assert DeliveryStatus.objects.count() == 5
+       assert FulfillmentMethod.objects.count() == 3
+       assert TransactionType.objects.count() == 3
+
+   @pytest.mark.django_db
+   def test_terminal_statuses():
+       # At least one terminal status per type
+       assert PaymentStatus.objects.filter(is_terminal=True).exists()
+       assert DeliveryStatus.objects.filter(is_terminal=True).exists()
+   ```
+
+7. **Run tests from `backend/` folder:**
+   ```powershell
+   pytest
+   ```
+
+**Expected result.** 7 tests passed (5 catalog + 2 orders).
+
+**Verify.** Paste the pytest summary line (e.g., `7 passed in 2.34s`).
 
 **If it fails.**
 - `pytest` collects 0 tests → `pytest.ini` not in the folder pytest runs from; run from `backend/`.
-- `(1146) table doesn't exist` in tests → step 3's clone was skipped or pointed at the wrong dump.
+- `(1146) table doesn't exist` in tests → step 3's clone was skipped or pointed at the wrong dump; verify `test_ecompra` exists and has tables.
 - `--reuse-db` keeps an old schema → drop `test_ecompra` (step 3) and re-clone.
+- `ModuleNotFoundError` on models → check app is in `INSTALLED_APPS`.
+- `django.db.utils.OperationalError: (1049, "Unknown database 'test_ecompra'")` → step 3 failed; re-run clone commands.
 
 > 📌 **CCS630 lesson — test the invariant, not the implementation.** "34 products, tomato 75/78/80" is the seed
 > contract from M0.9, now enforced forever by CI-able tests.
@@ -961,36 +1619,49 @@ pytest --reuse-db
 
 ## Step M2.16 — ruff lint pass
 
-**Goal.** A configured linter and a clean codebase.
+**Goal.** A configured linter and a clean codebase with consistent style.
 
 **Where.** Project root — PowerShell.
 
 **Actions.**
 
-1. `pip install ruff`
-2. Create `ruff.toml` at the project root:
+1. **Activate venv and install:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   pip install ruff
+   ```
 
-```toml
-line-length = 110
-exclude = [".venv", "backups", "tools"]
+2. **Create `ruff.toml` at the project root:**
+   ```toml
+   line-length = 110
+   exclude = [".venv", "backups", "tools", "backend/config/migrations", "backend/accounts/migrations", "backend/catalog/migrations", "backend/cart/migrations", "backend/orders/migrations", "backend/vendors/migrations", "backend/favorites/migrations"]
 
-[lint]
-select = ["E", "F", "W", "I"]
-```
+   [lint]
+   select = ["E", "F", "W", "I", "UP", "B", "C4", "T20"]
+   ignore = ["E501"]  # line-too-long handled by line-length
 
-3. Run and fix:
+   [format]
+   quote-style = "double"
+   indent-style = "space"
+   skip-magic-trailing-comma = false
+   ```
 
-```powershell
-ruff check backend --fix
-ruff check backend
-```
+3. **Run and fix:**
+   ```powershell
+   ruff check backend --fix
+   ruff format backend
+   ruff check backend
+   ```
 
 **Expected result.** `All checks passed!`
 
 **Verify.** Paste the final `ruff check backend` output.
 
-**If it fails.** Long lines in `migrations/` → add `"backend/config/settings.py"`-style excludes only for
-generated code, never for your own.
+**If it fails.**
+- Long lines in migrations → migrations are excluded in `ruff.toml`.
+- `T20` (print found) → remove debug `print()` statements or add `# noqa: T20`.
+- `UP` (pyupgrade) suggestions → apply with `--fix` or manually modernize (e.g., `super()` without args).
+- `B` (bugbear) findings → review and fix; these catch real bugs like unused loop variables.
 
 > 📌 **CCS630 lesson — lint is a review you get for free.** The import sorting alone (`I`) prevents a whole class
 > of circular-import bugs in Django apps.
@@ -999,39 +1670,145 @@ generated code, never for your own.
 
 ## Step M2.17 — Freeze requirements, `.gitattributes`, backend README
 
-**Goal.** The exact environment recorded; line-ending noise ended; backend documented.
+**Goal.** The exact environment recorded; line-ending noise ended; backend documented for handover.
 
 **Where.** Project root, `backend/` — PowerShell, editor.
 
 **Actions.**
 
-1. Append the newly installed, actually-resolved versions to the root `requirements.txt`:
+1. **Activate venv and freeze exact versions for all project dependencies:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   pip freeze | Select-String -Pattern "asgiref|Django|sqlparse|PyMySQL|python-dotenv|djangorestframework|drf-spectacular|django-cors|PyJWT|pytest|ruff|typing-extensions|tzdata"
+   ```
+   Add those `name==version` lines to root `requirements.txt` (merge with existing, do not duplicate). Expected packages:
+   - `Django==6.1.3`
+   - `djangorestframework==3.18.3`
+   - `drf-spectacular==0.28.0` (or latest compatible)
+   - `django-cors-headers==4.7.0` (or latest)
+   - `djangorestframework-simplejwt==5.5.0` (or latest)
+   - `PyMySQL==1.2.4`
+   - `python-dotenv==1.2.4`
+   - `pytest==8.3.0` (or latest)
+   - `pytest-django==4.8.0` (or latest)
+   - `ruff==0.6.0` (or latest)
+   - Plus transitive: `asgiref`, `sqlparse`, `tzdata`, `typing-extensions`, `PyJWT`, `packaging`
 
-```powershell
-pip freeze | Select-String -Pattern "asgiref|Django|sqlparse|PyMySQL|python-dotenv|djangorestframework|drf-spectacular|django-cors|PyJWT|pytest|ruff"
-```
+2. **Create `.gitattributes` at the project root** (ends LF/CRLF warnings from M1.9):
+   ```gitattributes
+   * text=auto
+   *.sql text
+   *.py text
+   *.md text
+   *.txt text
+   *.toml text
+   *.ini text
+   ```
 
-   Add those `name==version` lines to `requirements.txt` (merge, do not duplicate).
+3. **Create `backend/README.md`:**
+   ```markdown
+   # E-Compra Backend (M2 Complete)
 
-2. Create `.gitattributes` at the project root (ends the LF/CRLF warnings from M1.9):
+   ## Stack
+   - Python 3.12+
+   - Django 6.1.3
+   - Django REST Framework 3.18.3
+   - MySQL 8.4 (local) — schema `ecompra`, charset `utf8mb4`
+   - PyMySQL 1.2.4
+   - drf-spectacular (OpenAPI 3)
+   - SimpleJWT (auth)
+   - CORS Headers (frontend integration)
+   - pytest / pytest-django (tests)
+   - ruff (lint/format)
 
-```gitattributes
-* text=auto
-```
+   ## Setup
+   ```powershell
+   # 1. Clone and enter
+   git clone https://github.com/davedy-cit/e-compraStage.git
+   cd e-compraStage/backend
 
-3. Create `backend/README.md`: stack, how to set up (venv → pip → .env from .env.example → migrate →
-   handover SQL → createsuperuser → runserver), and the API surface so far.
+   # 2. Virtual environment
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
 
-**Expected result.** Pinned env reproducible from `requirements.txt` alone.
+   # 3. Dependencies
+   pip install -r ../requirements.txt
+
+   # 4. Environment config
+   Copy-Item ..\.env.example .env
+   # Edit .env with your MySQL root password
+
+   # 5. Database schema & seed (run once)
+   cmd /c "mysql -u root -p < ..\sql\01_schema.sql"
+   cmd /c "mysql -u root -p < ..\sql\02_indexes.sql"
+   cmd /c "mysql -u root -p < ..\sql\03_seed.sql"
+
+   # 6. Django migrations (creates auth_user, django_* tables)
+   python manage.py migrate
+
+   # 7. Auth_user handover (points FKs at real auth_user)
+   cmd /c "mysql -u root -p ecompra < ..\sql\04b_auth_user_fks.sql"
+
+   # 8. Superuser
+   python manage.py createsuperuser
+
+   # 9. Run
+   python manage.py runserver
+   ```
+
+   ## API Surface (M2)
+   | Endpoint | Description |
+   |---|---|
+   | `GET /api/catalog/products/` | List products (filter: `?q=`, `?category=`) |
+   | `GET /api/catalog/products/{id}/` | Product detail |
+   | `GET /api/catalog/categories/` | List categories |
+   | `GET /api/catalog/vendors/` | List vendors |
+   | `GET /api/catalog/units/` | List units of measure |
+   | `GET /api/catalog/availability/` | List availability statuses |
+   | `GET /api/orders/transaction-statuses/` | Transaction status lookup |
+   | `GET /api/orders/transaction-types/` | Transaction type lookup |
+   | `GET /api/orders/payment-statuses/` | Payment status lookup |
+   | `GET /api/orders/delivery-statuses/` | Delivery status lookup |
+   | `GET /api/orders/fulfillment-methods/` | Fulfillment method lookup |
+   | `GET /api/vendors/pos-vendors/` | POS vendor extensions |
+   | `GET /api/favorites/products/` | User's favorite products (auth required) |
+   | `GET /api/favorites/vendors/` | User's favorite vendors (auth required) |
+   | `POST /api/token/` | Obtain JWT pair |
+   | `POST /api/token/refresh/` | Refresh JWT access token |
+   | `GET /api/schema/swagger-ui/` | Swagger UI |
+   | `GET /api/schema/redoc/` | ReDoc |
+
+   ## Testing
+   ```powershell
+   # Clone seed to test database (run once)
+   cmd /c 'mysql -u root -p -e "DROP DATABASE IF EXISTS test_ecompra; CREATE DATABASE test_ecompra CHARACTER SET utf8mb4;"'
+   cmd /c "mysqldump -u root -p ecompra > ..\backups\test_seed.sql"
+   cmd /c 'mysql -u root -p test_ecompra < ..\backups\test_seed.sql'
+
+   # Run tests
+   pytest
+   ```
+
+   ## Linting
+   ```powershell
+   ruff check backend
+   ruff format backend
+   ```
+   ```
+
+**Expected result.** Pinned env reproducible from `requirements.txt` alone; `.gitattributes` ends line-ending noise; `backend/README.md` documents full setup.
 
 **Verify.** Run and paste:
-
 ```powershell
 Get-Content requirements.txt
 git status --short
 ```
+Expected: `requirements.txt` has pinned versions; `.gitattributes` and `backend/README.md` appear as new files.
 
-**If it fails.** `pip freeze` lists extra junk (e.g. `pptx`) → only copy the lines matching the pattern above.
+**If it fails.**
+- `pip freeze` lists extra junk (e.g. `pptx`, `pillow`) → only copy lines matching the pattern above.
+- `requirements.txt` has duplicates → deduplicate manually.
+- MySQL commands fail → ensure MySQL is in PATH and root password is correct.
 
 > 📌 **CCS630 lesson — the environment is part of the schema.** `requirements.txt` is to Python what
 > `01_schema.sql` is to MySQL: the script that rebuilds it from nothing.
@@ -1040,38 +1817,55 @@ git status --short
 
 ## Step M2.18 — M2 exit review
 
-**Goal.** Close the milestone: everything committed on `develop`, tagged, merged to `master` via PR.
+**Goal.** Close the milestone: everything committed on `develop`, tagged `m2-complete`, merged to `master` via PR.
 
 **Where.** Project root — PowerShell.
 
 **Actions.**
 
-1. Final smoke pass:
+1. **Final smoke pass (all must pass):**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   python manage.py check
+   pytest
+   ruff check backend
+   ```
 
-```powershell
-python manage.py check
-pytest --reuse-db
-ruff check backend
-```
+2. **Verify key files are present:**
+   ```powershell
+   git status --short
+   ```
+   Expected new/changed files:
+   - `backend/config/settings.py` (JWT, CORS, Spectacular, DB config)
+   - `backend/config/urls.py` (all app includes + schema + JWT)
+   - `backend/accounts/{models.py, admin.py}`
+   - `backend/catalog/{models.py, admin.py, serializers.py, views.py, urls.py, test_catalog.py}`
+   - `backend/cart/{models.py, admin.py}`
+   - `backend/orders/{models.py, admin.py, serializers.py, views.py, urls.py, test_orders.py}`
+   - `backend/vendors/{models.py, admin.py, serializers.py, views.py, urls.py}`
+   - `backend/favorites/{models.py, admin.py, serializers.py, views.py, urls.py}`
+   - `backend/pytest.ini`
+   - `ruff.toml`
+   - `requirements.txt` (pinned)
+   - `.gitattributes`
+   - `backend/README.md`
 
-2. Commit and tag:
+3. **Commit and tag:**
+   ```powershell
+   git add .
+   git commit -m "feat(m2): django backend core — models over M0 schema, admin, read-only API, jwt, tests"
+   git tag m2-complete
+   git push origin develop --tags
+   ```
 
-```powershell
-git add .
-git commit -m "feat(m2): django backend core — models over M0 schema, admin, read-only API, jwt, tests"
-git tag m2-complete
-git push origin develop --tags
-```
+4. **Merge to `master` via PR** (branch protection requires it):
+   - Open `https://github.com/davedy-cit/e-compraStage/pull/new/develop`
+   - Create PR titled "M2: Django backend core complete"
+   - **Solo-dev workaround:** In branch protection settings for `master`, temporarily set "Require approvals" to 0 or uncheck "Do not allow bypassing" → merge → restore protection.
 
-3. Merge to `master` via PR (branch protection requires it): open
-   `https://github.com/davedy-cit/e-compraStage/pull/new/develop`, create the PR, and merge.
-   **Solo-dev note:** "Require 1 approval" blocks self-approval — under the rule's settings tick
-   *Do not allow bypassing* **off** (or set approvals to 0) so you can merge your own PR, then re-enable.
-
-**Expected result.** All checks green; tag pushed; PR merged.
+**Expected result.** All checks green; tag `m2-complete` pushed; PR merged to `master`.
 
 **Verify.** Run and paste:
-
 ```powershell
 git log --oneline -5
 git tag
@@ -1079,11 +1873,19 @@ git status --short
 git log origin/master --oneline -3
 ```
 
-Expected: `m2-complete` in the tag list; clean tree; `origin/master` contains the merge.
+Expected:
+- `m2-complete` in the tag list
+- Clean tree (`git status --short` empty)
+- `origin/master` contains the merge commit
 
 **If it fails.**
-- PR merge blocked by protection → adjust the rule as in step 3, merge, restore the rule.
+- PR merge blocked by protection → adjust the rule as in step 4, merge, restore the rule.
 - `pytest` red → fix before tagging; never tag a red milestone.
+- `python manage.py check` fails → model/field mismatch; fix before commit.
+- `ruff check backend` fails → run `ruff check backend --fix` and `ruff format backend`.
+
+> 📌 **CCS630 lesson — a milestone is a contract.** Tagging `m2-complete` says "this exact code passes every check."
+> Future milestones build on this guarantee; if it's false, the whole tower leans.
 
 > 📌 **CCS630 lesson — the milestone gate.** M2 done means: from a wiped machine, `git clone` + `pip install` +
 > `.env` + three SQL scripts + `migrate` reproduces your entire backend with data. That is the deliverable, not
