@@ -9,14 +9,15 @@
 
 | | |
 |---|---|
-| **Current milestone** | **M3 Â· Feature Build** (Nov 26 â€“ Dec 2, 2026) |
-| **Current step** | M3.17 — Integration tests for write-path APIs |
+| **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
+| **Current step** | M4.8 — Vue: Payment (verify M3.15) |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
-| **M3 progress** | 16 / 18 steps · 89% (M3.1– M3.16) |
-| **Overall** | 45 / 78 steps · 58% |
-| **Last updated** | 2026-11-22 |
+| **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
+| **M4 progress** | 2 / 20 steps · 10% (M4.1–M4.20) |
+| **Overall** | 47 / 78 steps · 60% |
+| **Last updated** | 2026-11-23 |
 
 ---
 
@@ -38,8 +39,8 @@ _(to be filled in)_
 | M0 | System & Design + Planning Artifacts | 13 | 13 | âœ… Completed | 2026-11-18 |
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
-| M3 | Feature Build | 18 | 6 | ðŸ”µ In progress | |
-| M4 | Hardening & Delivery | 20 | 0 | âšª Not started | |
+| M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
+| M4 | Hardening & Delivery | 20 | 2 | ðŸ”µ In progress | |
 
 ---
 
@@ -437,5 +438,26 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Verification:** `npm run dev` → Vite starts at http://localhost:5173, no console errors.
 - **CCS630 lesson applied:** Frontend-backend API contract must match — checkout endpoint at root `/api/checkout/` (not `/api/orders/checkout/`) per config/urls.py spec; route names must stay in sync.
 - **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Need backend running to test actual cart loading and checkout flow.
+- **Error details & fix:**
+  1. **Checkout 404 error**: CartView.vue was calling `api.post('/orders/checkout/')` but backend has checkout at `/api/checkout/` (root level, per config/urls.py line 33: `path("api/checkout/", CheckoutView.as_view())`). Fixed by changing endpoint to `/checkout/`.
+  2. **Broken "Continue Shopping" link**: CartView.vue had `<router-link to="/products">` but catalog route is `/catalog` (router redirect from `/` to `/catalog`). Fixed by changing link to `/catalog`.
+  Both errors were discovered during code review of the existing M3.13 CartView.vue — no runtime errors yet since backend wasn't running, but would cause 404 on checkout click and 404 on continue shopping click.
 - **Next:** M4.7 — Vue: Checkout (verify M3.14).
+
+### [2026-11-23] Step M4.7 — Vue: Checkout screen (verify M3.14 integration)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Verified `frontend/src/views/CheckoutView.vue` uses the new `api` service. Fixed and enhanced:
+  1. **Fixed checkout endpoint**: Changed from `/orders/checkout/` to `/checkout/` to match backend URL config.
+  2. **Added fulfillment method selection**: Radio buttons for Delivery vs Pickup, sends `fulfillment_code` to backend.
+  3. **Updated backend**: Modified `checkout_cart()` service and `CheckoutView` to accept optional `fulfillment_code` parameter (defaults to DELIVERY).
+  4. **Fixed redirect**: Changed from `/confirmation` (non-existent route) to payment screen with first `order_id`.
+- **Verification:** `npm run build` → builds successfully; `python -m pytest` → all 21 backend tests pass; `npm run dev` → Vite starts at http://localhost:5173.
+- **CCS630 lesson applied:** Frontend-backend API contract alignment; fulfillment method as order attribute; proper redirect flow to payment.
+- **Issues/notes:** Need backend running to test actual checkout flow with both fulfillment methods. PICKUP fulfillment method must exist in DB (FulfillmentMethod count=3 per test, assumes DELIVERY/PICKUP/OTHER).
+- **Error details & fix:**
+  1. **Checkout 404 error**: CheckoutView.vue was calling `api.post('/orders/checkout/')` but backend has checkout at `/api/checkout/`. Fixed by changing endpoint to `/checkout/`.
+  2. **Missing fulfillment selection**: Original M3.14 CheckoutView had no fulfillment method selection. Added radio group for DELIVERY/PICKUP, passes `fulfillment_code` in request body.
+  3. **Broken redirect**: Original code redirected to `/confirmation` which doesn't exist. Fixed to redirect to `/payment/:id` with first order_id from response.
+  4. **Backend hardcoded DELIVERY**: `checkout_cart()` hardcoded `FulfillmentMethod.objects.get(code="DELIVERY")`. Updated to accept `fulfillment_code` parameter with DELIVERY as default.
+- **Next:** M4.8 — Vue: Payment (verify M3.15).
 

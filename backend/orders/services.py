@@ -32,7 +32,7 @@ def transition_order_status(order, new_status_code):
     return order
 
 
-def checkout_cart(user):
+def checkout_cart(user, fulfillment_code="DELIVERY"):
     """Split cart by vendor and create orders + transactions."""
     cart, _ = Cart.objects.get_or_create(user=user)
     items = CartItem.objects.filter(cart=cart).select_related("product", "product__vendor")
@@ -51,7 +51,7 @@ def checkout_cart(user):
             user=user,
             vendor_id=vendor_id,
             status_code=TransactionStatus.objects.get(code="PENDING_PAYMENT"),
-            fulfillment_code=FulfillmentMethod.objects.get(code="DELIVERY"),
+            fulfillment_code=FulfillmentMethod.objects.get(code=fulfillment_code),
             total_amount=total,
             notes="",
         )

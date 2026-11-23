@@ -51,8 +51,9 @@ class CheckoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        fulfillment_code = request.data.get("fulfillment_code", "DELIVERY")
         try:
-            order_ids = checkout_cart(request.user)
+            order_ids = checkout_cart(request.user, fulfillment_code=fulfillment_code)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(
