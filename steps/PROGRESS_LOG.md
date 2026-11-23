@@ -415,3 +415,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Port 5173 was in use, server started on 5174. Need to test actual login flow with backend running.
 - **Next:** M4.4 — Vue: Catalog browse screen (product list + search).
 
+### [2026-11-23] Step M4.4 — Vue: Catalog browse screen (product list + search)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `frontend/src/views/CatalogView.vue` with product grid, search input, category filter dropdown, pagination. Uses `api.get('catalog/products/')` with query params for search, category, pagination. Displays product cards with name, formatted price (₱), unit, vendor name, stall location, availability badge, add-to-cart button. Router already updated in M4.3 with `/catalog` route and redirect from `/` to `/catalog`.
+- **Verification:** `npm run dev` → Vite starts at http://localhost:5173, no console errors.
+- **CCS630 lesson applied:** API integration with query params — frontend sends `q`, `category`, `page`, `page_size` to backend; DRF pagination returns `results` + `count` for frontend pagination.
+- **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Need backend running to test actual product loading.
+- **Next:** M4.5 — Vue: Product detail screen.
+

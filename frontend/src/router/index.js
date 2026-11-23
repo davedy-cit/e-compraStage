@@ -5,6 +5,7 @@ import CheckoutView from '@/views/CheckoutView.vue'
 import PaymentView from '@/views/PaymentView.vue'
 import VendorPOSView from '@/views/VendorPOSView.vue'
 import LoginView from '@/views/LoginView.vue'
+import CatalogView from '@/views/CatalogView.vue'
 
 const routes = [
   { path: '/login', name: 'login', component: LoginView, meta: { public: true } },
@@ -12,7 +13,8 @@ const routes = [
   { path: '/checkout', name: 'checkout', component: CheckoutView, meta: { requiresAuth: true } },
   { path: '/payment/:id?', name: 'payment', component: PaymentView, props: true, meta: { requiresAuth: true } },
   { path: '/vendor/pos', name: 'vendor-pos', component: VendorPOSView, meta: { requiresAuth: true, role: 'vendor' } },
-  { path: '/', redirect: '/cart' },
+  { path: '/', redirect: '/catalog' },
+  { path: '/catalog', name: 'catalog', component: CatalogView, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
