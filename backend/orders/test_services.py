@@ -1,14 +1,15 @@
 """Tests for orders services layer."""
 
 import pytest
-from orders.services import transition_order_status, checkout_cart
+
 from orders.models import TransactionStatus
+from orders.services import checkout_cart, transition_order_status
 
 
 @pytest.mark.django_db
 def test_transition_order_status_valid(user, vendor, product):
     """Test valid order status transitions."""
-    from orders.models import Order, FulfillmentMethod, TransactionType, Transaction
+    from orders.models import FulfillmentMethod, Order, Transaction, TransactionType
     order = Order.objects.create(
         user=user, vendor=vendor,
         status_code=TransactionStatus.objects.get(code="PENDING_PAYMENT"),
@@ -27,7 +28,7 @@ def test_transition_order_status_valid(user, vendor, product):
 @pytest.mark.django_db
 def test_transition_order_status_invalid(user, vendor, product):
     """Test invalid order status transitions raise ValueError."""
-    from orders.models import Order, FulfillmentMethod, TransactionType, Transaction
+    from orders.models import FulfillmentMethod, Order, Transaction, TransactionType
     order = Order.objects.create(
         user=user, vendor=vendor,
         status_code=TransactionStatus.objects.get(code="PENDING_PAYMENT"),
@@ -43,7 +44,7 @@ def test_transition_order_status_invalid(user, vendor, product):
 @pytest.mark.django_db
 def test_transition_order_status_terminal(user, vendor, product):
     """Test transitions from terminal states (COMPLETED, CANCELLED) fail."""
-    from orders.models import Order, FulfillmentMethod, TransactionType, Transaction
+    from orders.models import FulfillmentMethod, Order, Transaction, TransactionType
     order = Order.objects.create(
         user=user, vendor=vendor,
         status_code=TransactionStatus.objects.get(code="COMPLETED"),
@@ -78,7 +79,7 @@ def test_checkout_cart_returns_order_and_transaction_ids(user, multi_vendor_cart
     assert len(transaction_ids) == len(multi_vendor_cart)
     # Verify each order has a corresponding transaction
     from orders.models import Transaction
-    for order_id, transaction_id in zip(order_ids, transaction_ids):
+    for order_id, transaction_id in zip(order_ids, transaction_ids, strict=True):
         txn = Transaction.objects.get(id=transaction_id)
         assert txn.order_id == order_id
 

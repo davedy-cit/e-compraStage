@@ -2,7 +2,8 @@
 
 from django.conf import settings
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
+from rest_framework_simplejwt.exceptions import AuthenticationFailed, InvalidToken
+
 from accounts.models import AuthUser
 
 
@@ -22,13 +23,13 @@ class CustomJWTAuthentication(JWTAuthentication):
         """
         try:
             user_id = validated_token[settings.SIMPLE_JWT["USER_ID_CLAIM"]]
-        except KeyError:
-            raise InvalidToken("Token contained no recognizable user identification")
+        except KeyError as err:
+            raise InvalidToken("Token contained no recognizable user identification") from err
 
         try:
             user = AuthUser.objects.get(**{settings.SIMPLE_JWT["USER_ID_FIELD"]: user_id})
-        except AuthUser.DoesNotExist:
-            raise AuthenticationFailed("User not found", code="user_not_found")
+        except AuthUser.DoesNotExist as err:
+            raise AuthenticationFailed("User not found", code="user_not_found") from err
 
         if not self.user_can_authenticate(user):
             raise AuthenticationFailed(
