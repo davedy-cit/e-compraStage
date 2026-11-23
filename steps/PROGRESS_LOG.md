@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.18 — Developer documentation (API reference, setup, architecture) |
+| **Current step** | M4.19 — Full dress rehearsal (Checkpoint Demo #5) |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 17 / 20 steps · 85% (M4.1–M4.17) |
-| **Overall** | 75 / 78 steps · 96% |
+| **M4 progress** | 18 / 20 steps · 90% (M4.1–M4.18) |
+| **Overall** | 76 / 78 steps · 97% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 17 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 18 | ðŸ”µ In progress | |
 
 ---
 
@@ -597,4 +597,13 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **CCS630 lesson applied:** User-centered documentation — separates customer vs vendor personas with distinct workflows; includes visual status timeline explanation for order tracking; troubleshooting table addresses common support issues.
 - **Issues/notes:** Documentation only — no code changes.
 - **Next:** M4.18 — Developer documentation (API reference, setup, architecture)
+
+
+### [2026-11-23] Step M4.18 — Developer documentation (API reference, setup, architecture)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `backend/docs/DEVELOPER_GUIDE.md` covering architecture (Vue 3 + Django + MySQL), project structure, database schema key points (28 tables, FK db_column names, lookup tables, seed data codes as contract), API endpoints table (8 modules), service layer pattern, common commands (backend/frontend/database), adding new status codes, deployment checklist.
+- **Verification:** File exists and covers all required sections per M4.18 spec.
+- **CCS630 lesson applied:** Technical documentation as onboarding tool — schema contracts, API reference, command cheatsheet, and deployment checklist reduce onboarding friction and production incidents.
+- **Issues/notes:** Documentation only — no code changes.
+- **Next:** M4.19 — Full dress rehearsal (Checkpoint Demo #5)
 
