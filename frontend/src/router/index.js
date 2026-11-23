@@ -6,6 +6,7 @@ import PaymentView from '@/views/PaymentView.vue'
 import VendorPOSView from '@/views/VendorPOSView.vue'
 import LoginView from '@/views/LoginView.vue'
 import CatalogView from '@/views/CatalogView.vue'
+import ProductDetailView from '@/views/ProductDetailView.vue'
 
 const routes = [
   { path: '/login', name: 'login', component: LoginView, meta: { public: true } },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/vendor/pos', name: 'vendor-pos', component: VendorPOSView, meta: { requiresAuth: true, role: 'vendor' } },
   { path: '/', redirect: '/catalog' },
   { path: '/catalog', name: 'catalog', component: CatalogView, meta: { requiresAuth: true } },
+  { path: '/product/:id', name: 'product-detail', component: ProductDetailView, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({

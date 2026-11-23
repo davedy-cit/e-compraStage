@@ -423,3 +423,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Need backend running to test actual product loading.
 - **Next:** M4.5 — Vue: Product detail screen.
 
+### [2026-11-23] Step M4.5 — Vue: Product detail screen
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `frontend/src/views/ProductDetailView.vue` with product image, name, formatted price (₱), unit, availability badge, description, vendor info (name, stall, section), quantity selector (max = stock_quantity), add-to-cart and reserve-for-pickup buttons. Updated `frontend/src/router/index.js` with import and route `/product/:id` (name: product-detail, requiresAuth: true). CatalogView already links to this route via `goToProduct()`.
+- **Verification:** `npm run dev` → Vite starts at http://localhost:5173, no console errors.
+- **CCS630 lesson applied:** Dynamic route params with `route.params.id` — RESTful URL design, detail endpoint fetches single resource, quantity bound to stock limit.
+- **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Need backend running to test actual product loading and add-to-cart flow.
+- **Next:** M4.6 — Vue: Cart (verify M3.13).
+
