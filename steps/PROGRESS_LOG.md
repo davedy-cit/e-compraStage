@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.17 — User manual (customer & vendor) |
+| **Current step** | M4.18 — Developer documentation (API reference, setup, architecture) |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 16 / 20 steps · 80% (M4.1–M4.16) |
-| **Overall** | 74 / 78 steps · 95% |
+| **M4 progress** | 17 / 20 steps · 85% (M4.1–M4.17) |
+| **Overall** | 75 / 78 steps · 96% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 16 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 17 | ðŸ”µ In progress | |
 
 ---
 
@@ -588,4 +588,13 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **CCS630 lesson applied:** Backup & recovery using mysqldump with single-transaction for consistency; routine/triggers preserved; 7-day retention with auto-cleanup; restore drill validates RTO/RPO.
 - **Issues/notes:** PowerShell script had quoting issue with `-p$Password` — ran backup via Bash (Git Bash) instead. Production script should use full mysqldump path.
 - **Next:** M4.17 — User manual (customer & vendor)
+
+
+### [2026-11-23] Step M4.17 — User manual (customer & vendor)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `backend/docs/USER_MANUAL.md` covering customer workflows (browse, cart, checkout, payment, tracking, favorites) and vendor workflows (POS, status flow, cash payment/receipt, inventory, dashboard), plus troubleshooting table.
+- **Verification:** File exists and covers all required sections per M4.17 spec.
+- **CCS630 lesson applied:** User-centered documentation — separates customer vs vendor personas with distinct workflows; includes visual status timeline explanation for order tracking; troubleshooting table addresses common support issues.
+- **Issues/notes:** Documentation only — no code changes.
+- **Next:** M4.18 — Developer documentation (API reference, setup, architecture)
 
