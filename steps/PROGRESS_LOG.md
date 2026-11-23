@@ -627,6 +627,6 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
   - Proposal: `docs/E-Compra_Proposal.pptx` (24 slides)
 - **Verification:** Fresh clone simulation passes — all tests (27+6+2), lint, build succeed. Tag `m4-complete` created.
 - **CCS630 lesson applied:** End-to-end capstone delivery — reproducible environment, documented architecture, tested features, security audit, performance analysis, backup/recovery drill, user & developer manuals.
-- **Issues/notes:** Submission deadline Dec 12, 2026 met with 19 days buffer.
+- **Issues/notes:** Submission deadline Dec 12, 2026 met with 19 days buffer. **Final lint fixes**: B904 exception chaining in `authentication.py` (2 instances), B905 `zip(strict=True)` in `test_services.py`. All ruff checks now pass.
 - **Next:** Project complete — ready for defense presentation
 
