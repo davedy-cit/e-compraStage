@@ -4,6 +4,9 @@ import CartView from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import PaymentView from '@/views/PaymentView.vue'
 import VendorPOSView from '@/views/VendorPOSView.vue'
+import VendorDashboardView from '@/views/VendorDashboardView.vue'
+import VendorProductsView from '@/views/VendorProductsView.vue'
+import VendorOrdersView from '@/views/VendorOrdersView.vue'
 import LoginView from '@/views/LoginView.vue'
 import CatalogView from '@/views/CatalogView.vue'
 import ProductDetailView from '@/views/ProductDetailView.vue'
@@ -20,6 +23,9 @@ const routes = [
   { path: '/checkout', name: 'checkout', component: CheckoutView, meta: { requiresAuth: true } },
   { path: '/payment/:id?', name: 'payment', component: PaymentView, props: true, meta: { requiresAuth: true } },
   { path: '/vendor/pos', name: 'vendor-pos', component: VendorPOSView, meta: { requiresAuth: true, role: 'vendor' } },
+  { path: '/vendor/dashboard', name: 'vendor-dashboard', component: VendorDashboardView, meta: { requiresAuth: true, role: 'vendor' } },
+  { path: '/vendor/products', name: 'vendor-products', component: VendorProductsView, meta: { requiresAuth: true, role: 'vendor' } },
+  { path: '/vendor/orders', name: 'vendor-orders', component: VendorOrdersView, meta: { requiresAuth: true, role: 'vendor' } },
   { path: '/', redirect: '/catalog' },
   { path: '/catalog', name: 'catalog', component: CatalogView, meta: { requiresAuth: true } },
   { path: '/product/:id', name: 'product-detail', component: ProductDetailView, meta: { requiresAuth: true } },

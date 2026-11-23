@@ -11,7 +11,7 @@
         <!-- Desktop Navigation -->
         <nav class="nav">
           <router-link
-            v-for="item in navItems"
+            v-for="item in visibleNavItems"
             :key="item.name"
             :to="item.to"
             :class="{ on: isActive(item.to) }"
@@ -71,7 +71,7 @@
       >
         <div class="space-y-2">
           <router-link
-            v-for="item in navItems"
+            v-for="item in visibleNavItems"
             :key="item.name"
             :to="item.to"
             @click="mobileMenuOpen = false"
@@ -141,6 +141,20 @@ const navItems = [
   { name: 'favorites-history', label: 'Favorites', to: '/favorites-history' },
   { name: 'order-tracking', label: 'Orders', to: '/order-tracking' },
 ]
+
+const vendorNavItems = [
+  { name: 'vendor-dashboard', label: 'Dashboard', to: '/vendor/dashboard' },
+  { name: 'vendor-products', label: 'Products', to: '/vendor/products' },
+  { name: 'vendor-orders', label: 'Orders', to: '/vendor/orders' },
+  { name: 'vendor-pos', label: 'POS', to: '/vendor/pos' },
+]
+
+const visibleNavItems = computed(() => {
+  if (isVendor.value) {
+    return vendorNavItems
+  }
+  return navItems
+})
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
