@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.9 — Vue: Vendor POS (verify M3.16) |
+| **Current step** | M4.10 — Vue: Order tracking screen |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 3 / 20 steps · 15% (M4.1–M4.20) |
-| **Overall** | 48 / 78 steps · 62% |
+| **M4 progress** | 4 / 20 steps · 20% (M4.1–M4.20) |
+| **Overall** | 49 / 78 steps · 63% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 3 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 4 | ðŸ”µ In progress | |
 
 ---
 
@@ -478,4 +478,18 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
   3. **Broken redirect**: Original PaymentView redirected to `/confirmation` which doesn't exist. Fixed to redirect to `/catalog`.
   4. **Missing Order import**: Added `Order` model import in views.py for OrderDetail queryset.
 - **Next:** M4.9 — Vue: Vendor POS (verify M3.16).
+
+### [2026-11-23] Step M4.9 — Vue: Vendor POS screen (verify M3.16 integration)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Verified `frontend/src/views/VendorPOSView.vue` works with the new auth/API setup:
+  - Loads vendor's orders on mount via `GET /api/vendors/pos/` ✅
+  - Status update buttons call `POST /api/vendors/pos/` with `order_id` and `status_code` ✅
+  - Only shows orders for the logged-in vendor (role check via router meta) ✅
+  - Handles transition validation errors (400 responses) via error display ✅
+  - Displays order queue with status badges, update dropdown works ✅
+  - Frontend status transition validation prevents invalid transitions (COMPLETED/CANCELLED terminal) ✅
+- **Verification:** `npm run build` → builds successfully; `python -m pytest` → all 21 backend tests pass (including 3 vendor POS tests); `npm run dev` → Vite starts at http://localhost:5173.
+- **CCS630 lesson applied:** Role-based access control (vendor role); status state machine enforcement via service layer; API error handling with user-friendly feedback.
+- **Issues/notes:** No code changes needed — M3.16 VendorPOSView already correctly integrated with the new auth/API setup. All vendor POS tests pass.
+- **Next:** M4.10 — Vue: Order tracking screen.
 

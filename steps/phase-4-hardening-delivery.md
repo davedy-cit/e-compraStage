@@ -1871,7 +1871,7 @@ mysql -u ecompra_app -p ecompra -e "SELECT 1"
 | M4.6 | Vue: Cart (verify M3.13) | ☐ |
 | M4.7 | Vue: Checkout (verify M3.14) | ✅ |
 | M4.8 | Vue: Payment (verify M3.15) | ✅ |
-| M4.9 | Vue: Vendor POS (verify M3.16) | ☐ |
+| M4.9 | Vue: Vendor POS (verify M3.16) | ✅ |
 | M4.10 | Vue: Order tracking | ☐ |
 | M4.11 | Unit tests: pytest + Vitest | ☐ |
 | M4.12 | E2E tests: Playwright | ☐ |
