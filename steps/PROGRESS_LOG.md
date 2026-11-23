@@ -507,3 +507,17 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Need backend running to test actual order tracking flow. OrderDetail endpoint returns nested items and status_display from OrderSerializer.
 - **Next:** M4.11 — Unit tests: Backend (pytest) + Frontend (Vitest).
 
+### [2026-11-23] Step M4.11 — Unit tests: Backend (pytest) + Frontend (Vitest)
+- **Status:** ✅ Completed (verified)
+- **What was done:** 
+  - **Backend:** Created `backend/orders/test_services.py` with 6 service-layer tests covering `transition_order_status` (valid transitions, invalid transitions, terminal state protection) and `checkout_cart` (vendor-splitting, order+transaction ID returns, empty cart error). Total backend tests: 27 passed (21 original + 6 new).
+  - **Frontend:** Installed `vitest`, `@vue/test-utils`, `jsdom` as dev dependencies. Created `frontend/vitest.config.js` with Vue plugin, `@` path alias (`./src`), jsdom environment. Added `"test": "vitest run"` script to package.json. Created `frontend/src/stores/__tests__/auth.test.js` with 6 auth store tests (initial state, login flow, logout, init from localStorage, no-token init, failed init logs out). Total frontend tests: 6 passed.
+- **Verification:** `pytest -v` → 27 passed; `npm run test` → 6 passed; `npm run build` → builds successfully; `npm run dev` → Vite starts at http://localhost:5173.
+- **CCS630 lesson applied:** Test the invariant, not the implementation — service-layer functions (`transition_order_status`, `checkout_cart`) have defined contracts enforced by tests; frontend Pinia store behavior verified independently of components.
+- **Issues/notes:** 
+  - **Vitest config required `@` alias fix**: Vite config didn't have `@` path alias, so Vitest couldn't resolve `@/stores/auth` and `@/services/api`. Fixed by adding `resolve.alias` to `vite.config.js` (same as vitest.config.js).
+  - **Tailwind v4 PostCSS plugin**: Frontend build initially failed because Tailwind v4 requires `@tailwindcss/postcss` package instead of the old `tailwindcss` PostCSS plugin. Already fixed in M3.18.
+  - **Service-layer pattern verified**: Tests prove `ALLOWED_TRANSITIONS` dict in services.py correctly enforces status state machine (PENDING_PAYMENT → CONFIRMED → PREPARING → OUT_FOR_DELIVERY → COMPLETED, CANCELLED from any state).
+  - **checkout_cart contract verified**: Returns both `order_ids` and `transaction_ids` arrays (1 per vendor), matching frontend PaymentView expectations.
+- **Next:** M4.12 — End-to-end tests with Playwright for key user flows.
+
