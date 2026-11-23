@@ -27,7 +27,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             }
         if hasattr(obj, "customerprofile"):
             return {
-                "id": obj.customerprofile.id,
+                "id": obj.customerprofile.user.id,
                 "phone": obj.customerprofile.phone,
                 "address": obj.customerprofile.address,
             }

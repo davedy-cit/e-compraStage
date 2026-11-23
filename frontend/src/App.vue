@@ -1,11 +1,14 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import api from '@/services/api'
+import Navbar from '@/components/Navbar.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
+
+const showNavbar = computed(() => route.name !== 'login')
 
 onMounted(async () => {
   await authStore.init()
@@ -13,5 +16,6 @@ onMounted(async () => {
 </script>
 
 <template>
+  <Navbar v-if="showNavbar" />
   <router-view />
 </template>

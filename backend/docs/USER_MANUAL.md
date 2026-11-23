@@ -3,9 +3,24 @@
 ## For Customers (Maria Santos)
 
 ### Getting Started
-1. Open the app at `https://your-domain.com` (or `http://localhost:5173` locally)
+1. Open the app at `https://your-domain.com` (or `http://localhost:5174` locally if port 5173 is in use)
 2. Click **Login** and enter your credentials
 3. New users: Contact admin for account creation (no self-registration in v1)
+
+### Test Credentials (for demo/testing)
+All test accounts share the same password: **`ecompra123`**
+
+| Username | Email | Role | Vendor |
+|----------|-------|------|--------|
+| `maria.santos` | maria.santos@example.ph | Customer | — |
+| `juan.reyes` | juan.reyes@example.ph | Customer | — |
+| `admin` | admin@ecompra.local | Admin | — |
+| `pedro.reyes` | pedro.reyes@example.ph | Vendor | Pedro's Fresh Catch (Fish) |
+| `rosa.delacruz` | rosa.delacruz@example.ph | Vendor | Rosa's Gulay Stand (Vegetables) |
+| `jose.bautista` | jose.bautista@example.ph | Vendor | Bautista Meat Shop (Meat/Poultry) |
+| `luzviminda.tan` | luzviminda.tan@example.ph | Vendor | Tan's Rice & Dry Goods (Dry Goods) |
+| `andres.villamor` | andres.villamor@example.ph | Vendor | Villamor Fruits & Gulay (Fruits) |
+| `nena.abellana` | nena.abellana@example.ph | Vendor | Nena's Manok (Poultry) |
 
 ### Browsing Products
 - **Search**: Type in the search bar (top of catalog) and press Enter

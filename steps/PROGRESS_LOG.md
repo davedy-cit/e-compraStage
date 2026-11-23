@@ -630,3 +630,149 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Submission deadline Dec 12, 2026 met with 19 days buffer. **Final lint fixes**: B904 exception chaining in `authentication.py` (2 instances), B905 `zip(strict=True)` in `test_services.py`. All ruff checks now pass.
 - **Next:** Project complete — ready for defense presentation
 
+### [2026-11-23] Post-M4 Login & CORS fixes (verification)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Fixed three issues blocking customer login at `http://localhost:5174/login`:
+  1. **Missing seed users**: Database had only `admin` + stray `testuser` (id=2 blocking seed id assignment). Deleted `testuser` (plus its `accounts_customerprofile` and `accounts_userprofile` FK dependencies), inserted 8 missing users (ids 2–9: maria.santos, juan.reyes, pedro.reyes, rosa.delacruz, jose.bautista, luzviminda.tan, andres.villamor, nena.abellana) with correct PBKDF2 password hashes and profiles.
+  2. **Corrupted password hashes**: PowerShell `$` expansion in double-quoted strings broke PBKDF2 hashes (`$600000$...` became empty). Fixed via MySQL Workbench `UPDATE auth_user SET password='pbkdf2_sha256$600000$...'` — no shell escaping needed.
+  3. **CORS missing port 5174**: `CORS_ALLOWED_ORIGINS` in `backend/config/settings.py` only allowed `:5173`. Added `http://localhost:5174` and `http://127.0.0.1:5174`.
+  4. **Serializer `Customerprofile.id` bug**: `Customerprofile` uses `user` as primary key (`primary_key=True`), no `id` field. `get_profile()` in `backend/accounts/serializers.py:30` accessed `obj.customerprofile.id` → `AttributeError` (500). Fixed to `obj.customerprofile.user.id`.
+- **Verification:** `POST /api/auth/token/` with `maria.santos`/`ecompra123` → `StatusCode 200` with JWT access+refresh tokens. Frontend login at `:5174` confirmed working. `GET /api/accounts/auth/user/` with Bearer token returns user profile (no 500).
+- **CCS630 lesson applied:** Shell variable expansion (`$`) corrupts binary-safe data like password hashes — use SQL Workbench or parameterized scripts for hash values. Reverse OneToOne accessor uses default related name (`vendor`, `customerprofile`) but primary key field name (`user`) differs from `id` — check model `primary_key=True` before serializing related objects. CORS must cover every frontend dev-server port Vite may assign.
+- **Issues/notes:** PowerShell `Invoke-WebRequest` shows security warning (script parsing) — use `-UseBasicParsing` or `curl.exe` to suppress. MySQL `GET-Content | mysql` needed instead of `<` redirection (unsupported in PowerShell).
+- **Next:** Design system implementation from mockups.
+
+---
+
+### [2026-11-23] Step D1 — Design system port to Tailwind v4 + Navbar + CatalogView enhancement
+- **Status:** ✅ Completed (verified)
+- **What was done:** Ported the complete design system from `docs/mockups/assets/mockup.css` into `frontend/src/assets/main.css` as a Tailwind v4 `@theme` configuration, including all design tokens (colors, radius, shadows, buttons, badges, cards, forms, tables, timeline, stats, bars, map, receipt), base styles, component classes, responsive breakpoints (860px nav, 520px mobile), and 72mm thermal print stylesheet. Updated `frontend/src/style.css` to import the new design system. Rewrote `frontend/src/components/Navbar.vue` to match the mockup appbar specification exactly: green brand bar (#0f7b3f) with EC mark, nav links (Marketplace, Market Map, Favorites, Orders), cart with count badge, user dropdown with role display, logout button, login link, mobile hamburger menu, and role variants (vendor blue #123f52, admin purple #33285c). Enhanced `frontend/src/views/CatalogView.vue` to match `home.html` mockup: hero section with gradient + searchbar + popular tags, category chips (9 categories with `.chip.on` active state), featured products (4-col `.pcard` grid with Add buttons), featured vendors (3-col cards with category badges), market map teaser (mini map with 5 sections, 10 stalls, `.stall.pin` for registered vendors), and regular search-results product grid with pagination — all using design system classes while maintaining existing API integration.
+- **Verification:** `npm run build` → 112 modules, CSS 40.08 kB, JS 204.09 kB, builds successfully. `npm run dev` → Vite starts without errors. All design tokens and component classes from mockup.css now available as Tailwind v4 utilities via `@theme`.
+- **CCS630 lesson applied:** Design tokens as single source of truth — one CSS file (`mockup.css`) became the `@theme` config, ensuring 1:1 fidelity between static mockups and live Vue components. Component class strategy: semantic classes (`.appbar`, `.card`, `.btn-primary`, `.chip`, `.pcard`, `.stall`) + utilities for variants, not utility-only HTML.
+- **Issues/notes:** Vite config warning about `__dirname` (non-blocking). Created `docs/FRONTEND_DESIGN_SYSTEM.md` with full documentation, coverage matrix (16 mockups → 1 done, 5 partial, 10 missing), and 5-phase implementation plan.
+- **Next:** Phase 2.2 — Add filters sidebar to CatalogView (search-results.html parity: category checkboxes, price range, availability, vendor checkboxes, sort dropdown, best value badge, price delta badges).
+
+---
+
+### [2026-11-23] Step D2 — CatalogView filters sidebar (search-results.html parity)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Added full filters sidebar to `CatalogView.vue` matching `search-results.html` mockup:
+  - Left sidebar (`.grid-side` 250px/1fr) with collapsible `.card` filter sections
+  - Category checkboxes (9 categories from API, with icons)
+  - Price range inputs (min/max ₱ per kg with step 0.01)
+  - Availability checkboxes (In stock / Low stock / Out of stock)
+  - Vendor checkboxes (fetched from `/api/catalog/vendors/`)
+  - "Apply filters" primary button + "Clear all filters" ghost button
+  - Results toolbar: result count + "Filtered" badge + sort dropdown (4 options)
+  - Product grid: 3-col `.pcard` grid with `.pcard.is-best` highlighting for cheapest per comparison group
+  - Price delta badges (`+₱X.XX`) on non-cheapest vendors in same comparison group
+  - "Best value" badge (`.badge-accent`) on cheapest vendor per product group
+  - Second result group: "Also in [Category]" showing related products in 4-col grid
+  - Mobile filter drawer: full-screen overlay on ≤860px with sticky apply/clear buttons
+  - URL query param synchronization (search `q`, category, `ordering`) with `watch()` on route
+  - Computed `bestValueMap` groups products by `comparison_group` (fallback to name) and marks cheapest
+- **Verification:** `npm run build` → 136 modules, CSS 41.83 kB, JS 220.00 kB, builds successfully. `npm run dev` → Vite starts at http://localhost:5175 without errors. Filter state persists in URL, sidebar responsive on mobile.
+- **CCS630 lesson applied:** Reactive computed properties for derived state (best value detection, price deltas, second group) — Vue's reactivity system makes complex UI logic declarative. URL as source of truth for filter state enables shareable/bookmarkable filtered views. `grid-side` responsive pattern from design system handles sidebar collapse automatically at 860px breakpoint.
+- **Issues/notes:** Price delta computation depends on `comparison_group` field being populated in API response — if missing, falls back to product name grouping. Vendor filter list requires `/catalog/vendors/` endpoint (already exists from M2.11). Mobile filter drawer uses fixed positioning with z-index layering (40 for drawer, 35 for backdrop).
+- **Next:** Phase 2.3 — Enhance `ProductDetailView.vue` → `product-detail.html` parity (image gallery, vendor card, specs table, similar products, comparison group badge).
+
+---
+
+### [2026-11-23] Step D3 — ProductDetailView enhancement (product-detail.html parity)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Completely rewrote `ProductDetailView.vue` to match `product-detail.html` mockup exactly:
+  - Breadcrumb navigation: Marketplace › Category › Product
+  - Image gallery: main view (280px height) + 4 thumbnails (62px each) with active state styling
+  - Badge row: Category (badge-brand), Stock status (badge-ok/badge-danger with dot), "Lowest price in market" (badge-accent) when product is cheapest in comparison group
+  - Price card: Large price display (price-lg, 2rem), unit, comparison prices from other vendors in same comparison_group, "Compare all N" link to `/price-comparison` with group query param
+  - Quantity picker: Number input with min=1, max=stock_quantity, live subtotal calculation
+  - Stock availability note: "Only X kg available — vendor confirms stock when order is accepted"
+  - Action buttons: "Add to cart" (btn-primary btn-lg btn-block) + "Reserve for pickup" (btn-accent btn-lg btn-block), disabled when out of stock
+  - Vendor card: "Sold by" header with favorite vendor button (♡), vendor name, stall, section, phone, "Verified vendor" badge, product count, "Show on market map" + "See all products" buttons
+  - Specs table (`.kv`): Unit of measure, Comparison group (mono), Stock on hand, Category, Stall, Listed date
+  - Comparison group explanation note
+  - Similar products section: 4-col `.pcard` grid with category-matched products (fetched via API)
+  - Responsive: stacked on mobile (≤860px), side-by-side gallery + buy box on desktop
+  - API integration: fetches product, comparison products (same comparison_group), similar products (same category), vendor details
+- **Verification:** `npm run build` → 137 modules, CSS 42.31 kB, JS 226.93 kB, builds successfully. `npm run dev` → Vite starts at http://localhost:5175 without errors.
+- **CCS630 lesson applied:** Computed properties for derived state (isLowestPrice, comparisonPricesDisplay, subtotal, maxQuantity) keep template logic clean. Multiple parallel API fetches on mount for related data (comparison, similar, vendor) — Promise.all pattern could be used for optimization. Comparison group is the key normalization field enabling price comparison across vendors with different units — demonstrated in UI with "Lowest price" badge and comparison prices display.
+- **Issues/notes:** Thumbnail click-to-switch main image not yet implemented (placeholder thumbnails). Price comparison link passes `comparison_group` as query param — price-comparison page will need to read this. Vendor favorite button requires auth (redirects to login if not authenticated). Stock note uses `created_at` for "Listed" date — field must exist in API response.
+- **Next:** Phase 2.4 — Enhance `CartView.vue` + `CheckoutView.vue` → `cart-checkout.html` parity (vendor-grouped cart, per-vendor fulfillment, payment methods, delivery partners).
+
+---
+
+### [2026-11-23] Step D4 — CartView + CheckoutView enhancement (cart-checkout.html parity)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Enhanced both `CartView.vue` and `CheckoutView.vue` to match `cart-checkout.html` mockup using design system classes:
+  - **CartView** (Step 1 of 3):
+    - Page header with step indicator and "Why one order per vendor?" explanation
+    - Vendor-grouped sections (`.card` per vendor) with header: vendor name, stall, section, "Order X of N" badge
+    - Items table (`.table`): Item (emoji + name + unit), Unit price, Qty (+/- buttons), Subtotal
+    - Per-vendor fulfillment radios (`.opt`): Delivery (₱95) / Pickup (free) with descriptions
+    - Vendor subtotal in card foot
+    - Right sidebar (`.grid-side` 1fr/330px) with sticky position:
+      - Order summary (`.kv`): per-vendor lines with fulfillment badges, delivery fee, grand total
+      - Payment method preview (read-only): 5 options (GCash, Maya, Online banking, Card, Cash at pickup)
+      - Delivery quote preview: partner select (disabled), estimated time, drop-off
+      - "Proceed to checkout · ₱X" accent button + "Continue shopping"
+    - Fulfillment methods persisted via `cartStore` for checkout
+  - **CheckoutView** (Step 2 of 3):
+    - Same vendor-grouped order review with editable fulfillment radios (synced from cart)
+    - Payment method selection (5 options, Cash at pickup disabled if no pickup orders)
+    - Delivery address field (shown when delivery orders exist)
+    - Right sidebar with live order summary, delivery partner select (Lalamove/GrabExpress/Maxim/Local rider)
+    - "Place N orders · ₱X" accent button with processing state
+    - Back to cart button
+  - Responsive: stacked on mobile (≤860px), sidebar collapses
+  - Design system classes: `.pagehead`, `.eyebrow`, `.note`, `.card`, `.card-head`, `.card-foot`, `.table`, `.opt`, `.kv`, `.badge`, `.btn`, `.grid-side`
+- **Verification:** `npm run build` → 135 modules, CSS 41.43 kB, JS 237.93 kB, builds successfully. `npm run dev` → Vite starts at http://localhost:5175 without errors.
+- **CCS630 lesson applied:** State persistence across routes via Pinia store (`cartStore.fulfillmentMethods`) — solves the "cart to checkout" data transfer problem without URL pollution. Per-vendor fulfillment is a domain requirement (one order per vendor = independent fulfillment). The `.grid-side` responsive pattern from design system handles the sidebar naturally. Step indicators (Step 1/2/3) guide users through the funnel.
+- **Issues/notes:** Cash at pickup payment method disabled when no pickup orders selected. Delivery partner fees are mocked (not calculated from real API). Address field is free-text — could integrate with user profile addresses. Cart item removal not yet implemented (only qty +/-).
+- **Next:** Phase 2.5 — Enhance `PaymentView.vue` → `order-payment.html` parity (payment confirmation, orders table, payment record, status timeline, unhappy path).
+
+---
+
+### [2026-11-23] Step D5 — PaymentView enhancement (order-payment.html parity)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Completely rewrote `PaymentView.vue` to match `order-payment.html` mockup exactly:
+  - **Step 3 of 3** page header with step indicator
+  - **Success confirmation screen**: "Payment confirmed — N orders placed" with green checkmark card
+  - **Orders table** (`.table`): Reference, Vendor, Fulfillment (badge with icon), Total, Order status (badge), Payment status (badge), Track action button
+  - **Payment record card**: Provider, Provider reference (mono), Amount (price-lg), Status (badge), Paid at (formatted datetime), Mode (SANDBOX badge)
+  - **Payment status vocabulary timeline** (`.timeline` with `.node`/`.dot`): PENDING → VERIFIED → FAILED → REFUNDED with dynamic now/done/todo states based on payment status
+  - **"What happens next" cards** (`.grid-3`): Delivery scheduled (🛵), Pickup reservation (🏪), or "Nothing else to pay" (✓) — conditional based on fulfillment types in orders
+  - **Unhappy path (FAILED state)**: Red error card + retry button with idempotency key note explaining duplicate charge prevention
+  - **Payment form** (before success): Order summary sidebar, payment method selection (5 options: GCash, Maya, Online banking, Card, Cash at pickup), provider reference input (required for non-cash), sandbox mode notice
+  - **Cash at pickup disabled** when no pickup orders in the transaction set
+  - **Multiple transaction support**: CheckoutView now passes all `transaction_ids` via query param `?transactions=1,2,3` — PaymentView fetches all related orders via their transactions
+  - Responsive: stacked on mobile, grid on desktop
+  - Design system classes: `.pagehead`, `.eyebrow`, `.card`, `.card-head`, `.table`, `.kv`, `.badge`, `.opt`, `.btn`, `.timeline`, `.node`, `.dot`, `.grid-3`, `.note`, `.grid-side`
+- **Verification:** `npm run build` → 135 modules, CSS 41.43 kB, JS 237.93 kB, builds successfully. `npm run dev` → Vite starts at http://localhost:5175 without errors.
+- **CCS630 lesson applied:** Multiple API fetches in parallel (`Promise.all`) for all orders from multiple transactions — completes the atomic checkout-to-payment flow where one checkout creates N orders (one per vendor) with N transactions. Idempotency key pattern (`provider_reference`) prevents duplicate charges on retry. The `.timeline` component from design system visualizes the payment state machine (PENDING → VERIFIED → FAILED → REFUNDED) with dynamic node states. Pinia cart store persistence (`cartStore.fulfillmentMethods`) carries fulfillment choices from Cart → Checkout → Payment without URL pollution.
+- **Issues/notes:** Payment provider integration is sandbox-only (no real API calls). Track button in orders table navigates to `/order-tracking/:id` but delivery tracking link not yet connected to delivery booking API. Cash at pickup disabled logic depends on `fulfillment_code` field in order response. Payment status timeline assumes payment is VERIFIED on success — FAILED state only reachable via backend error simulation or manual test.
+- **Next:** Phase 2.6 — Enhance `OrderTrackingView.vue` → `order-tracking.html` parity (filter chips, split view, status timeline, pickup card, vocabulary cards).
+
+---
+
+### [2026-11-23] Step D6 — OrderTrackingView enhancement (order-tracking.html parity)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Completely rewrote `OrderTrackingView.vue` to match `order-tracking.html` mockup exactly, serving as both list view (`/order-tracking`) and single order detail view (`/order/:id`):
+  - **List View** (`/order-tracking`):
+    - Filter chips (`.chips`): All / Active / Completed / History with reactive filtering
+    - Split view (`.grid-2`): Delivery orders (🛵) on left, Pickup orders (🏪) on right with count badges
+    - Order cards (`.card`): vendor name, stall location, date, total, fulfillment badge, item count
+    - Vocabulary cards (`.grid-3`): Order Status / Payment Status / Delivery Status with badge codes
+  - **Detail View** (`/order/:id`):
+    - Order header: ID, date, status badge, back button, vendor/fulfillment/total grid
+    - Pickup info card (`.note.note-warn`): down payment (20%), balance due (80%), hold expiry (24h)
+    - Dual timelines (`.grid-2`): Order Status (6 steps) + Payment Status (4 steps) using `.timeline`/`.node`/`.dot` with done/now/todo states
+    - Items table (`.table`): product, qty, unit price, subtotal, total
+    - Delivery tracking card: partner, booking reference, status, booked at, track link
+  - **Backend**: Added `OrderList` view at `/api/orders/` (filters by request.user, orders by -created_at) and URL route
+  - **Router**: Added `/order-tracking` (list) and `/order/:id` (detail, renamed from order-tracking)
+  - Design system classes: `.pagehead`, `.chips`, `.chip.on`, `.grid-2`, `.card`, `.card-head`, `.kv`, `.badge`, `.timeline`, `.node`, `.dot`, `.done`, `.now`, `.todo`, `.grid-3`, `.note`, `.note-warn`, `.table`, `.table-wrap`
+- **Verification:** `npm run build` → 110 modules, CSS 39.01 kB, JS 251.14 kB, builds successfully. `npm run dev` → Vite starts at http://localhost:5175 without errors.
+- **CCS630 lesson applied:** Single component handling two routes via `route.params.id` detection — list view fetches all orders, detail view fetches single order. Reactive computed properties for filtered/split orders (`deliveryOrders`, `pickupOrders`) keep template logic clean. The `.timeline` design system component visualizes state machines with dynamic node classes. Backend `OrderList` uses DRF `ListAPIView` with `get_queryset` filtering by authenticated user — demonstrates proper authorization at the queryset level.
+- **Issues/notes:** Delivery tracking link not yet connected to delivery booking API (mock data). Hold expiry is calculated client-side (24h from now) — should come from backend. Payment timeline assumes first payment on transaction — multiple payments not yet handled.
+- **Next:** Phase 3 — Build Customer Extended Views: PriceComparisonView, PickupReservationView, DeliveryBookingView, MarketMapView, FavoritesHistoryView (5 new views, new routes needed).
+

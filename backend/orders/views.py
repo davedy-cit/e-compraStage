@@ -104,6 +104,16 @@ class TransactionDetail(generics.RetrieveAPIView):
     serializer_class = TransactionSerializer
 
 
+class OrderList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Order.objects.select_related("vendor", "status_code", "fulfillment_code").prefetch_related("items__product", "transaction")
+        return queryset.filter(user=user).order_by("-created_at")
+
+
 class OrderDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.select_related("vendor", "status_code", "fulfillment_code").prefetch_related("items__product", "transaction")

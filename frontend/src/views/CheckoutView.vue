@@ -2,16 +2,36 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
+import { useCartStore } from '@/stores/cart'
 
 const router = useRouter()
+const cartStore = useCartStore()
 
 const cart = ref({ items: [] })
 const loading = ref(true)
 const error = ref(null)
 const processing = ref(false)
-const fulfillmentMethod = ref('DELIVERY')
+
+// Form state
+const paymentMethod = ref('GCASH')
+const deliveryPartner = ref('LALAMOVE')
+const deliveryAddress = ref('')
 
 const formatPrice = (price) => `₱${Number(price).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
+
+const categoryIcons = {
+  'Fish': '🐟',
+  'Meat': '🥩',
+  'Poultry': '🍗',
+  'Fruits': '🍎',
+  'Vegetables': '🥬',
+  'Rice': '🍚',
+  'Dry goods': '🫙',
+  'Spices': '🧂',
+  'Others': '🧺',
+}
+
+const getCategoryIcon = (name) => categoryIcons[name] || '📦'
 
 // Group items by vendor
 const itemsByVendor = computed(() => {
@@ -21,10 +41,13 @@ const itemsByVendor = computed(() => {
       const vendorId = item.vendor_id || 'unknown'
       if (!grouped[vendorId]) {
         grouped[vendorId] = {
-          vendor_name: item.vendor_name || 'Unknown Vendor',
           vendor_id: vendorId,
+          vendor_name: item.vendor_name || 'Unknown Vendor',
+          stall_location: item.stall_location || '—',
+          section_name: item.section_name || '—',
           items: [],
-          subtotal: 0
+          subtotal: 0,
+          fulfillment: cartStore.fulfillmentMethods[vendorId] || 'DELIVERY'
         }
       }
       grouped[vendorId].items.push(item)
@@ -34,34 +57,97 @@ const itemsByVendor = computed(() => {
   return grouped
 })
 
-const totalAmount = computed(() => {
-  return Object.values(itemsByVendor.value).reduce((sum, vendor) => sum + vendor.subtotal, 0)
+const vendorCount = computed(() => Object.keys(itemsByVendor.value).length)
+
+const deliveryVendorCount = computed(() => {
+  return Object.values(itemsByVendor.value).filter(v => v.fulfillment === 'DELIVERY').length
 })
 
-async function fetchCart() {
+const pickupVendorCount = computed(() => {
+  return Object.values(itemsByVendor.value).filter(v => v.fulfillment === 'PICKUP').length
+})
+
+const deliveryFee = computed(() => deliveryVendorCount.value * 95)
+
+const grandTotal = computed(() => {
+  let total = 0
+  Object.values(itemsByVendor.value).forEach(vendor => {
+    total += vendor.subtotal
+  })
+  total += deliveryFee.value
+  return total
+})
+
+const paymentMethods = [
+  { value: 'GCASH', icon: '📱', label: 'GCash', desc: 'Pay online now · sandbox' },
+  { value: 'MAYA', icon: '📱', label: 'Maya', desc: 'Pay online now · sandbox' },
+  { value: 'ONLINE_BANKING', icon: '🏦', label: 'Online banking', desc: 'Sandbox' },
+  { value: 'CARD', icon: '💳', label: 'Card', desc: 'Sandbox · no card data is stored' },
+  { value: 'CASH_PICKUP', icon: '💵', label: 'Cash at pickup', desc: 'Pickup orders only' },
+]
+
+const deliveryPartners = [
+  { value: 'LALAMOVE', label: 'Lalamove', fee: 95 },
+  { value: 'GRABEXPRESS', label: 'GrabExpress', fee: 110 },
+  { value: 'MAXIM', label: 'Maxim', fee: 85 },
+  { value: 'LOCAL_RIDER', label: 'Local market rider', fee: 60 },
+]
+
+const fetchCart = async () => {
   try {
     loading.value = true
     const response = await api.get('/cart/')
     cart.value = response.data
+    // Initialize fulfillment methods from cart store if not already set
+    if (response.data.items) {
+      const vendors = [...new Set(response.data.items.map(i => i.vendor_id).filter(Boolean))]
+      vendors.forEach(vid => {
+        if (!cartStore.fulfillmentMethods[vid]) {
+          cartStore.fulfillmentMethods[vid] = 'DELIVERY'
+        }
+      })
+    }
   } catch (err) {
-    error.value = 'Failed to load cart'
+    error.value = 'Failed to load checkout'
     console.error(err)
   } finally {
     loading.value = false
   }
 }
 
-async function placeOrder() {
+async function placeOrders() {
   try {
     processing.value = true
     error.value = null
-    const response = await api.post('/checkout/', { fulfillment_code: fulfillmentMethod.value })
+
+    // Build fulfillment methods from itemsByVendor (already synced from cart store)
+    const fulfillmentMethods = {}
+    Object.values(itemsByVendor.value).forEach(vendor => {
+      fulfillmentMethods[vendor.vendor_id] = vendor.fulfillment
+    })
+
+    const response = await api.post('/checkout/', {
+      fulfillment_methods: fulfillmentMethods,
+      payment_method: paymentMethod.value,
+      delivery_partner: deliveryPartner.value,
+      delivery_address: deliveryAddress.value
+    })
+
     const orderIds = response.data.order_ids
     const transactionIds = response.data.transaction_ids
-    alert(`Order placed successfully! Created ${orderIds.length} order(s).`)
-    // Redirect to payment screen with the first transaction_id (payment API expects transaction_id)
+
+    // Clear cart store
+    cartStore.clearCart()
+
+    // Redirect to payment screen with all transaction IDs
     if (transactionIds.length > 0) {
-      router.push({ name: 'payment', params: { id: transactionIds[0] } })
+      router.push({
+        name: 'payment',
+        params: { id: transactionIds[0] }, // Keep first for backward compatibility
+        query: { transactions: transactionIds.join(',') } // Pass all for enhanced view
+      })
+    } else {
+      router.push('/catalog')
     }
   } catch (err) {
     error.value = err.response?.data?.error || 'Checkout failed'
@@ -75,108 +161,243 @@ function goBackToCart() {
   router.push('/cart')
 }
 
-onMounted(() => {
-  fetchCart()
-})
+onMounted(fetchCart)
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl font-bold">Checkout</h1>
-      <button
-        @click="goBackToCart"
-        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
-      >
-        ← Back to Cart
-      </button>
-    </div>
+  <div class="min-h-screen bg-bg">
+    <Navbar />
 
-    <div v-if="loading" class="text-center py-8">
-      Loading checkout...
-    </div>
+    <main class="page">
+      <div class="wrap stack">
 
-    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-      {{ error }}
-    </div>
+        <!-- Page Header -->
+        <div class="pagehead">
+          <div class="eyebrow">Step 2 of 3</div>
+          <h1>Checkout</h1>
+          <p>Review your orders and choose how you'd like to pay. You're placing <strong>{{ vendorCount }} order{{ vendorCount > 1 ? 's' : '' }}</strong>.</p>
+        </div>
 
-    <div v-else-if="cart.items && cart.items.length > 0">
-      <div class="space-y-6">
-        <!-- Vendor groups -->
-        <div v-for="(vendor, vendorId) in itemsByVendor" :key="vendorId" class="bg-white border border-gray-200 rounded-lg">
-          <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
-            <h3 class="text-lg font-semibold text-gray-900">{{ vendor.vendor_name }}</h3>
-          </div>
+        <div v-if="loading" class="text-center py-12">Loading…</div>
 
-          <div class="divide-y divide-gray-200">
-            <div v-for="item in vendor.items" :key="item.id" class="px-6 py-4 flex items-center gap-4">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 truncate">{{ item.product_name }}</p>
-                <p class="text-sm text-gray-500">{{ formatPrice(item.product_price) }} × {{ item.quantity }}</p>
+        <div v-else-if="error" class="card" style="background: var(--color-danger-bg); border-color: var(--color-danger);">
+          <p>{{ error }}</p>
+          <button @click="fetchCart" class="btn btn-primary mt12">Retry</button>
+        </div>
+
+        <div v-else-if="cart.items && cart.items.length > 0">
+          <div class="grid-side" style="grid-template-columns: 1fr 330px; gap: 24px;">
+
+            <!-- Order Review (Left Side) -->
+            <div class="stack" style="gap: 16px;">
+              <section
+                v-for="(vendor, vendorId) in itemsByVendor"
+                :key="vendorId"
+                class="card"
+              >
+                <div class="card-head row-between">
+                  <div>
+                    <h3 class="mb0">🏪 {{ vendor.vendor_name }}</h3>
+                    <span class="small muted">📍 {{ vendor.stall_location }} · {{ vendor.section_name }}</span>
+                  </div>
+                  <span class="badge badge-info">Order {{ Object.keys(itemsByVendor).indexOf(vendorId) + 1 }} of {{ vendorCount }}</span>
+                </div>
+
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th class="num">Unit price</th>
+                        <th class="num">Qty</th>
+                        <th class="num">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in vendor.items" :key="item.id">
+                        <td>
+                          <div class="row" style="align-items: center; gap: 12px;">
+                            <span style="font-size: 1.4rem;">{{ getCategoryIcon(item.category_name || item.category) }}</span>
+                            <span>
+                              <strong>{{ item.product_name }}</strong><br>
+                              <span class="tiny muted">Sold per {{ item.unit || 'kg' }}</span>
+                            </span>
+                          </div>
+                        </td>
+                        <td class="num">{{ formatPrice(item.product_price) }} / {{ item.unit || 'kg' }}</td>
+                        <td class="num">{{ item.quantity }}</td>
+                        <td class="num"><strong>{{ formatPrice(Number(item.product_price) * Number(item.quantity)) }}</strong></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="card-foot stack" style="gap: 12px;">
+                  <div class="field mb8"><span>Fulfillment for this vendor</span></div>
+
+                  <label
+                    class="opt"
+                    :class="{ on: vendor.fulfillment === 'DELIVERY' }"
+                  >
+                    <input
+                      type="radio"
+                      :name="'ff-' + vendorId"
+                      value="DELIVERY"
+                      v-model="vendor.fulfillment"
+                      aria-label="Delivery"
+                    >
+                    <span>
+                      <span class="t">🛵 Delivery</span>
+                      <span class="d">To your address · quoted ₱95.00</span>
+                    </span>
+                  </label>
+
+                  <label
+                    class="opt"
+                    :class="{ on: vendor.fulfillment === 'PICKUP' }"
+                  >
+                    <input
+                      type="radio"
+                      :name="'ff-' + vendorId"
+                      value="PICKUP"
+                      v-model="vendor.fulfillment"
+                      aria-label="Pickup"
+                    >
+                    <span>
+                      <span class="t">🏪 Pickup at the stall</span>
+                      <span class="d">Collect at {{ vendor.stall_location }} · free</span>
+                    </span>
+                  </label>
+
+                  <div class="row-between mt12">
+                    <span class="muted small">Vendor subtotal</span>
+                    <span class="price">{{ formatPrice(vendor.subtotal) }}</span>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Payment Method Selection -->
+              <div class="card">
+                <div class="card-head"><h3>Payment method</h3></div>
+                <div v-for="method in paymentMethods" :key="method.value" class="opt" :class="{ on: paymentMethod === method.value }">
+                  <input
+                    type="radio"
+                    name="pay"
+                    :value="method.value"
+                    v-model="paymentMethod"
+                    :aria-label="method.label"
+                    :disabled="method.value === 'CASH_PICKUP' && pickupVendorCount === 0"
+                  >
+                  <span>
+                    <span class="t">{{ method.icon }} {{ method.label }}</span>
+                    <span class="d">{{ method.desc }}</span>
+                  </span>
+                </div>
+                <div class="note note-warn mt12 tiny">
+                  Payments run in <strong>sandbox / test mode</strong>. No real money moves and no card details are stored.
+                </div>
               </div>
-              <div class="text-right whitespace-nowrap">
-                <p class="text-sm font-medium text-gray-900">{{ formatPrice(Number(item.product_price) * Number(item.quantity)) }}</p>
+
+              <!-- Delivery Address (for delivery orders) -->
+              <div v-if="deliveryVendorCount > 0" class="card">
+                <div class="card-head"><h3>Delivery address</h3></div>
+                <div class="field">
+                  <label class="small muted">Drop-off location</label>
+                  <textarea
+                    v-model="deliveryAddress"
+                    class="input"
+                    rows="3"
+                    placeholder="Enter delivery address (e.g., Unit 4B, A.C. Cortes Ave., Mandaue City)"
+                    aria-label="Delivery address"
+                  ></textarea>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex justify-between items-center">
-            <span class="text-sm font-medium text-gray-700">Vendor Subtotal</span>
-            <span class="text-lg font-semibold text-gray-900">{{ formatPrice(vendor.subtotal) }}</span>
-          </div>
-        </div>
-
-        <!-- Fulfillment Method Selection -->
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Fulfillment Method</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                   :class="fulfillmentMethod === 'DELIVERY' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'">
-              <input type="radio" v-model="fulfillmentMethod" value="DELIVERY" class="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500" />
-              <div>
-                <p class="font-medium text-gray-900">Delivery</p>
-                <p class="text-sm text-gray-500">Delivered to your address</p>
+            <!-- Summary Sidebar (Right Side) -->
+            <aside class="stack" style="gap: 16px; position: sticky; top: 80px;">
+              <!-- Order Summary -->
+              <div class="card">
+                <div class="card-head"><h3>Order summary</h3></div>
+                <dl class="kv">
+                  <dt v-for="(vendor, vendorId) in itemsByVendor" :key="vendorId">
+                    {{ vendor.vendor_name }}
+                    <span class="badge badge-tiny" :class="vendor.fulfillment === 'DELIVERY' ? 'badge-info' : 'badge-ok'" style="margin-left: 8px; font-size: 0.65rem;">
+                      {{ vendor.fulfillment === 'DELIVERY' ? 'Delivery' : 'Pickup' }}
+                    </span>
+                  </dt>
+                  <dd>{{ formatPrice(vendor.subtotal) }}</dd>
+                </dl>
+                <hr class="divider">
+                <div v-if="deliveryFee > 0" class="kv" style="margin-top: 8px;">
+                  <dt>Delivery fee ({{ deliveryVendorCount }} vendor{{ deliveryVendorCount > 1 ? 's' : '' }} · {{ deliveryPartners.find(p => p.value === deliveryPartner)?.label || 'Lalamove' }})</dt>
+                  <dd>₱{{ deliveryFee.toFixed(2) }}</dd>
+                </div>
+                <div class="row-between" style="font-weight: 650; font-size: 1.1rem; margin-top: 8px;">
+                  <span>Total</span>
+                  <span class="price price-lg">{{ formatPrice(grandTotal) }}</span>
+                </div>
+                <div class="tiny muted mt8">
+                  {{ vendorCount }} order{{ vendorCount > 1 ? 's' : '' }} · {{ pickupVendorCount }} for pickup, {{ deliveryVendorCount }} for delivery
+                </div>
               </div>
-            </label>
-            <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                   :class="fulfillmentMethod === 'PICKUP' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'">
-              <input type="radio" v-model="fulfillmentMethod" value="PICKUP" class="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500" />
-              <div>
-                <p class="font-medium text-gray-900">Pickup</p>
-                <p class="text-sm text-gray-500">Collect from vendor stall</p>
+
+              <!-- Delivery Partner Selection -->
+              <div v-if="deliveryVendorCount > 0" class="card">
+                <div class="card-head"><h3>Delivery quote</h3></div>
+                <label class="field">
+                  <span>Partner</span>
+                  <select
+                    v-model="deliveryPartner"
+                    class="input"
+                    aria-label="Delivery partner"
+                  >
+                    <option v-for="partner in deliveryPartners" :key="partner.value" :value="partner.value">
+                      {{ partner.label }} — ₱{{ partner.fee }}.00
+                    </option>
+                  </select>
+                </label>
+                <dl class="kv">
+                  <dt>Estimated time</dt><dd>45–60 min</dd>
+                  <dt>Drop-off</dt><dd>{{ deliveryAddress || 'Your saved address' }}</dd>
+                </dl>
+                <div class="note mt12 tiny">Delivery is <strong>mocked</strong> in this project — the partner is simulated.</div>
               </div>
-            </label>
+
+              <!-- Action Buttons -->
+              <button
+                @click="placeOrders"
+                :disabled="processing"
+                class="btn btn-accent btn-lg btn-block"
+              >
+                <span v-if="processing">Placing {{ vendorCount }} order{{ vendorCount > 1 ? 's' : '' }}…</span>
+                <span v-else>Place {{ vendorCount }} order{{ vendorCount > 1 ? 's' : '' }} · {{ formatPrice(grandTotal) }}</span>
+              </button>
+              <button
+                @click="goBackToCart"
+                class="btn btn-block"
+                :disabled="processing"
+              >
+                ← Back to cart
+              </button>
+            </aside>
+
           </div>
         </div>
 
-        <!-- Order Total -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div class="flex justify-between items-center mb-4">
-            <span class="text-lg font-semibold text-blue-900">Order Total</span>
-            <span class="text-2xl font-bold text-blue-900">{{ formatPrice(totalAmount) }}</span>
-          </div>
-
-          <button
-            @click="placeOrder"
-            :disabled="processing"
-            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-          >
-            <span v-if="processing">Placing Order...</span>
-            <span v-else>Place Order ({{ formatPrice(totalAmount) }})</span>
-          </button>
+        <div v-else class="text-center py-12">
+          <p class="muted mb4">Your cart is empty</p>
+          <router-link to="/catalog" class="btn btn-primary">Start shopping</router-link>
         </div>
+
       </div>
-    </div>
+    </main>
 
-    <div v-else class="text-center py-12">
-      <p class="text-gray-500 mb-4">Your cart is empty</p>
-      <button @click="goBackToCart" class="text-blue-600 hover:text-blue-800 font-medium">
-        Continue Shopping
-      </button>
-    </div>
+    <footer class="foot">
+      <div class="wrap row-between">
+        <span>E-Compra · CCS630 Advance Database Systems capstone</span>
+        <span>All prices in Philippine pesos (₱)</span>
+      </div>
+    </footer>
   </div>
 </template>
-
-<style scoped>
-/* CheckoutView specific styles */
-</style>
