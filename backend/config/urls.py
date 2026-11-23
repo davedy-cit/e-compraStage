@@ -28,6 +28,7 @@ urlpatterns = [
     path("api/vendors/", include("vendors.urls")),
     path("api/favorites/", include("favorites.urls")),
     path("api/cart/", include("cart.urls")),
+    path("api/accounts/", include("accounts.urls")),
     # Checkout & Payment at root API level (per spec)
     path("api/checkout/", CheckoutView.as_view(), name="checkout"),
     path("api/payment/", PaymentView.as_view(), name="payment"),

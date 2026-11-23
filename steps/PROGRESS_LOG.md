@@ -399,3 +399,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). The `/api/accounts/auth/user/` endpoint doesn't exist yet (will be created in M4.2).
 - **Next:** M4.2 — Backend: add /api/auth/user/ endpoint for current user.
 
+### [2026-11-23] Step M4.2 — Backend: add /api/auth/user/ endpoint for current user
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `backend/accounts/serializers.py` with `CurrentUserSerializer` that returns user ID, username, email, role (vendor/customer), and profile data (vendor info or customer info). Created `backend/accounts/views.py` with `CurrentUserView` (RetrieveAPIView, IsAuthenticated). Created `backend/accounts/urls.py` with `/auth/user/` route. Updated `backend/config/urls.py` to include `accounts.urls` under `/api/accounts/`.
+- **Verification:** `python manage.py check` → no issues; `pytest` → 28 passed; `ruff check` → all checks passed; manual curl test: `GET /api/accounts/auth/user/` with Bearer token returns `{"id":1,"username":"admin","email":"admin@example.com","role":"customer","profile":null}`.
+- **CCS630 lesson applied:** DRF generic views (RetrieveAPIView) + custom serializer with SerializerMethodField for computed fields (role, profile) — keeps views thin, logic in serializer.
+- **Issues/notes:** Admin user has no vendor/customerprofile, so role="customer" and profile=null. Vendor users will have role="vendor" with vendor profile data.
+- **Next:** M4.3 — Vue: Login screen and route guard.
+
