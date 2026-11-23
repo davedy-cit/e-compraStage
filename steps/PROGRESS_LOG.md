@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.10 — Vue: Order tracking screen |
+| **Current step** | M4.11 — Unit tests: Backend (pytest) + Frontend (Vitest) |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 4 / 20 steps · 20% (M4.1–M4.20) |
-| **Overall** | 49 / 78 steps · 63% |
+| **M4 progress** | 5 / 20 steps · 25% (M4.1–M4.20) |
+| **Overall** | 50 / 78 steps · 64% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 4 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 5 | ðŸ”µ In progress | |
 
 ---
 
@@ -492,4 +492,18 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **CCS630 lesson applied:** Role-based access control (vendor role); status state machine enforcement via service layer; API error handling with user-friendly feedback.
 - **Issues/notes:** No code changes needed — M3.16 VendorPOSView already correctly integrated with the new auth/API setup. All vendor POS tests pass.
 - **Next:** M4.10 — Vue: Order tracking screen.
+
+### [2026-11-23] Step M4.10 — Vue: Order tracking screen
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created new `frontend/src/views/OrderTrackingView.vue` with:
+  - Visual status timeline showing all 6 status steps (PENDING_PAYMENT → CONFIRMED → PREPARING → READY_FOR_PICKUP → OUT_FOR_DELIVERY → COMPLETED)
+  - Current status highlighted with progress indicator (purple dots with checkmarks for completed steps)
+  - Order details: ID, date, vendor, fulfillment method, total amount
+  - Order items with quantities and prices
+  - Fetches order data via `GET /api/orders/:id/` endpoint (already exists from M4.8)
+  - Added route `/order/:id` with name `order-tracking` in router
+- **Verification:** `npm run build` → builds successfully; `python -m pytest` → all 21 backend tests pass; `npm run dev` → Vite starts at http://localhost:5173.
+- **CCS630 lesson applied:** Visual status timeline UX pattern; RESTful resource access via detail endpoint; computed properties for dynamic UI state.
+- **Issues/notes:** Need backend running to test actual order tracking flow. OrderDetail endpoint returns nested items and status_display from OrderSerializer.
+- **Next:** M4.11 — Unit tests: Backend (pytest) + Frontend (Vitest).
 
