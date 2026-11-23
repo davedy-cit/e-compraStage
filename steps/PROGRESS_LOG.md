@@ -431,3 +431,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Need backend running to test actual product loading and add-to-cart flow.
 - **Next:** M4.6 — Vue: Cart (verify M3.13).
 
+### [2026-11-23] Step M4.6 — Vue: Cart screen (verify M3.13 integration)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Verified `frontend/src/views/CartView.vue` already uses the new `api` service from `@/services/api`. Fixed two issues: (1) Checkout endpoint changed from `/orders/checkout/` to `/checkout/` to match backend URL config. (2) "Continue Shopping" link changed from `/products` to `/catalog` to match new route.
+- **Verification:** `npm run dev` → Vite starts at http://localhost:5173, no console errors.
+- **CCS630 lesson applied:** Frontend-backend API contract must match — checkout endpoint at root `/api/checkout/` (not `/api/orders/checkout/`) per config/urls.py spec; route names must stay in sync.
+- **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Need backend running to test actual cart loading and checkout flow.
+- **Next:** M4.7 — Vue: Checkout (verify M3.14).
+
