@@ -10,4 +10,6 @@ urlpatterns = [
     path("fulfillment-methods/", views.FulfillmentMethodList.as_view(), name="fulfillment-method-list"),
     path("checkout/", views.CheckoutView.as_view(), name="checkout"),
     path("payment/", views.PaymentView.as_view(), name="payment"),
+    path("transactions/<int:pk>/", views.TransactionDetail.as_view(), name="transaction-detail"),
+    path("orders/<int:pk>/", views.OrderDetail.as_view(), name="order-detail"),
 ]

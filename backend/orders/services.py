@@ -45,6 +45,7 @@ def checkout_cart(user, fulfillment_code="DELIVERY"):
         by_vendor.setdefault(item.product.vendor_id, []).append(item)
 
     order_ids = []
+    transaction_ids = []
     for vendor_id, vendor_items in by_vendor.items():
         total = sum((item.product.price * item.quantity) for item in vendor_items)
         order = Order.objects.create(
@@ -62,12 +63,13 @@ def checkout_cart(user, fulfillment_code="DELIVERY"):
                 quantity=item.quantity,
                 unit_price=item.product.price,
             )
-        Transaction.objects.create(
+        transaction = Transaction.objects.create(
             order=order,
             transaction_type=TransactionType.objects.get(code="ONLINE_ORDER"),
             reference_no=f"TXN-{order.id}-{vendor_id}",
         )
         order_ids.append(order.id)
+        transaction_ids.append(transaction.id)
 
     CartItem.objects.filter(cart=cart).delete()
-    return order_ids
+    return order_ids, transaction_ids

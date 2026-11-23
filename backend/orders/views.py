@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from .models import (
     DeliveryStatus,
     FulfillmentMethod,
+    Order,
     Payment,
     PaymentStatus,
     Transaction,
@@ -15,7 +16,9 @@ from .models import (
 from .serializers import (
     DeliveryStatusSerializer,
     FulfillmentMethodSerializer,
+    OrderSerializer,
     PaymentStatusSerializer,
+    TransactionSerializer,
     TransactionStatusSerializer,
     TransactionTypeSerializer,
 )
@@ -53,11 +56,11 @@ class CheckoutView(APIView):
     def post(self, request):
         fulfillment_code = request.data.get("fulfillment_code", "DELIVERY")
         try:
-            order_ids = checkout_cart(request.user, fulfillment_code=fulfillment_code)
+            order_ids, transaction_ids = checkout_cart(request.user, fulfillment_code=fulfillment_code)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-            {"order_ids": order_ids, "status": "checkout_complete"},
+            {"order_ids": order_ids, "transaction_ids": transaction_ids, "status": "checkout_complete"},
             status=status.HTTP_201_CREATED,
         )
 
@@ -93,3 +96,15 @@ class PaymentView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class TransactionDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Transaction.objects.select_related("order", "order__vendor", "order__status_code", "transaction_type")
+    serializer_class = TransactionSerializer
+
+
+class OrderDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.select_related("vendor", "status_code", "fulfillment_code").prefetch_related("items__product", "transaction")
+    serializer_class = OrderSerializer

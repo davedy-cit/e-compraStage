@@ -13,7 +13,6 @@ const error = ref(null)
 const success = ref(false)
 
 const transaction = ref(null)
-const order = ref(null)
 
 const paymentMethod = ref('cash')
 const providerReference = ref('')
@@ -36,35 +35,19 @@ async function fetchTransaction() {
 
   try {
     loading.value = true
-    // Fetch order details to get transaction info
-    // The checkout endpoint returns order_ids, we need to get the transaction from an order
-    // For now, we'll try to fetch order and then its transaction
-    const response = await api.get(`/orders/${transactionId}/`)
-    order.value = response.data
-
-    // If order has transactions, use the first one
-    if (order.value.transactions && order.value.transactions.length > 0) {
-      transaction.value = order.value.transactions[0]
-    } else if (order.value.transaction) {
-      transaction.value = order.value.transaction
-    }
+    // Fetch transaction details from the new endpoint
+    const response = await api.get(`/transactions/${transactionId}/`)
+    transaction.value = response.data
   } catch (err) {
-    // Try fetching transaction directly if order fetch fails
-    try {
-      const txnResponse = await api.get(`/transactions/${transactionId}/`)
-      transaction.value = txnResponse.data
-    } catch (txnErr) {
-      error.value = 'Failed to load transaction details'
-      console.error(txnErr)
-    }
+    error.value = 'Failed to load transaction details'
+    console.error(err)
   } finally {
     loading.value = false
   }
 }
 
 const amount = computed(() => {
-  if (transaction.value?.amount) return transaction.value.amount
-  if (order.value?.total_amount) return order.value.total_amount
+  if (transaction.value?.order?.total_amount) return transaction.value.order.total_amount
   return '0.00'
 })
 
@@ -92,7 +75,8 @@ async function processPayment() {
 
     success.value = true
     setTimeout(() => {
-      router.push('/confirmation')
+      // Redirect to order tracking or catalog (no confirmation route exists)
+      router.push('/catalog')
     }, 2000)
   } catch (err) {
     error.value = err.response?.data?.error || 'Payment failed'
@@ -135,25 +119,11 @@ onMounted(() => {
       <p class="text-sm opacity-80">Redirecting to confirmation...</p>
     </div>
 
-    <div v-else-if="transaction || order" class="space-y-6">
+    <div v-else-if="transaction" class="space-y-6">
       <!-- Order/Transaction Summary -->
       <div class="bg-white border border-gray-200 rounded-lg p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
-        <div v-if="order" class="space-y-2">
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Order ID</span>
-            <span class="font-medium">#{{ order.id }}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Vendor</span>
-            <span class="font-medium">{{ order.vendor_name || order.vendor }}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Status</span>
-            <span class="font-medium capitalize">{{ order.status_code?.code?.toLowerCase().replace('_', ' ') || order.status }}</span>
-          </div>
-        </div>
-        <div v-else-if="transaction" class="space-y-2">
+        <div class="space-y-2">
           <div class="flex justify-between text-sm">
             <span class="text-gray-600">Transaction ID</span>
             <span class="font-medium">#{{ transaction.id }}</span>
@@ -161,6 +131,18 @@ onMounted(() => {
           <div class="flex justify-between text-sm">
             <span class="text-gray-600">Reference</span>
             <span class="font-medium">{{ transaction.reference_no }}</span>
+          </div>
+          <div v-if="transaction.order" class="flex justify-between text-sm">
+            <span class="text-gray-600">Order ID</span>
+            <span class="font-medium">#{{ transaction.order.id }}</span>
+          </div>
+          <div v-if="transaction.order" class="flex justify-between text-sm">
+            <span class="text-gray-600">Vendor</span>
+            <span class="font-medium">{{ transaction.order.vendor?.name || transaction.order.vendor }}</span>
+          </div>
+          <div v-if="transaction.order" class="flex justify-between text-sm">
+            <span class="text-gray-600">Status</span>
+            <span class="font-medium capitalize">{{ transaction.order.status_code?.code?.toLowerCase().replace('_', ' ') || transaction.order.status }}</span>
           </div>
         </div>
         <div class="border-t border-gray-200 pt-4 mt-4 flex justify-between">

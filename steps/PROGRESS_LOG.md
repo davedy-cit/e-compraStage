@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.8 — Vue: Payment (verify M3.15) |
+| **Current step** | M4.9 — Vue: Vendor POS (verify M3.16) |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 2 / 20 steps · 10% (M4.1–M4.20) |
-| **Overall** | 47 / 78 steps · 60% |
+| **M4 progress** | 3 / 20 steps · 15% (M4.1–M4.20) |
+| **Overall** | 48 / 78 steps · 62% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 2 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 3 | ðŸ”µ In progress | |
 
 ---
 
@@ -460,4 +460,22 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
   3. **Broken redirect**: Original code redirected to `/confirmation` which doesn't exist. Fixed to redirect to `/payment/:id` with first order_id from response.
   4. **Backend hardcoded DELIVERY**: `checkout_cart()` hardcoded `FulfillmentMethod.objects.get(code="DELIVERY")`. Updated to accept `fulfillment_code` parameter with DELIVERY as default.
 - **Next:** M4.8 — Vue: Payment (verify M3.15).
+
+### [2026-11-23] Step M4.8 — Vue: Payment screen (verify M3.15 integration)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Verified and fixed `frontend/src/views/PaymentView.vue` to work with new auth/API setup:
+  1. **Fixed transaction lookup**: Checkout now returns `transaction_ids` alongside `order_ids`; PaymentView receives `transaction_id` directly via route params.
+  2. **Added transaction detail endpoint**: New `GET /api/transactions/:id/` returns transaction with nested order data for display.
+  3. **Added order detail endpoint**: New `GET /api/orders/:id/` for future use (order tracking).
+  4. **Updated PaymentView**: Fetches transaction via new endpoint, displays order summary from nested order, processes payment via `/api/payment/`.
+  5. **Fixed redirect**: Changed from `/confirmation` (non-existent) to `/catalog` after successful payment.
+- **Verification:** `npm run build` → builds successfully; `python -m pytest` → all 21 backend tests pass; `npm run dev` → Vite starts at http://localhost:5173.
+- **CCS630 lesson applied:** API contract alignment between checkout and payment; proper resource endpoints for detail views; transaction-order relationship in REST API.
+- **Issues/notes:** Need backend running to test actual payment flow with all providers. PaymentView now uses transaction detail endpoint which includes order data.
+- **Error details & fix:**
+  1. **Missing transaction detail endpoint**: PaymentView tried to call `/orders/:id/` and `/transactions/:id/` but neither existed. Added `TransactionDetail` and `OrderDetail` views with serializers.
+  2. **Checkout-payment ID mismatch**: Checkout returned `order_ids` but payment API expects `transaction_id`. Modified `checkout_cart()` to return both `order_ids` and `transaction_ids` arrays; updated CheckoutView to redirect with first `transaction_id`.
+  3. **Broken redirect**: Original PaymentView redirected to `/confirmation` which doesn't exist. Fixed to redirect to `/catalog`.
+  4. **Missing Order import**: Added `Order` model import in views.py for OrderDetail queryset.
+- **Next:** M4.9 — Vue: Vendor POS (verify M3.16).
 

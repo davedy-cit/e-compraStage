@@ -57,10 +57,11 @@ async function placeOrder() {
     error.value = null
     const response = await api.post('/checkout/', { fulfillment_code: fulfillmentMethod.value })
     const orderIds = response.data.order_ids
+    const transactionIds = response.data.transaction_ids
     alert(`Order placed successfully! Created ${orderIds.length} order(s).`)
-    // Redirect to payment screen with the first order_id
-    if (orderIds.length > 0) {
-      router.push({ name: 'payment', params: { id: orderIds[0] } })
+    // Redirect to payment screen with the first transaction_id (payment API expects transaction_id)
+    if (transactionIds.length > 0) {
+      router.push({ name: 'payment', params: { id: transactionIds[0] } })
     }
   } catch (err) {
     error.value = err.response?.data?.error || 'Checkout failed'
