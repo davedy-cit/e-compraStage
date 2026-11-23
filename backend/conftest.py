@@ -21,8 +21,7 @@ def _create_auth_user(username, email, password="testpass", **kwargs):
         date_joined=datetime.now(),
         last_login=datetime.now(),
     )
-    # Add DRF-required property
-    user.is_authenticated = True
+    # AuthUser model now has is_authenticated property that returns True
     return user
 
 
