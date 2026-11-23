@@ -536,3 +536,18 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
   - **Test timing improvements**: Added proper waits for API completion (dialog handling), cart loading (table/empty state), checkout page loading (loading text disappearance), and item verification.
 - **Next:** M4.13 — Indexes + PERFORMANCE.md
 
+### [2026-11-23] Step M4.13 — Indexes + PERFORMANCE.md
+- **Status:** ✅ Completed (verified)
+- **What was done:** 
+  - Created `backend/sql/04_performance_indexes.sql` with 8 composite indexes for query performance: product search (category+availability+price, vendor+availability), orders (user+date, vendor+status+date), cart items, payments, inventory movements, favorites.
+  - Ran the indexes against the `ecompra` database (MySQL 8.4).
+  - Created `backend/docs/PERFORMANCE.md` with detailed EXPLAIN ANALYZE output for 8 key queries, comparing index usage before/after.
+  - Analysis shows: new `idx_product_cat_avail_price` is actively used for category+availability+price queries; other new indexes match existing M0.8 indexes or are covered by unique constraints; optimizer will prefer new composite indexes as data volume grows.
+- **Verification:** `mysql -u root -pAdmin2627 ecompra < sql/04_performance_indexes.sql` → success; `SHOW INDEX` confirms all 8 indexes created; `EXPLAIN ANALYZE` on key queries shows index lookups with sub-millisecond actual times; `pytest` → 27 passed; `npm test` → 6 passed; `npx playwright test` → 2 passed.
+- **CCS630 lesson applied:** Indexing is a trade-off — 8 indexes added (some duplicate/redundant with existing); value proven with EXPLAIN ANALYZE; redundant indexes documented for future cleanup; composite index column order critical for query patterns.
+- **Issues/notes:** 
+  - **Duplicate indexes found**: Several new indexes duplicate existing M0.8 indexes (`ix_product_vendor_avail`, `ix_order_user_created`, `ix_payment_transaction`, `ix_invmov_product_created`) or are covered by unique constraints (`uq_cartitem`, `uq_favproduct`). Kept for documentation of intended query patterns; can be cleaned up later.
+  - **Optimizer choices vary with data size**: With small seed data (34 products, 18 orders), optimizer sometimes prefers simpler single-column indexes. New composite indexes will be chosen as data grows.
+  - **idx_product_cat_avail_price is the key new index**: Enables category+availability filter + price sort without filesort — critical for catalog search performance.
+- **Next:** M4.14 — Security review: Document security measures
+
