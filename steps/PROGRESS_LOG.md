@@ -551,3 +551,20 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
   - **idx_product_cat_avail_price is the key new index**: Enables category+availability filter + price sort without filesort — critical for catalog search performance.
 - **Next:** M4.14 — Security review: Document security measures
 
+### [2026-11-23] Step M4.14 — Security review: Document security measures
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `backend/docs/SECURITY.md` documenting security measures covering OWASP Top 10 (2021) relevant items:
+  - Authentication & Authorization: JWT (60min access, 7day refresh, rotation + blacklist), PBKDF2 password hashing, role-based access, object-level permissions, CustomJWTAuthentication
+  - Input Validation & Injection Prevention: Django ORM parameterization, DRF serializer validation, FK object lookups, choice constraints
+  - Data Protection: No card data stored, UTF-8mb4, HTTPS at reverse proxy, .env secrets management
+  - CORS & CSRF: Restricted CORS origins, CSRF not needed for JWT stateless API
+  - Database Security: Least-privilege roles, managed=False models, FK constraints, check constraints
+  - Audit Logging: Inventory ledger, payment records, delivery bookings
+  - OWASP Top 10 coverage matrix with all 10 categories assessed
+  - Known limitations (no rate limiting, no 2FA, no automated security scanning, etc.)
+  - Production security deployment checklist
+- **Verification:** File exists and covers all required sections; `pytest` → 27 passed; `npm test` → 6 passed; `npx playwright test` → 2 passed.
+- **CCS630 lesson applied:** Defense in depth through multiple security layers (ORM + serializer + DB constraints); principle of least privilege via database roles and Django permissions; audit trails via inventory ledger and payment records; state machine security via ALLOWED_TRANSITIONS.
+- **Issues/notes:** None — documentation step only.
+- **Next:** M4.15 — Database roles & grants script
+
