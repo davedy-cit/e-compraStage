@@ -42,4 +42,24 @@ class AuthUser(models.Model):
         db_table = "auth_user"
 
     def __str__(self):
-        return self.name
+        return f"{self.first_name} {self.last_name}".strip() or self.username
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    @property
+    def is_active_bool(self):
+        return bool(self.is_active)
+
+    @property
+    def is_staff_bool(self):
+        return bool(self.is_staff)
+
+    @property
+    def is_superuser_bool(self):
+        return bool(self.is_superuser)

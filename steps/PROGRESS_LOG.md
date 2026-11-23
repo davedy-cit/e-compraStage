@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.11 — Unit tests: Backend (pytest) + Frontend (Vitest) |
+| **Current step** | M4.16 — Backup & Restore drill |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 5 / 20 steps · 25% (M4.1–M4.20) |
-| **Overall** | 50 / 78 steps · 64% |
+| **M4 progress** | 15 / 20 steps · 75% (M4.1–M4.15) |
+| **Overall** | 73 / 78 steps · 94% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 5 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 15 | ðŸ”µ In progress | |
 
 ---
 
@@ -567,4 +567,16 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **CCS630 lesson applied:** Defense in depth through multiple security layers (ORM + serializer + DB constraints); principle of least privilege via database roles and Django permissions; audit trails via inventory ledger and payment records; state machine security via ALLOWED_TRANSITIONS.
 - **Issues/notes:** None — documentation step only.
 - **Next:** M4.15 — Database roles & grants script
+
+
+### [2026-11-23] Step M4.15 — Database roles & grants script
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `backend/sql/06_roles_grants.sql` with least-privilege MySQL users (ecompra_app CRUD, ecompra_readonly SELECT, ecompra_admin ALL) on domain tables, no DDL for app/readonly. Updated `backend/config/settings.py` (DB_USER default → ecompra_app; pytest override uses root to connect to test_ecompra) and `backend/.env` (DB_USER=ecompra_app).
+- **Verification:** `python manage.py check` → no issues; `pytest` → 27 passed; `npm test` → 6 passed; `npx playwright test` → 2 passed; `mysql -u ecompra_app -pAdmin2627 -h 127.0.0.1 ecompra -e "SELECT 1"` → connected.
+- **CCS630 lesson applied:** Principle of least privilege via database roles; managed=False models keep DDL in SQL scripts; app user has CRUD only (no DROP/ALTER/CREATE/INDEX).
+- **Issues/notes:** 
+  - **MySQL access fix**: `ecompra_app@'%'` could NOT connect via 127.0.0.1 (resolved as `localhost`) — error 1045 access denied despite correct password. Root cause: MySQL's `'%'` host wildcard does not match `localhost` connections. Fixed by adding `ecompra_app@'localhost'` and `ecompra_app@'127.0.0.1'` with identical password and grants; updated `06_roles_grants.sql` accordingly.
+  - **Grant loop (ERROR 4027)**: Earlier role-based approach (CREATE ROLE / GRANT role / SET DEFAULT ROLE) failed with grant loop; switched to direct GRANT to each user.
+  - `.env` is gitignored (secrets rule) — not committed.
+- **Next:** M4.16 — Backup & Restore drill
 

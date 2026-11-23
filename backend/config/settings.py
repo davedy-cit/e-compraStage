@@ -94,7 +94,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": os.getenv("DB_NAME", "ecompra"),
-        "USER": os.getenv("DB_USER", "root"),
+        "USER": os.getenv("DB_USER", "ecompra_app"),
         "PASSWORD": os.getenv("DB_PASSWORD", ""),
         "HOST": os.getenv("DB_HOST", "127.0.0.1"),
         "PORT": os.getenv("DB_PORT", "3306"),
@@ -205,7 +205,7 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "accounts.authentication.CustomJWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -216,3 +216,4 @@ REST_FRAMEWORK = {
 if "pytest" in sys.modules:
     DATABASES["default"]["NAME"] = "test_ecompra"
     DATABASES["default"]["TEST"] = {"NAME": "test_ecompra"}
+    DATABASES["default"]["USER"] = "root"

@@ -109,15 +109,15 @@ onMounted(() => {
           </div>
           <div class="p-4">
             <h3 class="font-medium text-gray-900 line-clamp-2 mb-1">{{ product.name }}</h3>
-            <p class="text-purple-600 font-bold mb-2">{{ formatPrice(product.price) }} / {{ product.unit_code }}</p>
+            <p class="text-purple-600 font-bold mb-2">{{ formatPrice(product.price) }} / {{ product.unit }}</p>
             <p class="text-xs text-gray-500 mb-2">{{ product.vendor_name }} • {{ product.stall_location }}</p>
             <div class="flex items-center justify-between">
-              <span :class="product.availability_code === 'IN_STOCK' ? 'text-green-600' : 'text-red-600'" class="text-xs font-medium">
-                {{ product.availability_code === 'IN_STOCK' ? 'In Stock' : 'Out of Stock' }}
+              <span :class="product.availability === 'IN_STOCK' ? 'text-green-600' : 'text-red-600'" class="text-xs font-medium">
+                {{ product.availability === 'IN_STOCK' ? 'In Stock' : 'Out of Stock' }}
               </span>
               <button
                 @click.stop="addToCart(product)"
-                :disabled="product.availability_code !== 'IN_STOCK'"
+                :disabled="product.availability !== 'IN_STOCK'"
                 class="px-3 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700 disabled:bg-gray-300"
               >
                 Add

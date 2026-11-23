@@ -1877,7 +1877,7 @@ mysql -u ecompra_app -p ecompra -e "SELECT 1"
 | M4.12 | E2E tests: Playwright | ✅ |
 | M4.13 | Indexes + PERFORMANCE.md | ✅ |
 | M4.14 | SECURITY.md | ✅ |
-| M4.15 | DB roles/grants script | ☐ |
+| M4.15 | DB roles/grants script | ✅ |
 | M4.16 | Backup/restore drill | ☐ |
 | M4.17 | USER_MANUAL.md | ☐ |
 | M4.18 | DEVELOPER_GUIDE.md | ☐ |
