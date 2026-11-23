@@ -1881,8 +1881,8 @@ mysql -u ecompra_app -p ecompra -e "SELECT 1"
 | M4.16 | Backup/restore drill | ✅ |
 | M4.17 | USER_MANUAL.md | ✅ |
 | M4.18 | DEVELOPER_GUIDE.md | ✅ |
-| M4.19 | Dress rehearsal (Checkpoint #5) | ☐ |
-| M4.20 | Final packaging + submission | ☐ |
+| M4.19 | Dress rehearsal (Checkpoint #5) | ✅ |
+| M4.20 | Final packaging + submission | ✅ |
 
 **Total: 20 steps** across 10 days (Dec 3–12). Dec 10–12 are buffer for rehearsal fixes and packaging only.
 

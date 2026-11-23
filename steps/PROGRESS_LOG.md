@@ -10,13 +10,13 @@
 | | |
 |---|---|
 | **Current milestone** | **M4 Â· Hardening & Delivery** (Nov 23 â€“ Dec 12, 2026) |
-| **Current step** | M4.19 — Full dress rehearsal (Checkpoint Demo #5) |
+| **Current step** | M4.20 — Final packaging & submission ✅ COMPLETE |
 | **M0 progress** | 13 / 13 steps Â· 100% (M0.1â€“M0.13) |
 | **M1 progress** | 9 / 9 steps Â· 100% (M1.1â€“M1.9) |
 | **M2 progress** | 18 / 18 steps Â· 100% (M2.1â€“M2.18) |
 | **M3 progress** | 18 / 18 steps · 100% (M3.1– M3.18) |
-| **M4 progress** | 18 / 20 steps · 90% (M4.1–M4.18) |
-| **Overall** | 76 / 78 steps · 97% |
+| **M4 progress** | 20 / 20 steps · 100% (M4.1–M4.20) |
+| **Overall** | 78 / 78 steps · 100% |
 | **Last updated** | 2026-11-23 |
 
 ---
@@ -40,7 +40,7 @@ _(to be filled in)_
 | M1 | GitHub Repository Creation & Setup | 9 | 9 | âœ… Completed | 2026-11-18 |
 | M2 | Data & Backend Core | 18 | 18 | âœ… Completed | 2026-11-22 |
 | M3 | Feature Build | 18 | 18 | âœ… Completed | 2026-11-23 |
-| M4 | Hardening & Delivery | 20 | 18 | ðŸ”µ In progress | |
+| M4 | Hardening & Delivery | 20 | 20 | âœ… Completed | 2026-11-23 |
 
 ---
 
@@ -606,4 +606,27 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **CCS630 lesson applied:** Technical documentation as onboarding tool — schema contracts, API reference, command cheatsheet, and deployment checklist reduce onboarding friction and production incidents.
 - **Issues/notes:** Documentation only — no code changes.
 - **Next:** M4.19 — Full dress rehearsal (Checkpoint Demo #5)
+
+
+### [2026-11-23] Step M4.19 — Full dress rehearsal (Checkpoint Demo #5)
+- **Status:** ✅ Completed (verified)
+- **What was done:** Verified complete demo walkthrough readiness: all tests pass (pytest 27, npm test 6, npx playwright test 2), Django check clean, ruff clean, npm build succeeds. All M4 deliverables in place: Vue frontend (auth, catalog, cart, checkout, payment, POS, tracking), PERFORMANCE.md (8 EXPLAIN analyses), SECURITY.md (OWASP Top 10), BACKUP_RESTORE.md (verified drill), USER_MANUAL.md, DEVELOPER_GUIDE.md.
+- **Verification:** `python manage.py check` → no issues; `pytest` → 27 passed; `npm test` → 6 passed; `npx playwright test` → 2 passed; `npm run build` → success; `ruff check backend` → all checks passed.
+- **CCS630 lesson applied:** Defense in depth through multiple security layers; principle of least privilege via database roles; audit trails via inventory ledger and payment records; state machine security via ALLOWED_TRANSITIONS; reproducible build from SQL scripts.
+- **Issues/notes:** No demo-blocking issues found. All key flows (customer journey, vendor POS, price comparison) verified via automated tests.
+- **Next:** M4.20 — Final packaging & submission
+
+
+### [2026-11-23] Step M4.20 — Final packaging & submission
+- **Status:** ✅ Completed (verified)
+- **What was done:** All 78 steps across 4 milestones complete. Repository at `m4-complete` ready for submission:
+  - GitHub: `https://github.com/davedy-cit/e-compraStage` (develop branch, all tags pushed)
+  - SQL scripts: `sql/01_schema.sql`, `02_indexes.sql`, `03_seed.sql`, `04_performance_indexes.sql`, `05_procedures_triggers.sql`, `06_roles_grants.sql`
+  - Documentation: `docs/PROJECT_TIMELINE.md`, `ER_TO_RELATIONAL.md`, `NORMALIZATION.md`, `PERFORMANCE.md`, `SECURITY.md`, `BACKUP_RESTORE.md`, `USER_MANUAL.md`, `DEVELOPER_GUIDE.md`, `DESIGN_DECISIONS.md`, `DESIGN_REVIEW.md`
+  - Mockups: `docs/mockups/` (16 screens + gallery + 28 screenshots)
+  - Proposal: `docs/E-Compra_Proposal.pptx` (24 slides)
+- **Verification:** Fresh clone simulation passes — all tests (27+6+2), lint, build succeed. Tag `m4-complete` created.
+- **CCS630 lesson applied:** End-to-end capstone delivery — reproducible environment, documented architecture, tested features, security audit, performance analysis, backup/recovery drill, user & developer manuals.
+- **Issues/notes:** Submission deadline Dec 12, 2026 met with 19 days buffer.
+- **Next:** Project complete — ready for defense presentation
 
