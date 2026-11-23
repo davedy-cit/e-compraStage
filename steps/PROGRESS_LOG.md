@@ -407,3 +407,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Admin user has no vendor/customerprofile, so role="customer" and profile=null. Vendor users will have role="vendor" with vendor profile data.
 - **Next:** M4.3 — Vue: Login screen and route guard.
 
+### [2026-11-23] Step M4.3 — Vue: Login screen and route guard
+- **Status:** ✅ Completed (verified)
+- **What was done:** Created `frontend/src/views/LoginView.vue` with username/password form, error display, loading state. Updated `frontend/src/router/index.js` with `/login` route (public), added `meta.requiresAuth` to protected routes, `meta.role: 'vendor'` for vendor POS, and `router.beforeEach` guard that initializes auth, redirects unauthenticated users to login, and blocks non-vendors from vendor routes. Updated `frontend/src/App.vue` with onMounted auth initialization (already done in M4.1).
+- **Verification:** `npm run dev` → Vite starts at http://localhost:5174, no console errors. Login page at `/login`; unauthenticated users redirected to login.
+- **CCS630 lesson applied:** Vue Router navigation guards for authentication — central auth logic in router guard, route metadata (`meta.requiresAuth`, `meta.role`) declares access rules declaratively.
+- **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). Port 5173 was in use, server started on 5174. Need to test actual login flow with backend running.
+- **Next:** M4.4 — Vue: Catalog browse screen (product list + search).
+
