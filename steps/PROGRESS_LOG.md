@@ -391,3 +391,11 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Issues/notes:** Fixed two frontend build issues during M3.18: (1) Tailwind CSS v4 requires `@tailwindcss/postcss` package instead of `tailwindcss` PostCSS plugin, (2) Vite `@` path alias was missing in `vite.config.js`. Both fixed before successful build.
 - **Next:** M4 — Hardening & Delivery (20 steps, Dec 3–12, 2026).
 
+### [2026-11-23] Step M4.1 — Vue: install deps and configure API base URL
+- **Status:** ✅ Completed (verified)
+- **What was done:** Installed `pinia` for state management. Created `frontend/src/services/api.js` with Axios instance, JWT interceptors (access token attachment, auto-refresh on 401). Created `frontend/src/stores/auth.js` Pinia store with login, fetchUser, logout, and init actions. Updated `frontend/src/main.js` to initialize Pinia and auth store on app startup.
+- **Verification:** `npm run dev` → Vite starts successfully at http://localhost:5173, no console errors.
+- **CCS630 lesson applied:** Separation of concerns — API client (services/api.js) handles HTTP concerns (interceptors, base URL), auth state (stores/auth.js) handles authentication logic, components stay thin.
+- **Issues/notes:** Only warning is Vite deprecation notice for `__dirname` in vite.config.js (non-blocking). The `/api/accounts/auth/user/` endpoint doesn't exist yet (will be created in M4.2).
+- **Next:** M4.2 — Backend: add /api/auth/user/ endpoint for current user.
+
