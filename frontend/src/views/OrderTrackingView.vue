@@ -533,11 +533,11 @@ const OrderCard = defineComponent({
         <span>All prices in Philippine pesos (₱)</span>
       </div>
     </footer>
-
-    <style>
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    </style>
   </div>
 </template>
+
+<style scoped>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>

@@ -5,6 +5,7 @@ export const useCartStore = defineStore('cart', {
   state: () => ({
     cart: null,
     _initialized: false,
+    fulfillmentMethods: {},
   }),
   actions: {
     async fetchCart() {
@@ -24,6 +25,9 @@ export const useCartStore = defineStore('cart', {
     clear() {
       this.cart = null
       this._initialized = false
+    },
+    setFulfillmentMethods(methods) {
+      this.fulfillmentMethods = { ...methods }
     },
   },
 })

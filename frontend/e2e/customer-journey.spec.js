@@ -24,8 +24,8 @@ test.describe('Customer Journey', () => {
     await expect(page).toHaveURL('/catalog')
 
     // Search for a product that's in stock (Bangus/Milkfish)
-    await page.fill('input[placeholder="Search products..."]', 'Bangus')
-    await page.press('input[placeholder="Search products..."]', 'Enter')
+    await page.fill('input[placeholder="Search fish, vegetables, rice…"]', 'Bangus')
+    await page.press('input[placeholder="Search fish, vegetables, rice…"]', 'Enter')
     // Wait for search results
     await expect(page.locator('text=Bangus').first()).toBeVisible()
 
@@ -55,7 +55,7 @@ test.describe('Customer Journey', () => {
     await expect(page.locator('text=Failed to load cart')).not.toBeVisible({ timeout: 10000 })
 
     // Proceed to checkout
-    await page.click('button:has-text("Checkout")')
+    await page.click('button:has-text("Proceed to checkout")')
     await expect(page).toHaveURL('/checkout')
 
     // Wait for checkout page to load - wait for loading to disappear
@@ -64,7 +64,7 @@ test.describe('Customer Journey', () => {
     await expect(page.locator('text=Bangus').first()).toBeVisible({ timeout: 10000 })
 
     // Select fulfillment and place order
-    await page.click('button:has-text("Place Order")')
+    await page.click('button:has-text("Place 1 order")')
     await expect(page).toHaveURL(/\/payment\//)
   })
 })

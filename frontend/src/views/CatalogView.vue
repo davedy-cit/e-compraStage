@@ -27,6 +27,14 @@ const selectedAvailabilities = ref([])
 const selectedVendors = ref([])
 const showFilters = ref(false) // mobile filter drawer
 const sortBy = ref('')
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
+
+onMounted(() => {
+  const updateWidth = () => { windowWidth.value = window.innerWidth }
+  window.addEventListener('resize', updateWidth)
+  updateWidth()
+  return () => window.removeEventListener('resize', updateWidth)
+})
 
 const fetchProducts = async () => {
   loading.value = true
@@ -397,10 +405,14 @@ const alsoInCategory = computed(() => {
           <div class="grid grid-side" style="gap: 24px;">
 
             <!-- Filters Sidebar -->
-            <aside class="card" style="position: sticky; top: 80px; height: fit-content;">
+            <aside
+              v-show="showFilters || windowWidth > 860"
+              class="card"
+              style="position: sticky; top: 80px; height: fit-content;"
+            >
               <!-- Mobile filter toggle -->
               <button
-                v-if="showFilters === false && (window.innerWidth <= 860)"
+                v-if="showFilters === false && windowWidth <= 860"
                 @click="showFilters = true"
                 class="btn btn-primary btn-block mb12"
                 style="display: none;"
@@ -408,7 +420,7 @@ const alsoInCategory = computed(() => {
                 Filters
               </button>
 
-              <div v-show="showFilters || window.innerWidth > 860" class="stack" style="gap: 16px;">
+              <div class="stack" style="gap: 16px;">
 
                 <!-- Category Filters -->
                 <div>

@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useCartStore } from '@/stores/cart'
+import Navbar from '@/components/Navbar.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -109,7 +110,6 @@ const fetchCart = async () => {
     }
   } catch (err) {
     error.value = 'Failed to load checkout'
-    console.error(err)
   } finally {
     loading.value = false
   }
@@ -137,7 +137,7 @@ async function placeOrders() {
     const transactionIds = response.data.transaction_ids
 
     // Clear cart store
-    cartStore.clearCart()
+    cartStore.clear()
 
     // Redirect to payment screen with all transaction IDs
     if (transactionIds.length > 0) {
@@ -151,7 +151,6 @@ async function placeOrders() {
     }
   } catch (err) {
     error.value = err.response?.data?.error || 'Checkout failed'
-    console.error(err)
   } finally {
     processing.value = false
   }
@@ -186,7 +185,7 @@ onMounted(fetchCart)
         </div>
 
         <div v-else-if="cart.items && cart.items.length > 0">
-          <div class="grid-side" style="grid-template-columns: 1fr 330px; gap: 24px;">
+          <div class="grid-side checkout-grid" style="gap: 24px;">
 
             <!-- Order Review (Left Side) -->
             <div class="stack" style="gap: 16px;">
@@ -320,13 +319,15 @@ onMounted(fetchCart)
               <div class="card">
                 <div class="card-head"><h3>Order summary</h3></div>
                 <dl class="kv">
-                  <dt v-for="(vendor, vendorId) in itemsByVendor" :key="vendorId">
-                    {{ vendor.vendor_name }}
-                    <span class="badge badge-tiny" :class="vendor.fulfillment === 'DELIVERY' ? 'badge-info' : 'badge-ok'" style="margin-left: 8px; font-size: 0.65rem;">
-                      {{ vendor.fulfillment === 'DELIVERY' ? 'Delivery' : 'Pickup' }}
-                    </span>
-                  </dt>
-                  <dd>{{ formatPrice(vendor.subtotal) }}</dd>
+                  <template v-for="(vendor, vendorId) in itemsByVendor" :key="vendorId">
+                    <dt>
+                      {{ vendor.vendor_name }}
+                      <span class="badge badge-tiny" :class="vendor.fulfillment === 'DELIVERY' ? 'badge-info' : 'badge-ok'" style="margin-left: 8px; font-size: 0.65rem;">
+                        {{ vendor.fulfillment === 'DELIVERY' ? 'Delivery' : 'Pickup' }}
+                      </span>
+                    </dt>
+                    <dd>{{ formatPrice(vendor.subtotal) }}</dd>
+                  </template>
                 </dl>
                 <hr class="divider">
                 <div v-if="deliveryFee > 0" class="kv" style="margin-top: 8px;">

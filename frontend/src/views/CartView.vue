@@ -3,9 +3,11 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useCartStore } from '@/stores/cart'
+import Navbar from '@/components/Navbar.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const checkoutBtn = ref(null)
 
 const cart = ref({ items: [] })
 const loading = ref(true)
@@ -69,7 +71,6 @@ const fetchCart = async () => {
     }
   } catch (err) {
     error.value = 'Failed to load cart'
-    console.error(err)
   } finally {
     loading.value = false
   }
@@ -172,7 +173,7 @@ onMounted(fetchCart)
         </div>
 
         <div v-else-if="cart.items && cart.items.length > 0">
-          <div class="grid-side" style="grid-template-columns: 1fr 330px; gap: 24px;">
+          <div class="grid-side cart-grid" style="gap: 24px;">
 
             <!-- Vendor Groups (Left Side) -->
             <div class="stack" style="gap: 16px;">
@@ -284,13 +285,15 @@ onMounted(fetchCart)
               <div class="card">
                 <div class="card-head"><h3>Order summary</h3></div>
                 <dl class="kv">
-                  <dt v-for="(vendor, vendorId) in itemsByVendor" :key="vendorId">
-                    {{ vendor.vendor_name }}
-                    <span class="badge badge-tiny" :class="fulfillmentMethods[vendorId] === 'DELIVERY' ? 'badge-info' : 'badge-ok'" style="margin-left: 8px; font-size: 0.65rem;">
-                      {{ fulfillmentMethods[vendorId] === 'DELIVERY' ? 'Delivery' : 'Pickup' }}
-                    </span>
-                  </dt>
-                  <dd>{{ formatPrice(vendor.subtotal) }}</dd>
+                  <template v-for="(vendor, vendorId) in itemsByVendor" :key="vendorId">
+                    <dt>
+                      {{ vendor.vendor_name }}
+                      <span class="badge badge-tiny" :class="fulfillmentMethods[vendorId] === 'DELIVERY' ? 'badge-info' : 'badge-ok'" style="margin-left: 8px; font-size: 0.65rem;">
+                        {{ fulfillmentMethods[vendorId] === 'DELIVERY' ? 'Delivery' : 'Pickup' }}
+                      </span>
+                    </dt>
+                    <dd>{{ formatPrice(vendor.subtotal) }}</dd>
+                  </template>
                 </dl>
                 <hr class="divider">
                 <div v-if="hasDeliveryFee" class="kv" style="margin-top: 8px;">
@@ -358,6 +361,7 @@ onMounted(fetchCart)
                 @click="proceedToCheckout"
                 class="btn btn-accent btn-lg btn-block"
                 :disabled="cart.items.length === 0"
+                ref="checkoutBtn"
               >
                 Proceed to checkout · {{ formatPrice(grandTotal) }}
               </button>

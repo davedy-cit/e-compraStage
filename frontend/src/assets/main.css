@@ -1094,6 +1094,28 @@ img {
   align-items: start;
 }
 
+/* Cart-specific grid: main content first (1fr), sidebar second (330px) */
+.cart-grid {
+  grid-template-columns: 1fr 330px;
+}
+
+@media (max-width: 860px) {
+  .cart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Checkout-specific grid: same layout as cart */
+.checkout-grid {
+  grid-template-columns: 1fr 330px;
+}
+
+@media (max-width: 860px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .row {
   display: flex;
   gap: 12px;
