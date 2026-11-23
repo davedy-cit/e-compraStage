@@ -521,3 +521,18 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
   - **checkout_cart contract verified**: Returns both `order_ids` and `transaction_ids` arrays (1 per vendor), matching frontend PaymentView expectations.
 - **Next:** M4.12 — End-to-end tests with Playwright for key user flows.
 
+### [2026-11-23] Step M4.12 — End-to-end tests with Playwright for key user flows
+- **Status:** ✅ Completed (verified)
+- **What was done:** 
+  - Created `frontend/playwright.config.js` with webServer pointing to `npm run dev`, projects for chromium (Desktop Chrome) and mobile (Pixel 5), sequential execution (`workers: 1`, `fullyParallel: false`) to avoid database conflicts.
+  - Created `frontend/e2e/customer-journey.spec.js` covering the complete customer journey: login → catalog → search → add to cart → cart → checkout → fulfillment selection → place order → payment.
+  - Fixed `frontend/src/views/CartView.vue` checkout flow: changed from direct API call to navigating to `/checkout` page (using `router.push('/checkout')`), aligning with the intended UX flow where checkout page handles fulfillment selection and order placement.
+  - Fixed test flakiness: improved waits for cart loading, checkout page loading, and item verification using Playwright's `expect.poll` and proper locator strategies.
+- **Verification:** `npx playwright test e2e/customer-journey.spec.js --reporter=line` → 2 passed (chromium + mobile) with sequential execution; both tests complete the full journey: login → catalog search → add Bangus to cart → cart view → checkout → select fulfillment → place order → navigate to payment screen.
+- **CCS630 lesson applied:** E2E tests validate the complete user journey across frontend-backend integration; sequential execution avoids test pollution from shared database state; proper waiting strategies eliminate flakiness.
+- **Issues/notes:** 
+  - **Parallel execution caused failures**: Running chromium and mobile tests in parallel shared the same database/user session, causing cart state conflicts. Fixed by setting `workers: 1` and `fullyParallel: false` in playwright config.
+  - **CartView checkout flow mismatch**: Original M3.13 CartView.vue called checkout API directly and showed alert; updated to navigate to `/checkout` page which handles fulfillment selection and order placement (matching CheckoutView.vue flow).
+  - **Test timing improvements**: Added proper waits for API completion (dialog handling), cart loading (table/empty state), checkout page loading (loading text disappearance), and item verification.
+- **Next:** M4.13 — Indexes + PERFORMANCE.md
+

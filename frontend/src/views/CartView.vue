@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '@/services/api'
+
+const router = useRouter()
 
 const cart = ref({ items: [] })
 const loading = ref(true)
@@ -41,16 +44,8 @@ async function removeItem(itemId) {
   }
 }
 
-async function checkout() {
-  try {
-    error.value = null
-    await api.post('/checkout/')
-    alert('Checkout complete! Orders created.')
-    await fetchCart()
-  } catch (err) {
-    error.value = 'Checkout failed'
-    console.error(err)
-  }
+function checkout() {
+  router.push('/checkout')
 }
 
 onMounted(() => {
