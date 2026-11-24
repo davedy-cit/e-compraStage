@@ -196,9 +196,6 @@ watch(() => route.params.id, () => {
 
 <template>
   <div class="min-h-screen bg-bg">
-    <!-- Navbar -->
-    <Navbar />
-
     <main class="page">
       <div class="wrap stack">
 

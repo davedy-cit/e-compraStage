@@ -277,8 +277,6 @@ onMounted(fetchOrders)
 
 <template>
   <div class="min-h-screen bg-bg">
-    <Navbar />
-
     <main class="page">
       <div class="wrap stack">
 

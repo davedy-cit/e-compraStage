@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,7 +26,7 @@ class FavoriteProductList(generics.ListCreateAPIView):
                 {"detail": "Product already in favorites"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        favorite = FavoriteProduct.objects.create(user=request.user, product_id=product_id)
+        favorite = FavoriteProduct.objects.create(user=request.user, product_id=product_id, created_at=timezone.now())
         serializer = self.get_serializer(favorite)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -62,7 +63,7 @@ class FavoriteVendorList(generics.ListCreateAPIView):
                 {"detail": "Vendor already in favorites"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        favorite = FavoriteVendor.objects.create(user=request.user, vendor_id=vendor_id)
+        favorite = FavoriteVendor.objects.create(user=request.user, vendor_id=vendor_id, created_at=timezone.now())
         serializer = self.get_serializer(favorite)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
