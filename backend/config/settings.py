@@ -213,9 +213,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
-# pytest: use test database clone (test_ecompra created manually)
+# pytest: use test database clone (test_ecompra_test created manually, schema from test_ecompra_restore)
 
 if "pytest" in sys.modules:
-    DATABASES["default"]["NAME"] = "test_ecompra"
-    DATABASES["default"]["TEST"] = {"NAME": "test_ecompra"}
+    DATABASES["default"]["NAME"] = "test_ecompra_test"
+    DATABASES["default"]["TEST"] = {"NAME": "test_ecompra_test"}
     DATABASES["default"]["USER"] = "root"

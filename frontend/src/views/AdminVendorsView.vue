@@ -81,28 +81,28 @@
             <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
               <div class="field">
                 <label class="small">Username *</label>
-                <input v-model="form.username" type="text" class="input" :class="{ 'input-error': formErrors.username }" />
+                <input v-model="form.username" type="text" class="input" :class="{ 'input-error': formErrors.username }" placeholder="username" />
                 <span v-if="formErrors.username" class="field-error">{{ formErrors.username }}</span>
               </div>
               <div class="field">
                 <label class="small">Email *</label>
-                <input v-model="form.email" type="email" class="input" :class="{ 'input-error': formErrors.email }" />
+                <input v-model="form.email" type="email" class="input" :class="{ 'input-error': formErrors.email }" placeholder="vendor@example.com" />
                 <span v-if="formErrors.email" class="field-error">{{ formErrors.email }}</span>
               </div>
             </div>
             <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
               <div class="field">
                 <label class="small">First Name *</label>
-                <input v-model="form.first_name" type="text" class="input" :class="{ 'input-error': formErrors.first_name }" />
+                <input v-model="form.first_name" type="text" class="input" :class="{ 'input-error': formErrors.first_name }" placeholder="First Name" />
               </div>
               <div class="field">
                 <label class="small">Last Name *</label>
-                <input v-model="form.last_name" type="text" class="input" :class="{ 'input-error': formErrors.last_name }" />
+                <input v-model="form.last_name" type="text" class="input" :class="{ 'input-error': formErrors.last_name }" placeholder="Last Name" />
               </div>
             </div>
             <div class="field">
               <label class="small">Password *</label>
-              <input v-model="form.password" type="password" class="input" :class="{ 'input-error': formErrors.password }" />
+              <input v-model="form.password" type="password" class="input" :class="{ 'input-error': formErrors.password }" placeholder="••••••••" />
               <span v-if="formErrors.password" class="field-error">{{ formErrors.password }}</span>
             </div>
           </div>

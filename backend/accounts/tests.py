@@ -1,10 +1,10 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from rest_framework.test import APIClient
-from rest_framework import status
-from accounts.models import AuthUser, Customerprofile, Userprofile
+from django.test import TestCase
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APIClient
+
+from accounts.models import AuthUser, Customerprofile, Userprofile
 
 
 class RegisterAPITest(TestCase):

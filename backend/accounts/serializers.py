@@ -1,10 +1,9 @@
-from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.utils import timezone
-from django.contrib.auth.hashers import make_password
+from rest_framework import serializers
 
 from accounts.models import AuthUser, Customerprofile, Userprofile
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
