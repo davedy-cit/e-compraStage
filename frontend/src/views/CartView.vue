@@ -3,7 +3,6 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useCartStore } from '@/stores/cart'
-import Navbar from '@/components/Navbar.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -140,8 +139,6 @@ onMounted(fetchCart)
 
 <template>
   <div class="min-h-screen bg-bg">
-    <Navbar />
-
     <main class="page">
       <div class="wrap stack">
 
