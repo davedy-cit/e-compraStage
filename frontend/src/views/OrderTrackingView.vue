@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, computed, watch, defineComponent } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
+import OrderCard from '@/components/OrderCard.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -86,6 +87,12 @@ const getPaymentStatusClass = (code) => {
   if (code === 'FAILED') return 'badge-danger'
   if (code === 'REFUNDED') return 'badge-info'
   return 'badge-warn'
+}
+
+const getDeliveryStatusClass = (code) => {
+  if (code === 'DELIVERED') return 'badge-ok'
+  if (code === 'FAILED') return 'badge-danger'
+  return 'badge-info'
 }
 
 // Fetch all orders for the current user (list view)
@@ -173,51 +180,6 @@ onMounted(() => {
   } else {
     fetchSingleOrder()
   }
-})
-
-// OrderCard component (defined inline)
-const OrderCard = defineComponent({
-  props: ['order'],
-  emits: ['click'],
-  setup(props, { emit }) {
-    const formatPrice = (price) => `₱${Number(price).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
-    const formatDate = (dateStr) => {
-      if (!dateStr) return '—'
-      return new Date(dateStr).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
-    }
-    const fulfillmentIcon = (code) => code === 'DELIVERY' ? '🛵' : '🏪'
-    const getStatusClass = (code) => {
-      if (code === 'COMPLETED') return 'badge-ok'
-      if (code === 'CANCELLED') return 'badge-danger'
-      if (code === 'PENDING_PAYMENT') return 'badge-warn'
-      return 'badge-info'
-    }
-
-    return { formatPrice, formatDate, fulfillmentIcon, getStatusClass }
-  },
-  template: `
-    <div class="card" style="cursor: pointer; transition: box-shadow 0.2s;" @click="$emit('click')" @keydown.enter.space="$emit('click')" tabindex="0" role="button">
-      <div class="card-head row-between">
-        <div>
-          <h4 class="mb0">{{ order.vendor_name || order.vendor?.name || 'Unknown Vendor' }}</h4>
-          <p class="tiny muted mb0">📍 {{ order.stall_location || order.vendor?.stall_location || '—' }}</p>
-        </div>
-        <span class="badge" :class="getStatusClass(order.status_code)">
-          {{ order.status_display || order.status_code }}
-        </span>
-      </div>
-      <dl class="kv" style="margin-top: 8px; grid-template-columns: auto 1fr;">
-        <dt>{{ formatDate(order.created_at) }}</dt>
-        <dd class="text-right">{{ formatPrice(order.total_amount) }}</dd>
-        <dt>{{ fulfillmentIcon(order.fulfillment_code) }} {{ order.fulfillment_code === 'DELIVERY' ? 'Delivery' : 'Pickup' }}</dt>
-        <dd class="text-right">{{ order.items?.length || 0 }} item{{ (order.items?.length || 0) > 1 ? 's' : '' }}</dd>
-      </dl>
-      <div class="card-foot row-between" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-line);">
-        <span class="tiny muted">View details →</span>
-        <span class="badge badge-tiny badge-info">{{ order.fulfillment_code === 'DELIVERY' ? '🛵 Delivery' : '🏪 Pickup' }}</span>
-      </div>
-    </div>
-  `
 })
 </script>
 
