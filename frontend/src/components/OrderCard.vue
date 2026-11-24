@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 
-defineProps(['order'])
+const props = defineProps(['order'])
 defineEmits(['click'])
 
 const formatPrice = (price) => `₱${Number(price).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
