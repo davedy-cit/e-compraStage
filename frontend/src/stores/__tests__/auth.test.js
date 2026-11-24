@@ -96,4 +96,61 @@ describe('Auth Store', () => {
     expect(store.isAuthenticated).toBe(false)
     expect(store.user).toBeNull()
   })
+
+  it('registers new user and sets authenticated state', async () => {
+    const store = useAuthStore()
+
+    const registerPayload = {
+      username: 'newuser',
+      email: 'new@test.com',
+      first_name: 'Juan',
+      last_name: 'Dela Cruz',
+      password: 'SecurePass123',
+      password_confirm: 'SecurePass123',
+      phone: '09171234567',
+      address: '123 Mandaue City, Cebu',
+    }
+
+    vi.spyOn(api, 'post').mockResolvedValue({
+      data: {
+        access: 'mock-access-token',
+        refresh: 'mock-refresh-token',
+        user: { id: 5, username: 'newuser', role: 'customer' },
+      },
+    })
+
+    await store.register(registerPayload)
+
+    expect(api.post).toHaveBeenCalledWith('accounts/auth/register/', registerPayload)
+    expect(store.isAuthenticated).toBe(true)
+    expect(store.user).toEqual({ id: 5, username: 'newuser', role: 'customer' })
+    expect(localStorage.getItem('access_token')).toBe('mock-access-token')
+    expect(localStorage.getItem('refresh_token')).toBe('mock-refresh-token')
+  })
+
+  it('throws error on registration failure', async () => {
+    const store = useAuthStore()
+
+    const registerPayload = {
+      username: 'existing',
+      email: 'exists@test.com',
+      first_name: 'Juan',
+      last_name: 'Dela Cruz',
+      password: 'SecurePass123',
+      password_confirm: 'SecurePass123',
+      phone: '09171234567',
+      address: '123 Mandaue City, Cebu',
+    }
+
+    vi.spyOn(api, 'post').mockRejectedValue({
+      response: { data: { username: ['A user with that username already exists.'] } },
+    })
+
+    await expect(store.register(registerPayload)).rejects.toEqual({
+      response: { data: { username: ['A user with that username already exists.'] } },
+    })
+
+    expect(store.isAuthenticated).toBe(false)
+    expect(store.user).toBeNull()
+  })
 })

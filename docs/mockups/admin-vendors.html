@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Market Admin: Manage Vendors</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-admin">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Market administration</small></span></a>
+    <nav class="nav">
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-vendors.html" class="on">Vendors</a>
+      <a href="admin-transactions.html">Transactions</a>
+    </nav>
+    <span class="who">Market Administrator</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Market administration</div>
+      <h1>Manage Vendors</h1>
+      <p>Create and manage vendor accounts and stall assignments. Each vendor gets a system account linked to their market stall.</p>
+    </div>
+
+    <div class="row-between" style="margin-bottom: 16px;">
+      <div></div>
+      <button class="btn btn-accent" type="button" id="createVendorBtn">+ Create Vendor</button>
+    </div>
+
+    <!-- ===== Vendors Table ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Registered Vendors</h3>
+        <span class="small muted">12 records</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Vendor Name</th>
+              <th>Stall</th>
+              <th>Section</th>
+              <th>Contact</th>
+              <th>Account</th>
+              <th>Status</th>
+              <th class="actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Pedro's Fresh Catch</strong>
+                <br><span class="tiny muted">pedro.reyes</span>
+              </td>
+              <td>A-12</td>
+              <td>A — Fish</td>
+              <td>
+                0917-555-0101<br>
+                <span class="tiny muted">pedro@stall.com</span>
+              </td>
+              <td>
+                pedro@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Rosa's Gulay Stand</strong>
+                <br><span class="tiny muted">rosa.mendoza</span>
+              </td>
+              <td>B-07</td>
+              <td>B — Vegetables</td>
+              <td>
+                0917-555-0102<br>
+                <span class="tiny muted">rosa@stall.com</span>
+              </td>
+              <td>
+                rosa@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Bautista Meat Shop</strong>
+                <br><span class="tiny muted">rico.bautista</span>
+              </td>
+              <td>C-03</td>
+              <td>C — Meat & Poultry</td>
+              <td>
+                0917-555-0103<br>
+                <span class="tiny muted">rico@stall.com</span>
+              </td>
+              <td>
+                rico@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Nena's Manok</strong>
+                <br><span class="tiny muted">nena.ocampo</span>
+              </td>
+              <td>C-09</td>
+              <td>C — Meat & Poultry</td>
+              <td>
+                0917-555-0104<br>
+                <span class="tiny muted">nena@stall.com</span>
+              </td>
+              <td>
+                nena@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Villamor Fruits & Gulay</strong>
+                <br><span class="tiny muted">ben.villamor</span>
+              </td>
+              <td>D-02</td>
+              <td>D — Fruits</td>
+              <td>
+                0917-555-0105<br>
+                <span class="tiny muted">ben@stall.com</span>
+              </td>
+              <td>
+                ben@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Tan's Rice & Dry Goods</strong>
+                <br><span class="tiny muted">liza.tan</span>
+              </td>
+              <td>E-01</td>
+              <td>E — Dry Goods</td>
+              <td>
+                0917-555-0106<br>
+                <span class="tiny muted">liza@stall.com</span>
+              </td>
+              <td>
+                liza@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Aling Puring's Sari-Sari</strong>
+                <br><span class="tiny muted">puring.delacruz</span>
+              </td>
+              <td>A-14</td>
+              <td>A — Fish</td>
+              <td>
+                0917-555-0107<br>
+                <span class="tiny muted">puring@stall.com</span>
+              </td>
+              <td>
+                puring@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Mang Berting's Seafood</strong>
+                <br><span class="tiny muted">berting.santos</span>
+              </td>
+              <td>B-09</td>
+              <td>B — Vegetables</td>
+              <td>
+                0917-555-0108<br>
+                <span class="tiny muted">berting@stall.com</span>
+              </td>
+              <td>
+                berting@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Kuya Jun's Lechon</strong>
+                <br><span class="tiny muted">jun.cruz</span>
+              </td>
+              <td>C-05</td>
+              <td>C — Meat & Poultry</td>
+              <td>
+                0917-555-0109<br>
+                <span class="tiny muted">jun@stall.com</span>
+              </td>
+              <td>
+                jun@stall.com<br>
+                <span class="tiny muted">Inactive</span>
+              </td>
+              <td>
+                <span class="badge badge-warn">Inactive</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" disabled style="opacity: 0.5;">Deactivated</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Tita Baby's Kakanin</strong>
+                <br><span class="tiny muted">baby.garcia</span>
+              </td>
+              <td>D-05</td>
+              <td>D — Fruits</td>
+              <td>
+                0917-555-0110<br>
+                <span class="tiny muted">baby@stall.com</span>
+              </td>
+              <td>
+                baby@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Manong Ito's Tinapahan</strong>
+                <br><span class="tiny muted">ito.reyes</span>
+              </td>
+              <td>E-03</td>
+              <td>E — Dry Goods</td>
+              <td>
+                0917-555-0111<br>
+                <span class="tiny muted">ito@stall.com</span>
+              </td>
+              <td>
+                ito@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>New Vendor Test Stall</strong>
+                <br><span class="tiny muted">vendor_test</span>
+              </td>
+              <td>F-01</td>
+              <td>F — New Section</td>
+              <td>
+                0918-222-3344<br>
+                <span class="tiny muted">vendor_test@contact.com</span>
+              </td>
+              <td>
+                vendor_test@stall.com<br>
+                <span class="tiny muted">Active</span>
+              </td>
+              <td>
+                <span class="badge badge-ok">Active</span>
+              </td>
+              <td class="actions">
+                <button class="btn btn-sm" type="button">Edit</button>
+                <button class="btn btn-sm" style="background:var(--danger-bg); border-color:var(--danger); color:var(--danger)" type="button">Deactivate</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot tiny muted">
+        Four further stalls (A-14, B-09, D-05, E-03) trade at the market but have no E-Compra account yet — see the
+        <a href="market-map.html">market map</a>.
+      </div>
+    </section>
+
+    <!-- ===== Create Vendor Modal (hidden by default) ===== -->
+    <div class="modal-overlay" id="createVendorModal" style="display:none">
+      <div class="modal card" style="max-width: 560px; width: 90%; max-height: 90vh; overflow-y: auto;">
+        <div class="card-head row-between">
+          <h3>Create New Vendor Account</h3>
+          <button class="btn btn-ghost btn-sm" id="closeModalBtn">✕</button>
+        </div>
+        <form class="stack" style="gap: 12px; padding: 16px;">
+
+          <!-- Account Details -->
+          <div class="card" style="padding: 16px;">
+            <h4 class="mb12" style="border-bottom: 1px solid var(--line); padding-bottom: 8px;">Account Credentials</h4>
+            <div class="grid grid-2">
+              <div class="field">
+                <label class="small">Username *</label>
+                <input type="text" class="input" placeholder="username" />
+              </div>
+              <div class="field">
+                <label class="small">Email *</label>
+                <input type="email" class="input" placeholder="vendor@example.com" />
+              </div>
+            </div>
+            <div class="grid grid-2">
+              <div class="field">
+                <label class="small">First Name *</label>
+                <input type="text" class="input" placeholder="First Name" />
+              </div>
+              <div class="field">
+                <label class="small">Last Name *</label>
+                <input type="text" class="input" placeholder="Last Name" />
+              </div>
+            </div>
+            <div class="field">
+              <label class="small">Password *</label>
+              <input type="password" class="input" placeholder="••••••••" />
+            </div>
+          </div>
+
+          <!-- Vendor Details -->
+          <div class="card" style="padding: 16px;">
+            <h4 class="mb12" style="border-bottom: 1px solid var(--line); padding-bottom: 8px;">Stall Information</h4>
+            <div class="field">
+              <label class="small">Business Name *</label>
+              <input type="text" class="input" placeholder="Rosa's Fresh Vegetables" />
+            </div>
+            <div class="grid grid-2">
+              <div class="field">
+                <label class="small">Stall Location *</label>
+                <input type="text" class="input" placeholder="Stall A-12" />
+              </div>
+              <div class="field">
+                <label class="small">Market Section *</label>
+                <input type="text" class="input" placeholder="Vegetables Section" />
+              </div>
+            </div>
+            <div class="grid grid-2">
+              <div class="field">
+                <label class="small">Contact Phone *</label>
+                <input type="tel" class="input" placeholder="09171112233" />
+              </div>
+              <div class="field">
+                <label class="small">Contact Email *</label>
+                <input type="email" class="input" placeholder="rosa@stall.com" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="justify-content: flex-end; gap: 8px; margin-top: 8px;">
+            <button type="button" class="btn" id="cancelModalBtn">Cancel</button>
+            <button type="submit" class="btn btn-accent">Create Vendor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>

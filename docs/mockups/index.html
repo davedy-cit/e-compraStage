@@ -66,7 +66,7 @@
       <a href="favorites-history.html">Favorites</a>
       <a href="order-tracking.html">Orders</a>
     </nav>
-    <span class="who">16 mockup screens</span>
+    <span class="who">19 mockup screens</span>
   </div>
 </header>
 
@@ -74,7 +74,7 @@
   <div class="wrap">
     <h1>E-Compra — user interface mockups</h1>
     <p>Static HTML wireframes for the Mandaue Public Market online marketplace, ordering and reservation system.
-       Sixteen screens covering three roles: the customer buying, the vendor selling, and the market administrator
+       Nineteen screens covering three roles: the customer buying, the vendor selling, and the market administrator
        keeping the records straight.</p>
     <div class="tags">
       <span>No JavaScript</span>
@@ -91,18 +91,29 @@
     <!-- ============ CUSTOMER ============ -->
     <div class="rolebar">
       <h2>Customer</h2>
-      <span class="pill">11 screens</span>
+      <span class="pill">12 screens</span>
       <span class="spacer"></span>
       <span class="small muted">Buyer browsing, ordering, paying and collecting</span>
     </div>
 
     <div class="gal">
 
+      <a class="item" href="register.html">
+        <div class="shot">📝</div>
+        <div class="meta">
+          <span class="n">01 · CUSTOMER</span>
+          <span class="t">Register Account</span>
+          <span class="d">Self-registration form with name, username, email, phone, address, and password confirmation.</span>
+          <span class="k">Creates AuthUser + Customerprofile + Userprofile atomically</span>
+          <span class="f">register.html</span>
+        </div>
+      </a>
+
       <a class="item" href="home.html">
         <div class="shot">🏠</div>
         <div class="meta">
-          <span class="n">01 · CUSTOMER</span>
-          <span class="t">Home &amp; Marketplace</span>
+          <span class="n">02 · CUSTOMER</span>
+          <span class="t">Home & Marketplace</span>
           <span class="d">Landing page with search, category chips, featured products and vendors.</span>
           <span class="k">Product discovery across 9 market categories</span>
           <span class="f">home.html</span>
@@ -112,8 +123,8 @@
       <a class="item" href="search-results.html">
         <div class="shot">🔍</div>
         <div class="meta">
-          <span class="n">02 · CUSTOMER</span>
-          <span class="t">Search &amp; Filter Results</span>
+          <span class="n">03 · CUSTOMER</span>
+          <span class="t">Search & Filter Results</span>
           <span class="d">One search term returns the same product from several vendors, cheapest flagged.</span>
           <span class="k">Multi-vendor results with a best-value marker</span>
           <span class="f">search-results.html</span>
@@ -123,7 +134,7 @@
       <a class="item" href="product-detail.html">
         <div class="shot">🍅</div>
         <div class="meta">
-          <span class="n">03 · CUSTOMER</span>
+          <span class="n">04 · CUSTOMER</span>
           <span class="t">Product Detail</span>
           <span class="d">Gallery, buy box, quantity picker, reserve-for-pickup, vendor card and product facts.</span>
           <span class="k">Add to cart or reserve, from one page</span>
@@ -134,7 +145,7 @@
       <a class="item" href="price-comparison.html">
         <div class="shot">⚖️</div>
         <div class="meta">
-          <span class="n">04 · CUSTOMER</span>
+          <span class="n">05 · CUSTOMER</span>
           <span class="t">Price Comparison</span>
           <span class="d">Vendors ranked by normalised unit price, with peso deltas against the cheapest.</span>
           <span class="k">Comparison groups normalise kg, pc and bundle to one base unit</span>
@@ -145,8 +156,8 @@
       <a class="item" href="cart-checkout.html">
         <div class="shot">🛒</div>
         <div class="meta">
-          <span class="n">05 · CUSTOMER</span>
-          <span class="t">Cart &amp; Checkout</span>
+          <span class="n">06 · CUSTOMER</span>
+          <span class="t">Cart & Checkout</span>
           <span class="d">A cart spanning four vendors, each group choosing its own fulfillment method.</span>
           <span class="k">One cart splits into one order per vendor, atomically</span>
           <span class="f">cart-checkout.html</span>
@@ -156,7 +167,7 @@
       <a class="item" href="pickup-reservation.html">
         <div class="shot">🏪</div>
         <div class="meta">
-          <span class="n">06 · CUSTOMER</span>
+          <span class="n">07 · CUSTOMER</span>
           <span class="t">Pickup Reservation</span>
           <span class="d">Half down payment online, the balance in cash at the stall, with a hold window.</span>
           <span class="k">Partial payment and a reservation hold that can expire</span>
@@ -167,7 +178,7 @@
       <a class="item" href="order-payment.html">
         <div class="shot">💳</div>
         <div class="meta">
-          <span class="n">07 · CUSTOMER</span>
+          <span class="n">08 · CUSTOMER</span>
           <span class="t">Payment (Sandbox)</span>
           <span class="d">E-wallet checkout in test mode, plus the unhappy path when a payment fails.</span>
           <span class="k">Idempotency keys stop a retry from charging twice</span>
@@ -178,7 +189,7 @@
       <a class="item" href="order-tracking.html">
         <div class="shot">📍</div>
         <div class="meta">
-          <span class="n">08 · CUSTOMER</span>
+          <span class="n">09 · CUSTOMER</span>
           <span class="t">Order Tracking</span>
           <span class="d">Delivery and pickup orders tracked side by side, each on its own status path.</span>
           <span class="k">Order, payment and delivery status each own a different concern</span>
@@ -189,7 +200,7 @@
       <a class="item" href="delivery-booking.html">
         <div class="shot">🛵</div>
         <div class="meta">
-          <span class="n">09 · CUSTOMER</span>
+          <span class="n">10 · CUSTOMER</span>
           <span class="t">Delivery Booking</span>
           <span class="d">Courier booking with route, fee, tracking link and courier-side progress.</span>
           <span class="k">Courier status is tracked separately from order status</span>
@@ -200,7 +211,7 @@
       <a class="item" href="market-map.html">
         <div class="shot">🗺️</div>
         <div class="meta">
-          <span class="n">10 · CUSTOMER</span>
+          <span class="n">11 · CUSTOMER</span>
           <span class="t">Interactive Market Map</span>
           <span class="d">Five sections, ten stalls, registered vendors pinned by stall number.</span>
           <span class="k">Stall-level location without a mapping library</span>
@@ -211,8 +222,8 @@
       <a class="item" href="favorites-history.html">
         <div class="shot">♡</div>
         <div class="meta">
-          <span class="n">11 · CUSTOMER</span>
-          <span class="t">Favorites &amp; History</span>
+          <span class="n">12 · CUSTOMER</span>
+          <span class="t">Favorites & History</span>
           <span class="d">Saved products and vendors, order history, reservation history and reorder.</span>
           <span class="k">Favorites are unique per user and product</span>
           <span class="f">favorites-history.html</span>
@@ -246,7 +257,7 @@
         <div class="shot v">📦</div>
         <div class="meta">
           <span class="n">13 · VENDOR</span>
-          <span class="t">Products &amp; Inventory</span>
+          <span class="t">Products & Inventory</span>
           <span class="d">Listings with price and availability, plus the inventory ledger behind each balance.</span>
           <span class="k">Stock is derived from an append-only movement ledger</span>
           <span class="f">vendor-products.html</span>
@@ -268,7 +279,7 @@
         <div class="shot v">💵</div>
         <div class="meta">
           <span class="n">15 · VENDOR</span>
-          <span class="t">POS Terminal &amp; Receipt</span>
+          <span class="t">POS Terminal & Receipt</span>
           <span class="d">Counter sale with cash tender, change calculation and a 72 mm printed receipt.</span>
           <span class="k">Receipt serials are unique per attempt; cash is a payment event</span>
           <span class="f">vendor-pos.html</span>
@@ -280,18 +291,40 @@
     <!-- ============ ADMIN ============ -->
     <div class="rolebar">
       <h2>Market Administrator</h2>
-      <span class="pill a">1 screen</span>
+      <span class="pill a">3 screens</span>
       <span class="spacer"></span>
-      <span class="small muted">Oversight of vendor records and recorded sales</span>
+      <span class="small muted">Oversight of vendor records, transactions, and marketplace analytics</span>
     </div>
 
     <div class="gal">
 
+      <a class="item" href="admin-dashboard.html">
+        <div class="shot a">📊</div>
+        <div class="meta">
+          <span class="n">16 · ADMIN</span>
+          <span class="t">Admin Dashboard</span>
+          <span class="d">Key metrics overview — vendors, products, orders, revenue — with quick actions and recent activity.</span>
+          <span class="k">Six stat cards, six action tiles, live activity feed</span>
+          <span class="f">admin-dashboard.html</span>
+        </div>
+      </a>
+
+      <a class="item" href="admin-vendors.html">
+        <div class="shot a">👥</div>
+        <div class="meta">
+          <span class="n">17 · ADMIN</span>
+          <span class="t">Manage Vendors</span>
+          <span class="d">Vendor registry with create modal (account + stall), inline edit and deactivate actions.</span>
+          <span class="k">Atomic creation of AuthUser + Userprofile + Vendor + PosVendor</span>
+          <span class="f">admin-vendors.html</span>
+        </div>
+      </a>
+
       <a class="item" href="admin-transactions.html">
         <div class="shot a">🛡️</div>
         <div class="meta">
-          <span class="n">16 · ADMIN</span>
-          <span class="t">Vendors &amp; Transactions</span>
+          <span class="n">18 · ADMIN</span>
+          <span class="t">Vendors & Transactions</span>
           <span class="d">Vendor registry, recorded transactions, a status-correction panel and lookup tables.</span>
           <span class="k">Corrections are additive and audited, never destructive</span>
           <span class="f">admin-transactions.html</span>
@@ -316,7 +349,7 @@
           <p class="small muted"><strong>No JavaScript, deliberately.</strong> Every page is HTML plus a single shared
              stylesheet. That keeps the wireframes readable as documents and makes them render identically wherever
              they are opened — including in a screenshot tool with scripting disabled.</p>
-          <p class="small muted"><strong>One stylesheet.</strong> All sixteen screens link
+          <p class="small muted"><strong>One stylesheet.</strong> All nineteen screens link
              <span class="mono">assets/mockup.css</span>, so a change to a colour token or component updates the whole
              set at once.</p>
         </div>
@@ -325,7 +358,7 @@
         <div class="row-wrap">
           <a class="btn btn-primary" href="home.html">Start with the customer flow →</a>
           <a class="btn" href="vendor-dashboard.html">Jump to the vendor console</a>
-          <a class="btn" href="admin-transactions.html">Jump to admin</a>
+          <a class="btn" href="admin-dashboard.html">Jump to admin</a>
         </div>
       </div>
     </section>

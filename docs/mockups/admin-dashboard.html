@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Compra — Market Admin: Dashboard</title>
+<link rel="stylesheet" href="assets/mockup.css">
+</head>
+<body>
+
+<header class="appbar is-admin">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark">EC</span><span>E-Compra<small>Market administration</small></span></a>
+    <nav class="nav">
+      <a href="admin-dashboard.html" class="on">Dashboard</a>
+      <a href="admin-vendors.html">Vendors</a>
+      <a href="admin-transactions.html">Transactions</a>
+    </nav>
+    <span class="who">Market Administrator</span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap stack">
+
+    <div class="pagehead">
+      <div class="eyebrow">Market administration</div>
+      <h1>Admin Dashboard</h1>
+      <p>Market Administrator Overview — key metrics and quick access to common tasks.</p>
+    </div>
+
+    <div class="row-between" style="margin-bottom: 16px; align-items: center;">
+      <div></div>
+      <div class="row" style="gap: 8px;">
+        <a href="admin-vendors.html" class="btn btn-accent">Manage Vendors</a>
+        <a href="home.html" class="btn">View Marketplace</a>
+      </div>
+    </div>
+
+    <!-- ===== Stats Overview ===== -->
+    <section class="card">
+      <div class="grid grid-6">
+        <div class="stat card">
+          <div class="k">Total Vendors</div>
+          <div class="v">12</div>
+          <div class="sub">all registered stalls</div>
+        </div>
+        <div class="stat card">
+          <div class="k">Active Vendors</div>
+          <div class="v">10</div>
+          <div class="sub">currently selling</div>
+        </div>
+        <div class="stat card">
+          <div class="k">Inactive Vendors</div>
+          <div class="v">2</div>
+          <div class="sub">accounts disabled</div>
+        </div>
+        <div class="stat card">
+          <div class="k">Total Products</div>
+          <div class="v">34</div>
+          <div class="sub">across 9 categories</div>
+        </div>
+        <div class="stat card">
+          <div class="k">Pending Orders</div>
+          <div class="v">7</div>
+          <div class="sub">awaiting fulfillment</div>
+        </div>
+        <div class="stat card" style="border-color:var(--brand-line)">
+          <div class="k">Revenue (Today)</div>
+          <div class="v" style="color:var(--brand)">₱12,450</div>
+          <div class="sub">from 15 transactions</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Quick Actions ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Quick Actions</h3>
+        <span class="small muted">Common administrative tasks</span>
+      </div>
+      <div class="grid grid-6">
+        <a class="action-card card" href="admin-vendors.html">
+          <div class="action-icon">👥</div>
+          <div class="action-label">Add New Vendor</div>
+          <div class="action-desc muted">Create vendor account with stall</div>
+        </a>
+        <a class="action-card card" href="admin-vendors.html">
+          <div class="action-icon">📋</div>
+          <div class="action-label">View All Vendors</div>
+          <div class="action-desc muted">Manage vendor accounts and stalls</div>
+        </a>
+        <a class="action-card card" href="#">
+          <div class="action-icon">📊</div>
+          <div class="action-label">Sales Reports</div>
+          <div class="action-desc muted">View marketplace analytics</div>
+        </a>
+        <a class="action-card card" href="#">
+          <div class="action-icon">⚙️</div>
+          <div class="action-label">Market Settings</div>
+          <div class="action-desc muted">Configure market sections, fees</div>
+        </a>
+        <a class="action-card card" href="#">
+          <div class="action-icon">📦</div>
+          <div class="action-label">Product Moderation</div>
+          <div class="action-desc muted">Review pending product listings</div>
+        </a>
+        <a class="action-card card" href="#">
+          <div class="action-icon">🎫</div>
+          <div class="action-label">Support Tickets</div>
+          <div class="action-desc muted">Customer & vendor support</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== Recent Activity ===== -->
+    <section class="card">
+      <div class="card-head">
+        <h3 class="mb0">Recent Activity</h3>
+        <span class="small muted">Latest events across the marketplace</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tiny muted">2h ago</td>
+              <td><span class="badge badge-ok">Vendor Added</span></td>
+              <td>Tan's Rice & Dry Goods (E-01) registered</td>
+              <td>liza.tan</td>
+            </tr>
+            <tr>
+              <td class="tiny muted">3h ago</td>
+              <td><span class="badge badge-info">New Order</span></td>
+              <td>Order #1042 — ₱1,250.00</td>
+              <td>Maria Santos</td>
+            </tr>
+            <tr>
+              <td class="tiny muted">5h ago</td>
+              <td><span class="badge badge-info">New Order</span></td>
+              <td>Order #1041 — ₱480.00</td>
+              <td>Juan Dela Cruz</td>
+            </tr>
+            <tr>
+              <td class="tiny muted">6h ago</td>
+              <td><span class="badge badge-warn">Vendor Deactivated</span></td>
+              <td>Old Stall C-05 account disabled</td>
+              <td>admin</td>
+            </tr>
+            <tr>
+              <td class="tiny muted">1d ago</td>
+              <td><span class="badge badge-info">New Order</span></td>
+              <td>Order #1040 — ₱320.00</td>
+              <td>Ana Reyes</td>
+            </tr>
+            <tr>
+              <td class="tiny muted">2d ago</td>
+              <td><span class="badge badge-ok">Vendor Added</span></td>
+              <td>Villamor Fruits & Gulay (D-02) registered</td>
+              <td>ben.villamor</td>
+            </tr>
+            <tr>
+              <td class="tiny muted">3d ago</td>
+              <td><span class="badge badge-info">New Order</span></td>
+              <td>Order #1039 — ₱890.00</td>
+              <td>Pedro Gomez</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot">
+        <a href="#" class="link-sm">View all activity →</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap row-between">
+    <span>E-Compra · CCS630 Advance Database Systems capstone · mockup, no live data</span>
+    <span>All prices in Philippine pesos (₱)</span>
+  </div>
+</footer>
+
+</body>
+</html>
