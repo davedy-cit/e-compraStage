@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from catalog.serializers import VendorSerializer
 from .models import (
     DeliveryBooking,
     DeliveryStatus,
@@ -83,6 +84,7 @@ class DeliveryBookingSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     transaction = TransactionSerializer(read_only=True)
+    vendor = VendorSerializer(read_only=True)
     status_display = serializers.CharField(source="status_code.description", read_only=True)
     fulfillment_display = serializers.CharField(source="fulfillment_code.description", read_only=True)
 
