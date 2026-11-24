@@ -628,6 +628,20 @@ equest.user.vendor. Original spec assigned raw string to order.status_code FK �
 - **Verification:** Fresh clone simulation passes — all tests (27+6+2), lint, build succeed. Tag `m4-complete` created.
 - **CCS630 lesson applied:** End-to-end capstone delivery — reproducible environment, documented architecture, tested features, security audit, performance analysis, backup/recovery drill, user & developer manuals.
 - **Issues/notes:** Submission deadline Dec 12, 2026 met with 19 days buffer. **Final lint fixes**: B904 exception chaining in `authentication.py` (2 instances), B905 `zip(strict=True)` in `test_services.py`. All ruff checks now pass.
+- **Next:** Phase 5 — Admin Dashboard UI Frontend
+
+---
+
+### [2026-11-24] Phase 5 — Admin Dashboard UI Frontend
+- **Status:** ✅ Completed (verified)
+- **What was done:** Implemented Phase 5 Admin Dashboard UI Frontend per implementation guide:
+  - Created `frontend/src/views/AdminDashboardView.vue`: Stats overview (total/active/inactive vendors, total products, pending orders, revenue today), quick actions grid (6 action cards), recent activity table (vendor additions, new orders)
+  - Created `frontend/src/views/AdminVendorsView.vue`: Vendor management table with columns (name, stall, section, contact, account, status, actions), create vendor modal with account credentials + stall information, deactivate functionality with confirmation
+  - Updated `frontend/src/router/index.js`: Added imports and routes for `/admin` (admin-dashboard) and `/admin/vendors` (admin-vendors) with `meta: { requiresAuth: true, role: 'admin' }`, added admin role check in router guard
+  - Updated `frontend/src/assets/main.css`: Added admin stat card styles (`.stat`, `.stat-label`, `.stat-value`), modal overlay (`.modal-overlay`), table actions (`.actions .btn`), responsive admin table (`@media (max-width: 768px) .admin-table-responsive`)
+- **Verification:** `npm run build` → builds successfully (132 modules, CSS 85.03 kB, JS 365.99 kB); `python -m pytest` → 27 backend tests passed; `npm test` → 6 frontend unit tests passed; `npx playwright test` → 2 E2E tests passed; `python manage.py check` → System check identified no issues (0 silenced); git push origin develop → c39bb82..c39bb82 develop -> develop
+- **CCS630 lesson applied:** Role-based access control on frontend routes (meta.role + router guard); Pinia auth store integration for admin user detection; Vue 3 Composition API with reactive state; design system semantic classes for consistency; API integration with error handling and form validation
+- **Issues/notes:** Frontend builds use design system tokens from `main.css` `@theme` config; admin navbar items already present in Navbar.vue (admin-dashboard, admin-vendors); test database required schema copy from main database for unmanaged models (accounts_userprofile, catalog_vendor, etc.)
 - **Next:** Project complete — ready for defense presentation
 
 ### [2026-11-23] Post-M4 Login & CORS fixes (verification)
