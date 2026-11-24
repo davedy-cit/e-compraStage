@@ -1,9 +1,10 @@
-from rest_framework import serializers
-from django.db import transaction
-from django.utils import timezone
-from django.contrib.auth.hashers import make_password
 from accounts.models import AuthUser, Userprofile
 from catalog.models import Vendor
+from django.contrib.auth.hashers import make_password
+from django.db import transaction
+from django.utils import timezone
+from rest_framework import serializers
+
 from vendors.models import PosVendor
 
 

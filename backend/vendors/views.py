@@ -1,3 +1,7 @@
+from accounts.permissions import IsMarketAdmin
+from catalog.models import Vendor
+from django.db import transaction
+from django.utils import timezone
 from orders.models import Order
 from orders.serializers import OrderSerializer
 from orders.services import transition_order_status
@@ -5,17 +9,13 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db import transaction
-from django.utils import timezone
 
-from accounts.permissions import IsMarketAdmin
-from catalog.models import Vendor
 from .models import PosVendor
 from .serializers import (
     PosVendorSerializer,
     VendorCreateSerializer,
-    VendorListSerializer,
     VendorDetailSerializer,
+    VendorListSerializer,
 )
 
 

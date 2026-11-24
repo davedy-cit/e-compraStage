@@ -1,12 +1,12 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-from rest_framework.test import APIClient
-from rest_framework import status
 from accounts.models import AuthUser, Userprofile
 from catalog.models import Vendor
-from vendors.models import PosVendor
 from django.contrib.auth.hashers import make_password
+from django.test import TestCase
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APIClient
+
+from vendors.models import PosVendor
 
 
 class AdminVendorAPITest(TestCase):
