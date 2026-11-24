@@ -11,50 +11,88 @@ const authStore = useAuthStore()
 const loading = ref(true)
 const error = ref(null)
 const activeTab = ref('favorites') // favorites, orders, reservations
-const favorites = ref(null)
-
-// Mock data - in production this would come from API endpoints
-const mockFavorites = {
+const favorites = ref({
   stats: {
-    totalOrders: 4,
-    completedOrders: 2,
-    totalSpent: '1325.00',
-    sinceDate: '10 Nov 2026',
-    favoriteVendors: 2,
-    totalVendors: 6,
-    reservationsHeld: 1,
-    balanceDue: '145.00'
+    totalOrders: 0,
+    completedOrders: 0,
+    totalSpent: '0.00',
+    sinceDate: '',
+    favoriteVendors: 0,
+    totalVendors: 0,
+    reservationsHeld: 0,
+    balanceDue: '0.00'
   },
-  favoriteProducts: [
-    { id: 1, name: 'Bangus (Milkfish)', emoji: '🐟', vendor: "Pedro's Fresh Catch", stall: 'Stall A-12', availability: 'IN_STOCK', stock: 12, unit: 'kg', price: '180.00' },
-    { id: 2, name: 'Tomatoes', emoji: '🍅', vendor: "Rosa's Gulay Stand", stall: 'Stall B-07', availability: 'IN_STOCK', stock: 15, unit: 'kg', price: '80.00' },
-    { id: 3, name: 'Mango (Carabao)', emoji: '🥭', vendor: 'Villamor Fruits & Gulay', stall: 'Stall D-02', availability: 'IN_STOCK', stock: 15, unit: 'kg', price: '160.00' }
-  ],
-  favoriteVendors: [
-    { name: "Pedro's Fresh Catch", stall: 'Stall A-12', section: 'Section A – Fish', phone: '0917-555-0101', products: 6 },
-    { name: "Rosa's Gulay Stand", stall: 'Stall B-07', section: 'Section B – Vegetables', phone: '0917-555-0102', products: 7 }
-  ],
-  orderHistory: [
-    { ref: 'ECO-20261116-0001', date: '16 Nov 2026', vendor: 'Villamor Fruits & Gulay', fulfillment: 'DELIVERY', total: '320.00', status: 'CONFIRMED', payment: 'VERIFIED', canReorder: true },
-    { ref: 'ECO-20261116-0002', date: '16 Nov 2026', vendor: "Rosa's Gulay Stand", fulfillment: 'PICKUP', total: '50.00', status: 'CONFIRMED', payment: 'VERIFIED', canReorder: true },
-    { ref: 'ECO-20261111-0003', date: '11 Nov 2026', vendor: "Pedro's Fresh Catch", fulfillment: 'WALK_IN', total: '340.00', status: 'COMPLETED', payment: 'VERIFIED', canReorder: true },
-    { ref: 'ECO-20261110-0001', date: '10 Nov 2026', vendor: "Pedro's Fresh Catch", fulfillment: 'DELIVERY', total: '615.00', status: 'COMPLETED', payment: 'VERIFIED', canReorder: false, viewUrl: '/order-tracking' }
-  ],
-  reservationHistory: [
-    { ref: 'ECO-20261112-0002', date: '12 Nov 2026', vendor: "Rosa's Gulay Stand", total: '290.00', downPayment: '145.00', balanceDue: '145.00', status: 'READY_FOR_PICKUP', detailUrl: '/pickup-reservation' }
-  ]
-}
+  favoriteProducts: [],
+  favoriteVendors: [],
+  orderHistory: [],
+  reservationHistory: []
+})
 
 async function fetchFavorites() {
   try {
-    // In production: await api.get('/accounts/favorites/')
-    favorites.value = mockFavorites
+    // Fetch favorite products and vendors from API
+    const [productsRes, vendorsRes] = await Promise.all([
+      api.get('favorites/products/'),
+      api.get('favorites/vendors/')
+    ])
+
+    const products = productsRes.data.results || productsRes.data || []
+    const vendors = vendorsRes.data.results || vendorsRes.data || []
+
+    favorites.value = {
+      stats: {
+        totalOrders: 0,
+        completedOrders: 0,
+        totalSpent: '0.00',
+        sinceDate: '',
+        favoriteVendors: vendors.length,
+        totalVendors: 0,
+        reservationsHeld: 0,
+        balanceDue: '0.00'
+      },
+      favoriteProducts: products.map(fav => ({
+        id: fav.product.id,
+        name: fav.product.name,
+        emoji: getCategoryIcon(fav.product.category_name || fav.product.category),
+        vendor: fav.product.vendor_name,
+        stall: fav.product.stall_location,
+        availability: fav.product.availability,
+        stock: fav.product.stock_quantity,
+        unit: fav.product.unit || 'kg',
+        price: fav.product.price
+      })),
+      favoriteVendors: vendors.map(fav => ({
+        name: fav.vendor.name,
+        stall: fav.vendor.stall_location,
+        section: fav.vendor.section_name || fav.vendor.section,
+        phone: fav.vendor.contact_phone,
+        products: fav.vendor.product_count || 0
+      })),
+      orderHistory: [],
+      reservationHistory: []
+    }
   } catch (e) {
     error.value = 'Failed to load favorites & history'
     console.error(e)
   } finally {
     loading.value = false
   }
+}
+
+const categoryIcons = {
+  'Fish': '🐟',
+  'Meat': '🥩',
+  'Poultry': '🍗',
+  'Fruits': '🍎',
+  'Vegetables': '🥬',
+  'Rice': '🍚',
+  'Dry goods': '🫙',
+  'Spices': '🧂',
+  'Others': '🧺',
+}
+
+function getCategoryIcon(name) {
+  return categoryIcons[name] || '📦'
 }
 
 function formatCurrency(amount) {
@@ -95,7 +133,26 @@ function getAvailabilityBadge(availability, stock) {
 }
 
 function navigateToProduct(productId) {
-  router.push(`/product/${productId}`)
+  router.push({ name: 'product-detail', params: { id: productId } })
+}
+
+async function removeFavoriteProduct(productId) {
+  try {
+    await api.delete(`favorites/products/${productId}/`)
+    // Remove from local state
+    favorites.value.favoriteProducts = favorites.value.favoriteProducts.filter(p => p.id !== productId)
+    favorites.value.stats.favoriteProducts = favorites.value.favoriteProducts.length
+    alert('Removed from favorites!')
+  } catch (e) {
+    console.error('Failed to remove favorite:', e)
+    alert('Failed to remove from favorites')
+  }
+}
+
+async function removeFavoriteVendor(vendorName) {
+  // Note: The API uses vendor ID, but we only have name in the vendor list
+  // For now, just show alert
+  alert('Remove vendor favorite - would call DELETE /api/favorites/vendors/{id}/')
 }
 
 async function handleReorder(orderRef) {
@@ -168,6 +225,13 @@ onMounted(() => {
                 <div class="foot">
                   <span class="price">{{ formatCurrency(product.price) }} <span class="unit">/ {{ product.unit }}</span></span>
                   <a class="btn btn-sm btn-primary" @click="navigateToProduct(product.id)">Add</a>
+                  <button
+                    @click="removeFavoriteProduct(product.id)"
+                    class="btn btn-sm btn-danger"
+                    title="Remove from favorites"
+                  >
+                    ×
+                  </button>
                 </div>
               </div>
             </article>

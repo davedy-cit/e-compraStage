@@ -148,6 +148,29 @@ const goToProduct = (p) => {
   router.push({ name: 'product-detail', params: { id: p.id } })
 }
 
+const isProductFavorited = ref(false)
+
+const toggleFavoriteProduct = async () => {
+  if (!product.value) return
+  try {
+    if (authStore.isAuthenticated) {
+      if (isProductFavorited.value) {
+        await api.delete(`favorites/products/${product.value.id}/`)
+        isProductFavorited.value = false
+        alert('Removed from favorites!')
+      } else {
+        await api.post('favorites/products/', { product_id: product.value.id })
+        isProductFavorited.value = true
+        alert('Added to favorites!')
+      }
+    } else {
+      router.push('/login')
+    }
+  } catch (e) {
+    alert('Failed to update favorites')
+  }
+}
+
 const toggleFavoriteVendor = async () => {
   if (!vendor.value) return
   try {
@@ -308,6 +331,13 @@ watch(() => route.params.id, () => {
                     class="btn btn-accent btn-lg btn-block"
                   >
                     Reserve for pickup
+                  </button>
+                  <button
+                    @click="toggleFavoriteProduct"
+                    class="btn btn-ghost btn-lg btn-block"
+                    :class="{ 'btn-danger': isProductFavorited }"
+                  >
+                    {{ isProductFavorited ? '♥' : '♡' }} Favorite product
                   </button>
                 </div>
                 <div class="center tiny muted mt8">Reserve now, pay at the stall — or pay online and have it delivered.</div>

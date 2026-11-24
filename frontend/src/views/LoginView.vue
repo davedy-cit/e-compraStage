@@ -41,6 +41,13 @@ const handleLogin = async () => {
       <button @click="handleLogin" :disabled="loading" class="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">
         {{ loading ? 'Logging in...' : 'Login' }}
       </button>
+
+      <p class="text-center text-sm text-gray-600 mt-6">
+        Don't have an account?
+        <router-link to="/register" class="font-medium text-purple-600 hover:underline ml-1">
+          Register
+        </router-link>
+      </p>
     </div>
   </div>
 </template>

@@ -2,9 +2,15 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import api from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
+
+// Track favorited product IDs for instant UI feedback
+const favoritedProducts = ref(new Set())
+const favoriting = ref(new Set())
 
 const products = ref([])
 const categories = ref([])
@@ -158,6 +164,33 @@ const addToCart = async (product) => {
     alert('Failed to add to cart')
   }
 }
+
+const toggleFavorite = async (product) => {
+  if (!authStore.isAuthenticated) {
+    router.push('/login')
+    return
+  }
+
+  const isFavorited = favoritedProducts.value.has(product.id)
+  favoriting.value.add(product.id)
+
+  try {
+    if (isFavorited) {
+      await api.delete(`favorites/products/${product.id}/`)
+      favoritedProducts.value.delete(product.id)
+    } else {
+      await api.post('favorites/products/', { product_id: product.id })
+      favoritedProducts.value.add(product.id)
+    }
+  } catch (e) {
+    console.error('Failed to toggle favorite:', e)
+    alert(isFavorited ? 'Failed to remove from favorites' : 'Failed to add to favorites')
+  } finally {
+    favoriting.value.delete(product.id)
+  }
+}
+
+const isFavorited = (product) => favoritedProducts.value.has(product.id)
 
 // Compute best value (cheapest) per comparison group
 const bestValueMap = computed(() => {
@@ -317,6 +350,14 @@ const alsoInCategory = computed(() => {
                 </div>
                 <div class="foot">
                   <span class="price">{{ formatPrice(product.price) }} <span class="unit">/ {{ product.unit || 'kg' }}</span></span>
+                  <button
+                    @click.stop="toggleFavorite(product)"
+                    :disabled="favoriting.has(product.id)"
+                    :class="['btn btn-sm', isFavorited(product) ? 'btn-danger' : 'btn-ghost']"
+                    title="Add to favorites"
+                  >
+                    {{ isFavorited(product) ? '♥' : '♡' }}
+                  </button>
                   <button
                     @click.stop="addToCart(product)"
                     :disabled="product.availability !== 'IN_STOCK'"
@@ -586,6 +627,14 @@ const alsoInCategory = computed(() => {
                         </span>
                       </div>
                       <button
+                        @click.stop="toggleFavorite(product)"
+                        :disabled="favoriting.has(product.id)"
+                        :class="['btn btn-sm', isFavorited(product) ? 'btn-danger' : 'btn-ghost']"
+                        title="Add to favorites"
+                      >
+                        {{ isFavorited(product) ? '♥' : '♡' }}
+                      </button>
+                      <button
                         @click.stop="addToCart(product)"
                         :disabled="product.availability !== 'IN_STOCK'"
                         class="btn btn-sm btn-primary"
@@ -647,6 +696,14 @@ const alsoInCategory = computed(() => {
                       </div>
                       <div class="foot">
                         <span class="price">{{ formatPrice(product.price) }} <span class="unit">/ {{ product.unit || 'kg' }}</span></span>
+                        <button
+                          @click.stop="toggleFavorite(product)"
+                          :disabled="favoriting.has(product.id)"
+                          :class="['btn btn-sm', isFavorited(product) ? 'btn-danger' : 'btn-ghost']"
+                          title="Add to favorites"
+                        >
+                          {{ isFavorited(product) ? '♥' : '♡' }}
+                        </button>
                         <button
                           @click.stop="addToCart(product)"
                           :disabled="product.availability !== 'IN_STOCK'"

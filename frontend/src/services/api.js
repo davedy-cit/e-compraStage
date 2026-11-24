@@ -5,15 +5,16 @@ const api = axios.create({
   timeout: 10000,
 })
 
-// Attach access token from localStorage to every request
+// Make interceptors completely safe for test environments
+// The response interceptor can receive undefined error in some test scenarios
 api.interceptors.request.use((config) => {
   try {
     const token = localStorage?.getItem?.('access_token')
-    if (token) {
+    if (token && config && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
   } catch (e) {
-    // Ignore localStorage errors in test environment
+    // Ignore all errors in test environment
   }
   return config
 })
@@ -22,8 +23,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Guard against undefined error or missing config (can happen in test env)
-    if (!error || !error.config) {
+    // Extra defensive: handle completely undefined error
+    if (!error) {
+      return Promise.reject(new Error('Unknown error'))
+    }
+    // Guard against undefined error.config (can happen in test env)
+    if (!error.config) {
       return Promise.reject(error)
     }
     const originalRequest = error.config
@@ -37,12 +42,14 @@ api.interceptors.response.use(
         })
         localStorage?.setItem?.('access_token', res.data.access)
         localStorage?.setItem?.('refresh_token', res.data.refresh)
-        originalRequest.headers.Authorization = `Bearer ${res.data.access}`
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${res.data.access}`
+        }
         return api(originalRequest)
       } catch (e) {
         localStorage?.removeItem?.('access_token')
         localStorage?.removeItem?.('refresh_token')
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && window.location) {
           window.location.href = '/login'
         }
       }
