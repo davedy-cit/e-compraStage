@@ -8,6 +8,7 @@ import VendorDashboardView from '@/views/VendorDashboardView.vue'
 import VendorProductsView from '@/views/VendorProductsView.vue'
 import VendorOrdersView from '@/views/VendorOrdersView.vue'
 import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
 import CatalogView from '@/views/CatalogView.vue'
 import ProductDetailView from '@/views/ProductDetailView.vue'
 import OrderTrackingView from '@/views/OrderTrackingView.vue'
@@ -19,6 +20,7 @@ import FavoritesHistoryView from '@/views/FavoritesHistoryView.vue'
 
 const routes = [
   { path: '/login', name: 'login', component: LoginView, meta: { public: true } },
+  { path: '/register', name: 'register', component: RegisterView, meta: { public: true } },
   { path: '/cart', name: 'cart', component: CartView, meta: { requiresAuth: true } },
   { path: '/checkout', name: 'checkout', component: CheckoutView, meta: { requiresAuth: true } },
   { path: '/payment/:id?', name: 'payment', component: PaymentView, props: true, meta: { requiresAuth: true } },

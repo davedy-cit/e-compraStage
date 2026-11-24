@@ -41,15 +41,23 @@
           </button>
         </div>
 
-        <!-- Login link (not authenticated) -->
-        <router-link
-          v-else
-          to="/login"
-          class="btn btn-sm"
-          style="background: rgba(255,255,255,.16); border-color: transparent; color: #fff; padding: 5px 12px; margin-left: 8px;"
-        >
-          Login
-        </router-link>
+        <!-- Auth links (not authenticated) -->
+        <div v-else style="display: flex; align-items: center; gap: 8px; margin-left: 8px;">
+          <router-link
+            to="/register"
+            class="btn btn-sm"
+            style="background: rgba(255,255,255,.16); border-color: transparent; color: #fff; padding: 5px 12px;"
+          >
+            Register
+          </router-link>
+          <router-link
+            to="/login"
+            class="btn btn-sm"
+            style="background: var(--color-accent); border-color: transparent; color: #fff; padding: 5px 12px;"
+          >
+            Login
+          </router-link>
+        </div>
 
         <!-- Mobile Menu Button -->
         <button
@@ -95,26 +103,35 @@
             </span>
           </router-link>
           <div class="pt-4 border-t" style="border-color: rgba(255,255,255,.12);">
-            <div v-if="authStore.isAuthenticated" class="px-4 py-2">
-              <div class="text-sm font-medium" style="color: #fff;">{{ authStore.user?.username }}</div>
-              <div class="text-xs" style="color: rgba(255,255,255,.7); text-transform: capitalize;">{{ authStore.user?.role }}</div>
+            <div v-if="authStore.isAuthenticated">
+              <div class="px-4 py-2">
+                <div class="text-sm font-medium" style="color: #fff;">{{ authStore.user?.username }}</div>
+                <div class="text-xs" style="color: rgba(255,255,255,.7); text-transform: capitalize;">{{ authStore.user?.role }}</div>
+              </div>
+              <button
+                @click="handleLogout"
+                class="w-full px-4 py-2 text-sm font-medium rounded-lg text-left"
+                style="background: rgba(255,255,255,.16); color: #fff; border: none;"
+              >
+                Logout
+              </button>
             </div>
-            <button
-              v-if="authStore.isAuthenticated"
-              @click="handleLogout"
-              class="w-full px-4 py-2 text-sm font-medium rounded-lg text-left"
-              style="background: rgba(255,255,255,.16); color: #fff; border: none;"
-            >
-              Logout
-            </button>
-            <router-link
-              v-else
-              to="/login"
-              class="w-full px-4 py-2 text-sm font-medium text-center rounded-lg block"
-              style="background: var(--color-accent); color: #fff; border: none;"
-            >
-              Login
-            </router-link>
+            <div v-else>
+              <router-link
+                to="/register"
+                class="w-full px-4 py-2 text-sm font-medium text-center rounded-lg block mb-2"
+                style="background: rgba(255,255,255,.16); color: #fff; border: none;"
+              >
+                Register
+              </router-link>
+              <router-link
+                to="/login"
+                class="w-full px-4 py-2 text-sm font-medium text-center rounded-lg block"
+                style="background: var(--color-accent); color: #fff; border: none;"
+              >
+                Login
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
@@ -149,7 +166,15 @@ const vendorNavItems = [
   { name: 'vendor-pos', label: 'POS', to: '/vendor/pos' },
 ]
 
+const adminNavItems = [
+  { name: 'admin-dashboard', label: 'Admin Dashboard', to: '/admin' },
+  { name: 'admin-vendors', label: 'Manage Vendors', to: '/admin/vendors' },
+]
+
 const visibleNavItems = computed(() => {
+  if (isAdmin.value) {
+    return [...navItems, ...adminNavItems]
+  }
   if (isVendor.value) {
     return vendorNavItems
   }
