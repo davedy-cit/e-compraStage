@@ -1069,6 +1069,50 @@ img {
   }
 }
 
+/* Admin Stat Cards */
+.stat {
+  text-align: center;
+  padding: 20px 16px;
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Table Actions */
+.actions .btn {
+  margin-right: 4px;
+}
+
+/* Responsive Admin Table */
+@media (max-width: 768px) {
+  .admin-table-responsive {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 /* Grid utilities */
 .grid {
   display: grid;

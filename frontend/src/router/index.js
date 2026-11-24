@@ -17,6 +17,8 @@ import PickupReservationView from '@/views/PickupReservationView.vue'
 import DeliveryBookingView from '@/views/DeliveryBookingView.vue'
 import MarketMapView from '@/views/MarketMapView.vue'
 import FavoritesHistoryView from '@/views/FavoritesHistoryView.vue'
+import AdminDashboardView from '@/views/AdminDashboardView.vue'
+import AdminVendorsView from '@/views/AdminVendorsView.vue'
 
 const routes = [
   { path: '/login', name: 'login', component: LoginView, meta: { public: true } },
@@ -28,6 +30,9 @@ const routes = [
   { path: '/vendor/dashboard', name: 'vendor-dashboard', component: VendorDashboardView, meta: { requiresAuth: true, role: 'vendor' } },
   { path: '/vendor/products', name: 'vendor-products', component: VendorProductsView, meta: { requiresAuth: true, role: 'vendor' } },
   { path: '/vendor/orders', name: 'vendor-orders', component: VendorOrdersView, meta: { requiresAuth: true, role: 'vendor' } },
+  // Phase 5: Admin routes
+  { path: '/admin', name: 'admin-dashboard', component: AdminDashboardView, meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/admin/vendors', name: 'admin-vendors', component: AdminVendorsView, meta: { requiresAuth: true, role: 'admin' } },
   { path: '/', redirect: '/catalog' },
   { path: '/catalog', name: 'catalog', component: CatalogView, meta: { requiresAuth: true } },
   { path: '/product/:id', name: 'product-detail', component: ProductDetailView, meta: { requiresAuth: true } },
@@ -65,6 +70,10 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.role === 'vendor' && authStore.user?.role !== 'vendor') {
     return next({ name: 'cart' })
+  }
+
+  if (to.meta.role === 'admin' && authStore.user?.role !== 'admin') {
+    return next({ name: 'catalog' })
   }
 
   next()
