@@ -31,6 +31,7 @@
 | **Node.js** | 18+ (LTS) | Frontend runtime | [nodejs.org](https://nodejs.org/) |
 | **MySQL** | 8.0+ | Database server | [mysql.com](https://dev.mysql.com/downloads/mysql/) |
 | **MySQL Workbench** | 8.0+ | Database GUI (optional) | [mysql.com](https://dev.mysql.com/downloads/workbench/) |
+| **Visual Studio Code** | 1.85+ | Code editor | [code.visualstudio.com](https://code.visualstudio.com/) |
 
 ### Verify Installations
 
@@ -41,9 +42,438 @@ python --version       # Should show 3.11+
 node --version         # Should show 18+
 npm --version          # Should show 9+
 mysql --version        # Should show 8.0+
+code --version         # Should show 1.85+ (VS Code CLI)
 ```
 
 ---
+
+## 🎯 VS Code Setup (Fresh Installation)
+
+This section provides a complete VS Code configuration for Django + Vue development.
+
+### 1. Install VS Code
+
+```bash
+# Windows: Download from https://code.visualstudio.com/
+# Or via winget:
+winget install Microsoft.VisualStudioCode
+
+# macOS: 
+brew install --cask visual-studio-code
+
+# Ubuntu/Linux:
+sudo snap install code --classic
+# OR: sudo apt install code
+```
+
+### 2. Required Extensions
+
+Open VS Code → Extensions (Ctrl+Shift+X) → Install these:
+
+| Extension | ID | Purpose |
+|-----------|----|---------|
+| **Python** | `ms-python.python` | Django, PyLint, debugging, virtual env support |
+| **Pylance** | `ms-python.vscode-pylance` | Fast Python language server |
+| **Django** | `batisteo.vscode-django` | Django template syntax, runserver commands |
+| **Vue Language Features (Volar)** | `Vue.volar` | Vue 3 SFC support, TypeScript, IntelliSense |
+| **TypeScript Vue Plugin (Volar)** | `Vue.vscode-typescript-vue-plugin` | TS support in Vue SFCs |
+| **ESLint** | `dbaeumer.vscode-eslint` | JavaScript/Vue linting |
+| **Prettier** | `esbenp.prettier-vscode` | Code formatting |
+| **Tailwind CSS IntelliSense** | `bradlc.vscode-tailwindcss` | Tailwind class autocomplete |
+| **MySQL** | `cweijan.vscode-mysql-client2` | Database explorer, query runner |
+| **GitLens** | `eamodio.gitlens` | Enhanced Git visualization |
+| **Error Lens** | `usernamehw.errorlens` | Inline error display |
+| **REST Client** | `humao.rest-client` | Test API endpoints in `.http` files |
+
+**Install all at once (copy-paste to terminal):**
+```bash
+code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance
+code --install-extension batisteo.vscode-django
+code --install-extension Vue.volar
+code --install-extension Vue.vscode-typescript-vue-plugin
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension esbenp.prettier-vscode
+code --install-extension bradlc.vscode-tailwindcss
+code --install-extension cweijan.vscode-mysql-client2
+code --install-extension eamodio.gitlens
+code --install-extension usernamehw.errorlens
+code --install-extension humao.rest-client
+```
+
+### 3. Workspace Settings (`.vscode/settings.json`)
+
+Create `.vscode/settings.json` in the project root:
+
+```json
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": ["--line-length", "100"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["backend"],
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  
+  "vue.languageFeatures.experimentalTemplatesPropsDestructuring": true,
+  "volar.enableProjectDiagnostics": true,
+  
+  "files.associations": {
+    "*.vue": "vue",
+    "*.html": "html"
+  },
+  "emmet.includeLanguages": {
+    "vue": "html",
+    "vue-html": "html"
+  },
+  
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.profiles.windows": {
+    "Command Prompt": {
+      "path": "cmd.exe",
+      "args": ["/k", "${workspaceFolder}/backend/.venv/Scripts/activate.bat"]
+    },
+    "PowerShell": {
+      "path": "powershell.exe",
+      "args": ["-NoExit", "-Command", "& '${workspaceFolder}/backend/.venv/Scripts/Activate.ps1'"]
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/dist": true,
+    "**/playwright-report": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/dist/**": true
+  }
+}
+```
+
+### 4. Debug Configurations (`.vscode/launch.json`)
+
+Create `.vscode/launch.json` in the project root:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Django: Runserver",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/manage.py",
+      "args": ["runserver", "8000"],
+      "django": true,
+      "justMyCode": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend"
+      }
+    },
+    {
+      "name": "Django: Runserver (No Reload)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/manage.py",
+      "args": ["runserver", "8000", "--noreload"],
+      "django": true,
+      "justMyCode": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Django: Shell",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/manage.py",
+      "args": ["shell"],
+      "django": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Django: Test (pytest)",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-v", "--tb=short"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend"
+      }
+    },
+    {
+      "name": "Vue: Vite Dev Server",
+      "type": "node",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://[^\\s]+)",
+        "uriFormat": "%s",
+        "action": "openInBrowser"
+      }
+    },
+    {
+      "name": "Full Stack: Django + Vue",
+      "type": "compound",
+      "configurations": ["Django: Runserver", "Vue: Vite Dev Server"],
+      "stopAll": true
+    }
+  ]
+}
+```
+
+### 5. Python Interpreter Selection
+
+1. Open Command Palette: `Ctrl+Shift+P` (Windows/Linux) / `Cmd+Shift+P` (macOS)
+2. Type: `Python: Select Interpreter`
+3. Choose: `./backend/.venv/Scripts/python.exe` (Windows) or `./backend/.venv/bin/python` (macOS/Linux)
+4. If not listed: Click `Enter interpreter path...` → `Find...` → Navigate to `.venv` folder
+
+### 6. Django + pymysql Configuration
+
+In `backend/config/settings.py`, ensure pymysql is used:
+
+```python
+# At the TOP of settings.py (before DATABASES)
+import pymysql
+pymysql.install_as_MySQLdb()
+```
+
+**Alternative: Use mysqlclient (better performance)**
+
+```bash
+# Windows - may need Visual C++ Build Tools
+pip install mysqlclient
+
+# macOS
+brew install mysql-client
+pip install mysqlclient
+
+# Ubuntu
+sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
+pip install mysqlclient
+```
+
+### 7. MySQL Connection in VS Code
+
+1. Open MySQL extension (database icon in sidebar)
+2. Click `+` to add connection:
+   - Host: `127.0.0.1`
+   - Port: `3306`
+   - User: `ecompra_app`
+   - Password: `your_secure_password`
+   - Database: `ecompra`
+3. Test connection → Save
+
+### 8. Create `.http` File for API Testing
+
+Create `backend/api.http` (or `api-tests.http` in root):
+
+```http
+### Variables
+@baseUrl = http://localhost:8000/api
+@token = 
+
+### Authentication
+# Login
+POST {{baseUrl}}/auth/token/
+Content-Type: application/json
+
+{
+  "username": "marketadmin",
+  "password": "adminpass123"
+}
+
+### Get current user
+GET {{baseUrl}}/accounts/auth/current/
+Authorization: Bearer {{token}}
+
+### Register new customer
+POST {{baseUrl}}/accounts/auth/register/
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "first_name": "Test",
+  "last_name": "User",
+  "password": "SecurePass123!",
+  "password_confirm": "SecurePass123!",
+  "phone": "09171234567",
+  "address": "123 Test St"
+}
+
+### Catalog - List products
+GET {{baseUrl}}/catalog/products/
+
+### Favorites - Add product
+POST {{baseUrl}}/favorites/products/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "product_id": 1
+}
+
+### Orders - List user orders
+GET {{baseUrl}}/orders/
+Authorization: Bearer {{token}}
+
+### Admin - Create vendor
+POST {{baseUrl}}/vendors/admin/create/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "vendor_test",
+  "email": "vendor@test.com",
+  "first_name": "Test",
+  "last_name": "Vendor",
+  "password": "VendorPass123",
+  "name": "Test Stall",
+  "stall_location": "Stall B-1",
+  "market_section": "Fish",
+  "contact_phone": "09182223344",
+  "contact_email": "stall@test.com"
+}
+```
+
+### 9. Tasks Configuration (`.vscode/tasks.json`)
+
+Create `.vscode/tasks.json`:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Backend: Install Dependencies",
+      "type": "shell",
+      "command": "pip install -r requirements.txt",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Backend: Run Migrations",
+      "type": "shell",
+      "command": "python manage.py migrate",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Backend: Run Tests",
+      "type": "shell",
+      "command": "python -m pytest -v",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "test"
+    },
+    {
+      "label": "Frontend: Install Dependencies",
+      "type": "shell",
+      "command": "npm ci",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Frontend: Run Tests",
+      "type": "shell",
+      "command": "npm test -- --run",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "group": "test"
+    },
+    {
+      "label": "Frontend: E2E Tests",
+      "type": "shell",
+      "command": "npx playwright test",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "group": "test"
+    },
+    {
+      "label": "Frontend: Build Production",
+      "type": "shell",
+      "command": "npm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "group": "build"
+    }
+  ]
+}
+```
+
+Run tasks via: `Ctrl+Shift+P` → `Tasks: Run Task`
+
+### 10. Recommended User Settings (`settings.json` global)
+
+Open global settings: `Ctrl+Shift+P` → `Preferences: Open User Settings (JSON)`
+
+```json
+{
+  "editor.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 14,
+  "editor.lineHeight": 1.6,
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "boundary",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.iconTheme": "vscode-icons",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.fontFamily": "'Cascadia Code', monospace",
+  "files.autoSave": "onFocusChange",
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "diffEditor.ignoreTrimWhitespace": true
+}
+```
+
+---
+
+## 💻 System Requirements
 
 ## 💻 System Requirements
 
